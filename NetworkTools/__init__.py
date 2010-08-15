@@ -1,0 +1,2 @@
+class WaveConnection():
+	def connect
