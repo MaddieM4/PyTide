@@ -6,6 +6,8 @@ import json
 import gtk
 import gobject
 
+from gui import rel_to_abs
+
 try:
 	import webkit
 	weblib = "webkit"
@@ -121,7 +123,7 @@ class browserWindow:
 				if self.echo: print "recieved null"
 
 		implementation.connect_title_changed(self.browser, title_changed)
-		implementation.open_uri(self.browser, uri)
+		implementation.open_uri(self.browser, rel_to_abs(uri))
 
 	def send(self, msg):
 		if self.echo: print "[T>>>", msg

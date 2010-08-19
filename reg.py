@@ -1,4 +1,4 @@
-import wavelist
+from gui import wavelist
 
 class Registry:
 	"""reg is the registry, which allows windows to communicate 
