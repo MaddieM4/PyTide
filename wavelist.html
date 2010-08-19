@@ -261,7 +261,7 @@
 		<script type="text/javascript" src="jquery-1.4.2.min.js"></script>
 	</head>
 
-	<body>
+	<body class ="noselect">
 		<div id="nav">
 			<div class="top">
 				<table class="textbutton noselect"><tr>
@@ -393,6 +393,16 @@
 		</div>
 		</div>
 	<script type="text/javascript">
+		function sendObject(obj) {
+			obj['timestamp'] = new Date()
+			str = JSON.stringify(obj);
+			document.title = str;
+		}
+
+		function doctitle() {
+			searchbox.val(document.title);
+			t=setTimeout("doctitle()",300);
+		}
 
 		function checkSelect() {
 			if ($('#mainlist li.selected').length >0){
@@ -445,10 +455,14 @@
 		});
 
 		// switch toolbar depending on selection state
-		$('#mainlist li').click(function(){
+		$('#mainlist li').mousedown(function(){
 			$(this).toggleClass('selected');
+			sendObject({"type":"waveSelected",
+				"value":$(this).hasClass('selected')});
 			checkSelect();
 		});
+
+		doctitle();
 	</script>
 
 	</body>

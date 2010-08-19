@@ -1,7 +1,9 @@
 import time
 import Queue
 import thread
+import threading
 import urllib
+import json
 
 import gtk
 import gobject
@@ -94,42 +96,46 @@ def start_gtk_thread():
 def kill_gtk_thread():
 	async_gtk_message(gtk.main.quit)()
 
-class browserWindow():
+class browserWindow:
 
-	def __init__(self, uri, size=(300,600), echo=True):
+	def __init__(self, uri, registry, size=(300,600), echo=True):
 		self.echo = echo
+		self.registry = registry
 		self.window = gtk.Window()
 		self.browser = implementation.create_browser()
 
 		box = gtk.VBox(homogeneous = False, spacing = 0)
 		self.window.add(box)
 		self.window.set_geometry_hints(min_width = 270, min_height=400)
-		print "shrinkable: ", self.window.allow_shrink
-		print "growable: ", self.window.allow_grow
+		if self.echo:
+			print "shrinkable: ", self.window.allow_shrink
+			print "growable: ", self.window.allow_grow
 		box.pack_start(self.browser, expand=True, fill=True, padding=0)
 
 		self.window.set_default_size(size[0],size[1])
 		self.window.show_all()
 
-		self.message_queue = Queue.Queue()
+		#self.message_queue = Queue.Queue()
 
 		def title_changed(title):
-			if title != 'null':self.message_queue.put(title)
+			if title != 'null':
+				if self.echo: print "[T<<<",title
+				self.process(json.loads(title))
+			else: 
+				if self.echo: print "recieved null"
 
 		implementation.connect_title_changed(self.browser, title_changed)
 		implementation.open_uri(self.browser, uri)
 
-	def recieve(self):
-		if self.message_queue.empty():
-			return None
-		else:
-			msg = self.message_queue.get()
-			if self.echo: print "<<< ", msg
-			return msg
-
 	def send(self, msg):
-		if echo: print "[S>>>", msg
+		if self.echo: print "[T>>>", msg
 		async_gtk_message(implementation.inject_javascript)(self.browser, msg)
 
 	def setTitle(self, newtitle):
 		self.window.set_title(newtitle)
+
+	def process(self, data):
+		pass
+
+	def regmsg_receive(self, data):
+		pass
