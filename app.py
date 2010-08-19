@@ -1,8 +1,3 @@
-import webgui
-import os
-import threading
-import time
-
 import reg
 
 r = reg.Registry()
