@@ -1,0 +1,26 @@
+This will only work if you have the Python modules webkit and/or 
+GtkMozEmbed installed. You also have to have GTK installed and 
+available to Python.
+
+If you have that stuff and PyTide still doesn't work, that's an
+issue. PyTide is still in a state of constant change so it could
+have been recently broken for everyone. Figure out what's wrong
+if you can, wait a while and redownload if you can't.
+
+Also note that this folder is basically a horrible mess, very
+much like an apartment that hasn't needed to be cleaned since
+I started renting, and now people are visiting. So yeah. There's
+stuff that doesn't do anything. There's stuff that's earlier 
+than experimental. There's basically no documentation. It's a
+wreck. I already know this.
+
+If I could ask for anything in particular as something that 
+would help the cause - help expand the WaveImages.txt file
+by adding the base64 URLs for any images in Wave you can find.
+That would be a huge timesaver for me in the GUI department.
+
+Also, once we hammer out a base WaveConnection class that can
+be subclassed to make plugin-like protocols for each server
+type, we can actually start making those plugins. I think
+that's where the open-source concurrency of this project is
+really going to have an opportunity to shine.
