@@ -119,24 +119,71 @@
 
 			.toolbar li {
 				display:inline;
-				padding:2px 4px 5px 19px;
-				background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAWCAYAAADwza0nAAAAc0lEQVR42u2TMQrAIAxFPZuH8WgdMopzZunm7Ow5rLGlNLSmcffDgxh4JBA0ZkWOO1M/cH9iLaW8oH6LnZ1WxS1G00bcW1CRc1ZziVsXU0pqmBhjVMNERFTDxBCCGiYCgJqnOHVH7/3eRQrdhR4T2PVRhRxv98rD8I97bgAAAABJRU5ErkJggg==) no-repeat 3px 0px;
+				padding:2px 10px 5px 10px;
+				margin-right:-5px;
+				background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOoAAAAWCAYAAADOxAAsAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9oIFAM4OkOvxfAAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAAmElEQVR42u3YwQ3DIBBFQQewfXD/nXIAJEyKIIeNNFPCSk9f8Km1rud5DiCu1FpzBRAqsB1q790VwKICu0pr7VhruQRED/V9X5cAoQLboc45XQIihzrGsKgQPdQ5p1Aheqj3fQsVood6XZc3KkQP9TxPiwr/sKhCheChllKECkIFfhKqzySwqMBuqDlnoYJFBXallJIrQHBfe8dRnbpmMgUAAAAASUVORK5CYII=) repeat-x 0px 0px;
+			}
+
+			.toolbar li.invisible {
+				display:none;
+			}
+
+			.toolbar .more {
+				margin-right: 0px;
+				position:absolute;
+				right:0px;
+				top:58px;
+				padding-left:9px;
+				padding-right:9px;
+			}
+
+			.toolbar .more.over {
+				top:57px;
+				padding-top:2px;
+				padding-bottom:5px;
+				margin-right:0px;
 			}
 
 			.toolbar .over {
+				background-position: -1px 0px;
 				border: 1px solid #555;
-				background-position: 2px 0px;
-				padding-left:18px;
-				padding-right:3px;
+				padding-left:9px;
+				padding-right:8px;
+				margin-right:-4px;
 			}
 
-			.toolbar .down {border: 1px solid #55F;}
-
-			.toolbar .more {
-				background-image: none;
+			.toolbar .more.active {
+				border: 1px solid #555;
+				padding: 2px 8px 5px 9px;
+				top: 57px;
 			}
 
-			li.folder {background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAWCAYAAADwza0nAAAAc0lEQVR42u2TMQrAIAxFPZuH8WgdMopzZunm7Ow5rLGlNLSmcffDgxh4JBA0ZkWOO1M/cH9iLaW8oH6LnZ1WxS1G00bcW1CRc1ZziVsXU0pqmBhjVMNERFTDxBCCGiYCgJqnOHVH7/3eRQrdhR4T2PVRhRxv98rD8I97bgAAAABJRU5ErkJggg==);}
+			.toolbar .down, .toolbar .more.active {
+				background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAWCAYAAAABxvaqAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9oIFAQdDGGplgsAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAAH0lEQVQI12NYtWrVfyYmJiYGJmZmZgYIC0GgiVHKBQBoVgO7xr+tTAAAAABJRU5ErkJggg==);
+			}
+
+			.toolbar li div {
+				display:inline;
+				padding:2px 4px 2px 17px;
+				background-position:0px 0px;
+				background-repeat:no-repeat;
+			}
+
+			li.folder div {
+				background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAWCAYAAADwza0nAAAAc0lEQVR42u2TMQrAIAxFPZuH8WgdMopzZunm7Ow5rLGlNLSmcffDgxh4JBA0ZkWOO1M/cH9iLaW8oH6LnZ1WxS1G00bcW1CRc1ZziVsXU0pqmBhjVMNERFTDxBCCGiYCgJqnOHVH7/3eRQrdhR4T2PVRhRxv98rD8I97bgAAAABJRU5ErkJggg==);
+			}
+			li.inbox div {
+				background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAWCAYAAADwza0nAAAAYUlEQVR42mNgGAWkgYKCgv8wTLLGz58/gzUCwdJBqBGocBnMbzCNULwMr0Y3NzewBnQMEgeCbJyaYBhdEwzj1YSsGZs41jgjFsM1bt++nWgMD2mKNJKK4XELYpCKR0KeBQDdYEdxegoAzgAAAABJRU5ErkJggg==);
+			}
+			li.storage div {
+				background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAWCAYAAAAb+hYkAAAAh0lEQVR42u2TMQrAIBAE81prv5OXWFjZWdnZWQk+wBcY16DkEpIzbcjCgOgOnILL8mePlFJUyiSiSyWlNAW6NeuQcs6PXKQYY1FKNc4j9X10iBRCGId3oEMk7z0roUMk59wURLLWsg+BDpGMMexDoEMkrTV7J3SIxAnHKYb0hiYhWLzhi39wAwgIAbtsviwhAAAAAElFTkSuQmCC);
+			}
+			li.contacts div {
+				background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAWCAYAAAAinad/AAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAAewgAAHsIBbtB1PgAAAAd0SU1FB9oICwA7InHS9/UAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAACsklEQVQ4y+WUQUsbURDH/7Npo8gmEdRqJEsvPRRa9ig9iJhUWtEKHgq2BLz4EUo/RfETFLUIVU/rQRACqdhDDsVDQcMeeirdok1tcHWTmLyXfdODu2UN1fZY6MDydmb3/Zg3/zcD/BdGV8TTAHIATAAGAAGgAmAfwA6Ao7+F5ROJxMN8Pl+ZnZ31R0ZGtFqtBtu21ebmpra2tjbked47AG//BHsxPj4+tLq6eqbrOgHgjn+4Vqthfn4+ubu7+w3AYnSzFs1obGzslmVZ33VdbxYKhWcAmgDOATQANAqFwnNd188ty6qMjo4OAMj/Dpbu6enJLi0tHfq+35JSttbX1z/5vt+UUraklEJKKYJYS0opVlZWDru6up4G9b0Ey01OTn6JxWJtz/P8er3uSynZ8zxVr9f98BFCqOB7OxaLtaenpz8GQgEAbgSrmc1mj1zXVUGNWAjBgf/LpJRwXZcBgJk5m82eWZZlMvMwEb0KYYOGYXw+OTlRAIiZSQjBoR8WXwjB1WqVAUDTNDYMowlgEMCPqJpvlpeXP+i6rjRNY6VUVMmoopfePc/TFhYWHjBzPxE9CTOr7O3t3TRNUwQnABGFm6MrALBSCkREBwcH8eAy90drtl8qle6k0+kKAI2ZGQARESmloGkaghg2NjYeAcDc3FyhVCr1Bl1xLwrbsW075zjOcXd3t9re3n7MzExBemHBAWBqaqrIzOw4Tsy27dsAXgMY7uyAfF9f3/2JiQmHiIgvjIgoVI8AKAAaEXGxWDSq1Wo5VPK37ZRKpQZM0zyKx+OXroVSF64Qgsrl8vDp6ekxM2cBvL8KBgB5Isr19vZ+TSaTXiqVavu+T41GI+a6bsJ13Qwz7zDzxdEC0LUjaGtra3FmZsbpHEGO49zNZDJnnaDrYGDml1cOwQ7Iv28/ATRlfmulE8mJAAAAAElFTkSuQmCC);
+			}
+			li.eye-open div {
+				background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAWCAYAAAAmaHdCAAABpElEQVR42u2UP0gCcRTHnZ0a3J3bgqaG9sM/KGI0KJQONupaKCESJ3hBizjcQS3ncEu36BIHpVIJojikpmZEp9YUctMN9es9uTvONJsDH3y4e/++93vH42exrOyfmNvt3ne5XNcAQZxO5zMgYtzr9a4tbXY4HBvQdAwNe5Ik7RBC4gBfLpevcrncdTAYlD0ej+Lz+U4WimEQROzQhPiAbcCm5+F9HaCq1SqXSCQe/X7/eyAQ2J0TgiIrNvI8b2cY5jIajX7oIyHoY7xer281m81DsIdYLHY6J5TNZulQKPTJsiwRRZFEIhED9DEeDoe/OI47ww+iGE3TjCGQTqfvBUEgiqJMSSaTBE0XQV/PYV0mk3nVJrDh+JZ8Pi8NBgMyHo8NzKfQMeexvlAovBin6Pf7571ej5hJpVIzAuj/rJFl+QlOcWQIdTqd20ajQXRKpRKBeacC+ETfnB8OhzVcAeBg5sd2u92LSqWiYsNvYH40Gt1oAtTCpZtMJlSr1bqDJXsrFotEB/12u11TVVWAZhbYXLq92s5Q+taaiGtx6+qC+Nu+Adp4svp3Z5U/AAAAAElFTkSuQmCC);
+			}
 
 			.menu {
 				margin:0px;
@@ -150,6 +197,15 @@
 				z-index:3;
 				background-color: rgba(256,256,256,.9);
 				color:black;
+			}
+
+			.menu .tools li {
+				list-style-type:none;
+			}
+
+			.menu .tools div {
+				padding:3px 17px;
+				background-repeat: no-repeat;
 			}
 
 			#mainlist {
@@ -257,6 +313,7 @@
 			}
 
 			.floatright {float:right;}
+
 		</style>
 		<script type="text/javascript" src="jquery-1.4.2.min.js"></script>
 	</head>
@@ -279,13 +336,14 @@
 			</div>
 			<div class="toolbar noselect">
 				<ul class="invisible select">
-					<li class="eye-open">Read</li>
+					<li class="eye-open"><div>Read</div></li>
 				</ul>
 				<ul class="nonselect">
-					<li class="inbox">Inbox</li>
-					<li class="storage">Archive</li>
-					<li class="contacts">Contacts</li>
-					<li class="folder">Folders</li>
+					<li class="inbox"><div>Inbox</div></li>
+					<li class="storage"><div>Archive</div></li>
+					<li class="contacts"><div>Contacts</div></li>
+					<li class="folder"><div>Folders</div></li>
+					<li class="more">...</li>
 				</ul>
 			</div>
 		</div>
@@ -412,7 +470,65 @@
 				$("#nav .toolbar .select").addClass("invisible")
 				$("#nav .toolbar .nonselect").removeClass("invisible")
 			}
+			adj_toolbar();
 		}
+
+		menuLevel = 0;
+
+		function menuSlide(dir, fade) {
+			leftalter = ((dir=="left") ? "-=":"+=")+$(window).width();
+			map = {};
+			map['left'] = leftalter;
+			if (fade == "in") {
+				map['opacity'] = 1;
+			} else if (fade == "out") {
+				map['opacity'] = 0;
+			}
+			$('.menu').animate(map, function() {
+				// animation complete
+				// tidy up
+				left = parseInt($(this).css("left"));
+				if (left!=0) $(this).remove()
+			});
+		}
+
+		function newMenu() {
+			return $('<div class="menu"></div>').appendTo($('body'));
+		}
+
+		function newMenuLeft() {
+			menu = newMenu();
+			menu.css({"left":-$(window).width(),"opacity":0});
+			return menu;
+		}
+		function newMenuRight() {
+			menu = newMenu();
+			menu.css({"left":$(window).width(),"opacity":0});
+			return menu;
+		}
+
+		function openMenu(html, level) {
+			// if new menu is greater level, come from right, slide left
+			slideLeft = (level>menuLevel);
+			menu = slideLeft ? newMenuRight():newMenuLeft();
+			menu.html(html);
+			menuSlide((slideLeft ? "left":"right"),"in");
+			menuLevel = level;
+		}
+
+		function closeMenu() {
+			menuSlide(((menuLevel>0) ? "right":"left"),"out");
+			menuLevel = 0;
+		}
+
+		$('.toolbar .more').toggle(function() {
+			openMenu("<ul class='tools'>"+pullTools()+"</ul>",3);
+			$(this).addClass("active");
+		}, function () {
+			closeMenu();
+			$(this).removeClass("active");
+			adj_toolbar();
+		});
 
 		buttons = $('.textbutton');
 		searchbox = $('.search input');
@@ -461,6 +577,51 @@
 				"value":$(this).hasClass('selected')});
 			checkSelect();
 		});
+
+		hiddenTools = new Array();
+
+		function hideTool(jqobj) {
+			hiddenTools[hiddenTools.length] = {"class":jqobj.attr("class"),"label":jqobj.text()};
+			jqobj.addClass("invisible");
+		}
+
+		function clearTools() {hiddenTools = new Array()}
+
+		function pullTools() {
+			retstring = ""
+			for (i in hiddenTools) {
+				retstring+="<li class='"+hiddenTools[i]['class']+"'><div>"+hiddenTools[i]['label']+"</div>";
+			}
+			return retstring;
+		}
+
+		// adjust toolbar in resize events
+		function adj_toolbar(){
+			clearTools();
+			toolbar = $('.toolbar ul:not(.invisible)');
+			totalwidth = $(window).width();
+			runningwidth = 0;
+			showMore = false;
+			toolbar.children(':not(.more)').removeClass('invisible').each(function(){
+				t = $(this)
+				runningwidth+=t.width()+20;
+				if (runningwidth > totalwidth || t.position().top > 58) {
+					hideTool(t);
+					showMore = true;
+				}
+			});
+			if (showMore) {
+				$('.toolbar .more').removeClass('invisible')
+			} else {
+				if (!$('.toolbar .more').hasClass('active')) {
+					$('.toolbar .more').addClass('invisible');
+				}
+			}
+			sendObject({"type":"runwidth","value":runningwidth,"percent":100*runningwidth/totalwidth});
+		}
+
+		$(window).resize(adj_toolbar);
+		adj_toolbar()
 
 		doctitle();
 	</script>
