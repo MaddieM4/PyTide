@@ -114,6 +114,7 @@ class browserWindow:
 
 		self.window.set_default_size(size[0],size[1])
 		self.window.show_all()
+		self.window.connect('delete-event', self.destroy)
 
 		def title_changed(title):
 			if title != 'null':
@@ -132,8 +133,19 @@ class browserWindow:
 	def setTitle(self, newtitle):
 		self.window.set_title(newtitle)
 
+	def getTitle(self):
+		return self.window.get_title()
+
 	def process(self, data):
 		pass
 
 	def regmsg_receive(self, data):
 		pass
+
+	def focus(self):
+		self.window.present()
+
+	def destroy(self,widget,event):
+		print "unregistering self"
+		self.registry.unregister(self)
+		return False

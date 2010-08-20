@@ -64,3 +64,22 @@ class Registry:
 			if self.fromID(id) == wl:
 				return id
 		return None
+
+	def getWaveLists(self):
+		return [self.fromID(id) for id in self.WaveLists]
+
+	def getAllWindows(self):
+		return self.getWaveLists()
+
+	def unregister(self, obj):
+		for i in self.MasterList:
+			if self.MasterList[i] == obj:
+				# i is the object's ID
+				if i in self.WaveLists: self.WaveLists.remove(i)
+				elif i in self.WaveViewers: self.WaveViewers.remove(i)
+				elif i in self.BlipWindows: self.BlipWindows.remove(i)
+
+				# remove from master list without deleting actual object
+				self.MasterList.pop(i)
+				return True
+		return False
