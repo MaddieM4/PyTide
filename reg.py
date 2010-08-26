@@ -1,4 +1,5 @@
-from gui import wavelist
+from gui import wavelist, browserwindow, loginwindow
+from NetworkTools import network
 
 class Registry:
 	"""reg is the registry, which allows windows to communicate 
@@ -28,6 +29,16 @@ class Registry:
 
 	def getNetwork(self):
 		return self.Network
+
+	def newNetwork(self):
+		self.Network = network.Network(self)
+
+	def newBrowserWindow(self, url, destroyCallback=None):
+		print "registry.newBrowserWindow(%s)" % url
+		return browserwindow.BrowserWindow(url, self, destroyCallback=destroyCallback)
+
+	def newLoginWindow(self, callback):
+		return loginwindow.LoginWindow(callback)
 
 	def msgWaveLists(self, msg, ignore=None):
 		'''Send an object to every registered WaveList. Triggers

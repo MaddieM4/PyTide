@@ -220,14 +220,24 @@
 			}
 
 			#mainlist li {
-				border-bottom: 1px solid #EEE;
+				border: 1px solid #EEE;
+				border-top: none;
 				padding:2px 6px 5px 6px;
+				-webkit-user-drag: element;
+				-webkit-user-select: none;
+				-moz-user-select: -moz-all;
+				list-style-type:none;
 			}
 
 			#mainlist li.selected {
+				background-color:#E0E8A4;
+				border-bottom-color: #CED697;
+				border-left-color: #F0F4D2;
+			}
+
+			#mainlist li.open {
 				background-color:#789E35;
 				border-color: #CED697;
-				list-style: none;
 				color: white;
 			}
 
@@ -271,7 +281,7 @@
 			}
 
 			#mainlist .date .msgs {color:#888;}
-			#mainlist li.selected .date, #mainlist li.selected .date .msgs {color:white;}
+			#mainlist li.open .date, #mainlist li.open .date .msgs {color:white;}
 
 			#footer {
 				position:absolute;
@@ -316,6 +326,7 @@
 
 		</style>
 		<script type="text/javascript" src="jquery-1.4.2.min.js"></script>
+		<script type="text/javascript" src="comm.js"></script>
 	</head>
 
 	<body class ="noselect">
@@ -451,12 +462,6 @@
 		</div>
 		</div>
 	<script type="text/javascript">
-		function sendObject(obj) {
-			obj['timestamp'] = new Date()
-			str = JSON.stringify(obj);
-			document.title = str;
-		}
-
 		function doctitle() {
 			searchbox.val(document.title);
 			t=setTimeout("doctitle()",300);
@@ -617,13 +622,12 @@
 					$('.toolbar .more').addClass('invisible');
 				}
 			}
-			sendObject({"type":"runwidth","value":runningwidth,"percent":100*runningwidth/totalwidth});
 		}
 
 		$(window).resize(adj_toolbar);
 		adj_toolbar()
 
-		doctitle();
+		//doctitle();
 	</script>
 
 	</body>

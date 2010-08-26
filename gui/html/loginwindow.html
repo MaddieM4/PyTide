@@ -1,0 +1,51 @@
+<html>
+	<head>
+		<script type="text/javascript" src="comm.js"></script>
+		<script type="text/javascript">
+			function send() {
+				so = {'type':'logindata'};
+				so['username'] = document.getElementById("username").value;
+				so['password'] = document.getElementById("password").value;
+				sendObject(so);
+			}
+
+			function setStatus(newstatus) {
+				document.getElementById("status").innerHTML = newstatus;
+			}
+		</script>
+		<style type="text/css">
+			body {
+				background-color: #C9E2FC;
+				font-family: sans-serif;
+			}
+
+			div.header {
+				font-family: serif;
+				font-size:1.8em;
+			}
+
+			#status {
+				color: #0084F1;
+			}
+
+			#username, #password {
+				width:100%;
+			}
+
+			#submit {
+				float:right;
+				width:100px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="header">
+			Login
+		</div>
+		<input id="username" value="Username"/><br/>
+		<input id="password" value="Password" type="password"/><br/>
+		<div id="status"></div>
+		<input type="button" value="Log in" id="submit" onclick="send()"/>
+	</body>
+</html>

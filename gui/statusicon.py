@@ -1,4 +1,5 @@
 import gtk
+import time
 
 class StatusIcon(gtk.StatusIcon):
 	def __init__(self, registry):
@@ -6,6 +7,7 @@ class StatusIcon(gtk.StatusIcon):
 		self.set_from_file("gui/html/img/something.jpg")
 		self.registry = registry
 		self.connect('popup-menu', self.on_right_click)
+		self.connect('activate', self.on_left_click)
 		gtk.main()
 
 	def popupMenu(self, event_button, event_time, itemList=None):
@@ -23,7 +25,7 @@ class StatusIcon(gtk.StatusIcon):
 				menuItem = gtk.MenuItem()
 				menu.append(menuItem)
 				menuItem.show()
-
+		menu.show()
 		menu.popup(None, None, gtk.status_icon_position_menu, event_button, event_time,self)
 
 	def on_right_click(self,data,event_button,event_time):
@@ -38,6 +40,9 @@ class StatusIcon(gtk.StatusIcon):
 			('Quit',self.quit, None)
 			])
 
+	def on_left_click(self,icon):
+		self.popupMenu(1, gtk.get_current_event_time(), [('No updates',self.blank,None)])
+
 	def focusWin(self, data=None):
 		if data != None:
 			data.focus()
@@ -47,3 +52,6 @@ class StatusIcon(gtk.StatusIcon):
 
 	def newWaveList(self, data=None):
 		self.registry.newWaveList()
+
+	def blank(self, data=None):
+		pass

@@ -6,8 +6,6 @@ import json
 import gtk
 import gobject
 
-from gui import rel_to_abs
-
 try:
 	import webkit
 	weblib = "webkit"
@@ -98,7 +96,7 @@ def kill_gtk_thread():
 
 class browserWindow:
 
-	def __init__(self, uri, registry, size=(300,600), echo=True):
+	def __init__(self, uri, registry, size=(300,600),minsize=(270,400), echo=True):
 		self.echo = echo
 		self.registry = registry
 		self.window = gtk.Window()
@@ -106,7 +104,7 @@ class browserWindow:
 
 		box = gtk.VBox(homogeneous = False, spacing = 0)
 		self.window.add(box)
-		self.window.set_geometry_hints(min_width = 270, min_height=400)
+		self.window.set_geometry_hints(min_width = minsize[0], min_height=minsize[1])
 		if self.echo:
 			print "shrinkable: ", self.window.allow_shrink
 			print "growable: ", self.window.allow_grow
@@ -119,12 +117,15 @@ class browserWindow:
 		def title_changed(title):
 			if title != 'null':
 				if self.echo: print "[T<<<",title
-				self.process(json.loads(title))
+				try:
+					self.process(json.loads(title))
+				except ValueError:
+					self.process(title)
 			else: 
 				if self.echo: print "recieved null"
 
 		implementation.connect_title_changed(self.browser, title_changed)
-		implementation.open_uri(self.browser, rel_to_abs(uri))
+		implementation.open_uri(self.browser, uri)
 
 	def send(self, msg):
 		if self.echo: print "[T>>>", msg
