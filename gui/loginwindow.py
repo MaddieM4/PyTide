@@ -19,5 +19,8 @@ class LoginWindow(webgui.browserWindow):
 		self.send("setStatus('%s');" % status.replace("'","\'"))
 
 	def destroy(self, widget, event):
-		print "Destroying the Login window"
-		return False
+		print "Destroying the universe from the login window"
+		quit()
+
+	def hide(self):
+		self.window.hide()

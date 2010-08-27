@@ -25,7 +25,7 @@ class Network(threading.Thread):
 		self.connect(username, password)
 
 	def run(self):
-		if self.connection:
+		if self.is_connected():
 			self.connection.getUpdates()
 			self.connection.submit()
 
@@ -41,7 +41,7 @@ class Network(threading.Thread):
 				import gwave
 				self.connection = gwave.GoogleWaveConnection(username, password, self)
 				self.status("Connected")
-				self.loginWindow = None
+				self.loginWindow.hide()
 				self.registry.newWaveList()
 				return True
 			except NetworkTools.ConnectionFailure, e:
@@ -59,3 +59,9 @@ class Network(threading.Thread):
 		if self.loginWindow != None:
 			self.loginWindow.setStatus(self._status)
 		print "Network status: %s" % self._status
+
+	def is_connected(self):
+		if self.connection == None:
+			return False
+		else:
+			return True

@@ -16,13 +16,13 @@ class GoogleWaveConnection(models.Plugin):
 		try:
 			serverResponse = urllib.urlopen("http://pytidewave.appspot.com/account/remotelogin",
 				urllib.urlencode({'username':username,'password':password}))
+
+			access_data = json.loads(serverResponse.read())
+			self.service = waveservice.WaveService()
+			self.service.set_access_token(access_data['serial'])
+			self.start()
 		except IOError, e:
 			raise NetworkTools.ConnectionFailure("Could not communicate with PyTide Server",e[1])
-
-		print serverResponse.read()
-		self.accessKey = None
-		self.service = waveservice.WaveService()
-		self.start()
 
 	def run(self):
 		pass

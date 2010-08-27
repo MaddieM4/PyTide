@@ -576,12 +576,16 @@
 		});
 
 		// switch toolbar depending on selection state
-		$('#mainlist li').mousedown(function(){
-			$(this).toggleClass('selected');
-			sendObject({"type":"waveSelected",
-				"value":$(this).hasClass('selected')});
-			checkSelect();
-		});
+		function initListSelectability() {
+			$('#mainlist li').mousedown(function(){
+				$(this).toggleClass('selected');
+				sendObject({"type":"waveSelected",
+					"value":$(this).hasClass('selected')});
+				checkSelect();
+			});
+		}
+
+		initListSelectability()
 
 		hiddenTools = new Array();
 
@@ -628,6 +632,41 @@
 		adj_toolbar()
 
 		//doctitle();
+
+		function reloadList(newlist) {
+			results = JSON.parse(newlist);
+			searchbox.val(results['query']);
+			digests = results['digests'];
+			$('#mainlist li').remove();
+			for (i in digests) {
+				digest = digests[i];
+				$(renderDigest(digest)).appendTo('#mainlist');
+				}
+			// alert(newlist);
+			initListSelectability()
+		}
+
+		function renderDigest(digest) {
+			item = "<li><div class='name'>"+digest['title']+"</div>";
+			// participantlist = digest['participants']
+			item+= "<table class='details'><tr><td><table><tr><td class='participants'><div></div></td>";
+			item+="<td class='tags'></td></tr></table></td>";
+			item+="<td class='date'>"+digest['date'];
+			item+='<div class="msgs">'+digest['total']+" msgs</div></td></tr></table></li>";
+			// alert(item)
+			return item;
+		}
+
+		function query() {
+			sendObject({
+				'type':'query',
+				'value':searchbox.val()
+			});
+		}
+
+		searchbox.keypress(function(event) {
+			if (event.keyCode=='13') query();
+		});
 	</script>
 
 	</body>

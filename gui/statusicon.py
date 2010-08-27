@@ -31,17 +31,26 @@ class StatusIcon(gtk.StatusIcon):
 	def on_right_click(self,data,event_button,event_time):
 		allwins = self.registry.getAllWindows()
 		openlist = []
+		optionlist = []
 		for win in allwins:
 			openlist.append((win.getTitle(),self.focusWin,win))
 		if openlist != []:
 			openlist.append(())
-		self.popupMenu(event_button, event_time, openlist+[
-			('New WaveList window',self.newWaveList,None),
-			('Quit',self.quit, None)
-			])
+		if self.registry.Network.is_connected():
+			optionlist += [
+				('New WaveList window',self.newWaveList,None)]
+		else:
+			login = self.registry.Network.loginWindow
+			openlist.append((login.getTitle(),self.focusWin,login))
+
+		self.popupMenu(event_button, event_time, openlist+optionlist+[('Quit',self.quit, None)] )
 
 	def on_left_click(self,icon):
-		self.popupMenu(1, gtk.get_current_event_time(), [('No updates',self.blank,None)])
+		if self.registry.Network.is_connected():
+			popuplist = [('No updates',self.blank,None)]
+		else:
+			popuplist = [("You're not logged in.",self.blank,None)]
+		self.popupMenu(1, gtk.get_current_event_time(),popuplist)
 
 	def focusWin(self, data=None):
 		if data != None:

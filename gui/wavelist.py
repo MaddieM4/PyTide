@@ -6,10 +6,12 @@ from gui import rel_to_abs
 class WaveList(webgui.browserWindow):
 	def __init__(self,registry):
 		webgui.browserWindow.__init__(self,rel_to_abs("gui/html/wavelist.html"),registry, echo=False)
-		self.setTitle('Search "in:inbox" 1-19 of 19')
+		self.query('in:inbox')
 
 	def process(self, data):
 		if data != None:
+			if data['type'] == 'query':
+				self.query(data['value'])
 			print data
 		else:
 			return None
@@ -18,7 +20,15 @@ class WaveList(webgui.browserWindow):
 		print "smokebomb",data
 
 	def query(self, query):
-		results = self.registry.network.query(query)
-		jres = json.loads(results)
-		self.send("reloadList('"+jres+"')")
-
+		self.setTitle('Search "%s"' % query)
+		results = self.registry.Network.query(query)
+		jres = {'query':query,'digests':[]}
+		for digest in results.digests:
+			jres['digests'].append({
+				'title':digest.title,
+				'participants':[],
+				'unread':digest.unread_count,
+				'total':digest.blip_count,
+				'date':digest.last_modified,
+				})
+		self.send("reloadList('%s')" % json.dumps(jres))
