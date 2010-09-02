@@ -82,8 +82,12 @@ class Network(threading.Thread):
 
 	def saveLogin(self, uname, pword):
 		print "saveLogin called for ", (uname,pword)
-		sfile = open('savedlogins', 'r+')
-		logins = json.loads(sfile.read())
+		try:
+			sfile = open('savedlogins', 'r+')
+			logins = json.loads(sfile.read())
+		except IOError:
+			sfile = open('savedlogins', 'w')
+			logins = {'pairs':[]}
 		if not [uname, pword] in logins['pairs']:
 			logins['pairs'].append([uname,pword])
 		sfile.seek(0)
