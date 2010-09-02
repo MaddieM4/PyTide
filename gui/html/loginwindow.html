@@ -1,16 +1,25 @@
 <html>
 	<head>
+		<script type="text/javascript" src="jquery-1.4.2.min.js"></script>
 		<script type="text/javascript" src="comm.js"></script>
 		<script type="text/javascript">
 			function send() {
 				so = {'type':'logindata'};
-				so['username'] = document.getElementById("username").value;
-				so['password'] = document.getElementById("password").value;
+				so['username'] = $("#username").val();
+				so['password'] = $("#password").val();
 				sendObject(so);
 			}
 
 			function setStatus(newstatus) {
 				document.getElementById("status").innerHTML = newstatus;
+			}
+
+			function setLogins(jsonstring) {
+				logins = JSON.parse(jsonstring);
+				if (logins['pairs'].length >0) {
+					$("#username").val(logins['pairs'][0][0]);
+					$("#password").val(logins['pairs'][0][1]);
+				}
 			}
 		</script>
 		<style type="text/css">
@@ -47,5 +56,13 @@
 		<input id="password" value="Password" type="password"/><br/>
 		<div id="status"></div>
 		<input type="button" value="Log in" id="submit" onclick="send()"/>
+		<script type="text/javascript">
+			function checkenter(event) {
+				if (event.keyCode=='13') send();
+			}
+
+			$('#username').keypress(checkenter)
+			$('#password').keypress(checkenter)
+		</script>
 	</body>
 </html>

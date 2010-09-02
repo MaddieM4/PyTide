@@ -2,6 +2,7 @@ import NetworkTools
 
 import threading
 import models
+import json
 
 class Network(threading.Thread):
 	'''The Network object is a thread, and it communicates between the connection plugin
@@ -41,9 +42,9 @@ class Network(threading.Thread):
 				import gwave
 				self.connection = gwave.GoogleWaveConnection(username, password, self)
 				self.status("Connected")
-				self.username = username
 				self.loginWindow.hide()
 				self.registry.newWaveList()
+				self.saveLogin(username, password)
 				return True
 			except NetworkTools.ConnectionFailure, e:
 				self.status("Connection Failed - Your internet may be down or your login data incorrect")
@@ -78,3 +79,14 @@ class Network(threading.Thread):
 			'address':address,
 			'avatar':avatar
 			}
+
+	def saveLogin(self, uname, pword):
+		print "saveLogin called for ", (uname,pword)
+		sfile = open('savedlogins', 'r+')
+		logins = json.loads(sfile.read())
+		if not [uname, pword] in logins['pairs']:
+			logins['pairs'].append([uname,pword])
+		sfile.seek(0)
+		sfile.truncate()
+		sfile.write(json.dumps(logins))
+		sfile.close()
