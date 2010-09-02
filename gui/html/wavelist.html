@@ -634,7 +634,8 @@
 		//doctitle();
 
 		function reloadList(newlist) {
-			results = JSON.parse(newlist);
+			// alert(""+newlist);
+			results = newlist//JSON.parse(newlist);
 			searchbox.val(results['query']);
 			digests = results['digests'];
 			$('#mainlist li').remove();
@@ -642,16 +643,34 @@
 				digest = digests[i];
 				$(renderDigest(digest)).appendTo('#mainlist');
 				}
-			// alert(newlist);
 			initListSelectability()
+		}
+
+		shortmonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+		function renderTime(ms) {
+			var s = parseInt(ms)/1000;
+			var d = new Date(parseInt(ms));
+			if (new Date() - d > 1000*60*60*24) {
+				// more than a day of difference
+				return shortmonths[d.getMonth()]+" " +d.getDate();
+			} else {
+				// less than a day, show time
+				return ""+d.getHours()+":"+d.getMinutes();
+			}
 		}
 
 		function renderDigest(digest) {
 			item = "<li><div class='name'>"+digest['title']+"</div>";
-			// participantlist = digest['participants']
-			item+= "<table class='details'><tr><td><table><tr><td class='participants'><div></div></td>";
-			item+="<td class='tags'></td></tr></table></td>";
-			item+="<td class='date'>"+digest['date'];
+			participantlist = digest['participants']
+			item+= "<table class='details'><tr><td><table><tr><td class='participants'><div>"
+			for (i in participantlist) {
+				part = participantlist[i];
+				item += "<img class='online' alt='"+part['nick']+"' src='"+part['avatar']+"'/>"
+			}
+			item+="</div></td>";
+			// don't include a TD for tags at this point
+			item+="</tr></table></td>";
+			item+="<td class='date'>"+renderTime(digest['date']);
 			item+='<div class="msgs">'+digest['total']+" msgs</div></td></tr></table></li>";
 			// alert(item)
 			return item;
@@ -664,9 +683,22 @@
 			});
 		}
 
+		function printHTML() {
+			sendObject({
+				'type':'sendHTML',
+				'html':$('body').html()
+			});
+		}
+
+		$('#nav .search .right').click(function () {
+			query();
+		});
+
 		searchbox.keypress(function(event) {
 			if (event.keyCode=='13') query();
 		});
+
+		query();
 	</script>
 
 	</body>

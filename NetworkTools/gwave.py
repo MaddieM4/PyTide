@@ -32,3 +32,6 @@ class GoogleWaveConnection(models.Plugin):
 
 	def new_wavelet(self):
 		pass
+
+	def get_wave_address(self):
+		return self.service

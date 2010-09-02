@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import reg
 from gui.statusicon import StatusIcon
 

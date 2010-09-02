@@ -41,6 +41,7 @@ class Network(threading.Thread):
 				import gwave
 				self.connection = gwave.GoogleWaveConnection(username, password, self)
 				self.status("Connected")
+				self.username = username
 				self.loginWindow.hide()
 				self.registry.newWaveList()
 				return True
@@ -65,3 +66,15 @@ class Network(threading.Thread):
 			return False
 		else:
 			return True
+
+	def participantMeta(self,address):
+		ascii = ord(address.lower()[0])
+		if ascii >=97 and ascii <= 122:
+			avatar = "img/profile/"+address.lower()[0]+".jpg"
+		else:
+			avatar = "img/profile_base.png"
+		return {
+			'nick':address,
+			'address':address,
+			'avatar':avatar
+			}
