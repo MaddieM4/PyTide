@@ -281,6 +281,14 @@
 			}
 
 			#mainlist .date .msgs {color:#888;}
+			#mainlist .date .msgs .unread {
+				color: white;
+				font-weight: bold;
+				background-image:url("img/unread.png");
+				display: inline-block;
+				width:25px;
+				text-align: center;
+			}
 			#mainlist li.open .date, #mainlist li.open .date .msgs {color:white;}
 
 			#footer {
@@ -348,12 +356,18 @@
 			<div class="toolbar noselect">
 				<ul class="invisible select">
 					<li class="eye-open"><div>Read</div></li>
+					<li class="eye-open"><div>Mark as Read</div></li>
+					<li class="eye-open"><div>Unfollow</div></li>
+					<li class="storage"><div>Shove</div></li>
+					<li class="folder"><div>Folderize</div></li>
+					<li class="more">...</li>
 				</ul>
 				<ul class="nonselect">
 					<li class="inbox"><div>Inbox</div></li>
 					<li class="storage"><div>Archive</div></li>
 					<li class="contacts"><div>Contacts</div></li>
 					<li class="folder"><div>Folders</div></li>
+					<li class="folder"><div>Options</div></li>
 					<li class="more">...</li>
 				</ul>
 			</div>
@@ -441,6 +455,7 @@
 		<p>Items in select toolbar:</p>
 		<ul>
 			<li>Read</li>
+			<li>Mark as Read</li>
 			<li>Follow/Unfollow</li>
 			<li>Shove</li>
 			<li>Folderize</li>
@@ -671,7 +686,11 @@
 			// don't include a TD for tags at this point
 			item+="</tr></table></td>";
 			item+="<td class='date'>"+renderTime(digest['date']);
-			item+='<div class="msgs">'+digest['total']+" msgs</div></td></tr></table></li>";
+			if (digest['unread'] == 0) {
+				item+='<div class="msgs">'+digest['total']+" msgs</div></td></tr></table></li>";
+			} else {
+				item+='<div class="msgs"><div class="unread">'+digest['unread']+"</div> of "+digest['total']+"</div></td></tr></table></li>";
+			}
 			// alert(item)
 			return item;
 		}
