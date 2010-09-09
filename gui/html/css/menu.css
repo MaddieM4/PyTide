@@ -1,0 +1,33 @@
+.menu {
+	margin:0px;
+	padding:6px;
+	position:absolute;
+	top:81px;
+	left:0px;
+	right:0px;
+	bottom:37px;
+	overflow:hidden;
+	z-index:3;
+	background-color: rgba(256,256,256,.9);
+	color:black;
+}
+
+.menu .tools li {
+	list-style-type:none;
+}
+
+.menu .tools div {
+	padding:3px 17px;
+	background-repeat: no-repeat;
+}
+
+.menuexit {
+	position: absolute;
+	height:64px;
+	width:64px;
+	right:20px;
+	background-image: url('../img/menuexit.png');
+}
+
+.menuexit.over { background-position:128px 0px;}
+.menuexit.down { background-position:64px 0px;}

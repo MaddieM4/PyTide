@@ -25,8 +25,19 @@ class WaveList(webgui.browserWindow):
 	def escape(str):
 		return str.replace('"','\"')
 
+	def getTitleFromQuery(self, querytext):
+		if querytext == "in:inbox":
+			return "Inbox"
+		elif querytext == "in:all":
+			return "Archive"
+		elif querytext == "::contacts":
+			return "Contacts"
+		else: return 'Search "%s"' % querytext
+
 	def query(self, query):
-		self.setTitle('Search "%s"' % query)
+		if query == "": 
+			query="in:inbox"
+		self.setTitle(self.getTitleFromQuery(query))
 		results = self.registry.Network.query(query)
 		jres = {'query':self.escape(query),'digests':[]}
 		for digest in results.digests:
