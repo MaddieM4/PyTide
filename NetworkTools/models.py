@@ -29,11 +29,11 @@ class Digest:
 
 class User:
 	'''Used for contacts and participants and such. '''
-	def __init__(self, name="", nick="", address = None, picture = None):
+	def __init__(self, name="", nick="", address = None, avatar = None):
 		self.name = name
 		self.nick = nick
 		self.addr = address
-		self.pict = picture
+		self.pict = avatar
 
 # This space left intentionally blank for subclassing
 class Plugin(threading.Thread):

@@ -42,6 +42,10 @@
 	padding-right:9px;
 }
 
+.toolbar .over.down {
+	z-index:83;
+}
+
 .toolbar .more {
 	margin-right: 1px;
 	position:absolute;
@@ -49,7 +53,7 @@
 	top:58px;
 	padding-left:9px;
 	padding-right:9px;
-	z-index:82;
+	z-index:85;
 }
 
 .toolbar .more.over {

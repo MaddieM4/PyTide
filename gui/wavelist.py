@@ -39,6 +39,10 @@ class WaveList(webgui.browserWindow):
 			query="in:inbox"
 		self.setTitle(self.getTitleFromQuery(query))
 		results = self.registry.Network.query(query)
+		if "::contacts" in query:
+			contacts = [{'name':c.name or c.nick,'address':c.addr,'avatar':c.pict} for c in self.registry.Network.getContacts()]
+			self.send("contactsList(%s)" % json.dumps(contacts))
+			return
 		jres = {'query':self.escape(query),'digests':[]}
 		for digest in results.digests:
 			plist = digest.participants.serialize()

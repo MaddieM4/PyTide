@@ -94,3 +94,7 @@ class Network(threading.Thread):
 		sfile.truncate()
 		sfile.write(json.dumps(logins))
 		sfile.close()
+
+	def getContacts(self):
+		'''Return a list of all your personal contacts.'''
+		return self.connection.get_contacts()

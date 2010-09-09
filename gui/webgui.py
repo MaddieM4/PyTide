@@ -111,6 +111,7 @@ class browserWindow:
 		box.pack_start(self.browser, expand=True, fill=True, padding=0)
 
 		self.window.set_default_size(size[0],size[1])
+		self.window.set_icon_from_file('gui/html/img/something28.jpg')
 		self.window.show_all()
 		self.window.connect('delete-event', self.destroy)
 

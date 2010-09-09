@@ -1,0 +1,37 @@
+div.contact {
+	height:70px;
+	width: 100%;
+	position: relative;
+}
+
+div.contact img {
+	height:64px;
+	width:64px;
+	float:left;
+	margin-right: 10px;
+	padding-top:4px;
+}
+
+div.contact .name {
+	display:inline;
+	font-weight:bold;
+}
+
+div.contact .name span {
+	font-weight:normal;
+	font-style:italic;
+}
+
+div.contact .buttonseries {
+	position:absolute;
+	width:100%;
+	top:45px;
+	left:5px;
+	right:5px;
+	height:25px;
+	bottom:2px;
+}
+
+div.contact .buttonseries .textbutton {
+	float:right;
+}
