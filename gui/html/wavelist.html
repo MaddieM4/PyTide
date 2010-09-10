@@ -130,6 +130,12 @@
 					<li class="folder gotoOptions"><div>Options</div></li>
 					<li class="more">...</li>
 				</ul>
+				<ul class="contactselect invisible">
+					<li class="inbox"><div>New Wave</div></li>
+					<li class="inbox"><div>Shared Waves</div></li>
+					<li class="inbox"><div>Search</div></li>
+					<li class="more">...</li>
+				</ul>
 			</div>
 		</div>
 		<ul id="mainlist">
@@ -242,10 +248,16 @@
 	<script type="text/javascript" src="jslib/contact.js"></script>
 	<script type="text/javascript">
 		function checkSelect() {
-			if ($('#mainlist li.selected').length >0){
+			if ($('#mainlist li.selected .contact').length >0){
+				$("#nav .toolbar .contactselect").removeClass("invisible")
+				$("#nav .toolbar .select").addClass("invisible")				
+				$("#nav .toolbar .nonselect").addClass("invisible")				
+			} else if ($('#mainlist li.selected').length >0){
+				$("#nav .toolbar .contactselect").addClass("invisible")				
 				$("#nav .toolbar .select").removeClass("invisible")
 				$("#nav .toolbar .nonselect").addClass("invisible")
 			} else {
+				$("#nav .toolbar .contactselect").addClass("invisible")				
 				$("#nav .toolbar .select").addClass("invisible")
 				$("#nav .toolbar .nonselect").removeClass("invisible")
 			}
@@ -499,6 +511,7 @@
 			for (i in contacts) {				
 				$('<li></li>').append(renderContact(contacts[i])).appendTo('#mainlist');
 			}
+			initListSelectability()
 		}
 
 		function query() {

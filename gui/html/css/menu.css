@@ -17,6 +17,7 @@
 }
 
 .menu .tools div {
+	cursor: pointer;
 	padding:3px 17px;
 	background-repeat: no-repeat;
 }
