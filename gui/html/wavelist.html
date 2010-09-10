@@ -22,24 +22,29 @@
 
 			#mainlist li {
 				border: 1px solid #EEE;
-				border-top: none;
 				padding:2px 20px 5px 6px;
 				-webkit-user-drag: element;
 				-webkit-user-select: none;
 				-moz-user-select: -moz-all;
 				list-style-type:none;
+				position:relative;
+				margin-bottom:-1px;
+				z-index:0;
 			}
 
 			#mainlist li.selected {
 				background-color:#E0E8A4;
+				border-top-color: #CED697;
 				border-bottom-color: #CED697;
 				border-left-color: #F0F4D2;
+				z-index:1;
 			}
 
 			#mainlist li.open {
 				background-color:#789E35;
 				border-color: #CED697;
 				color: white;
+				z-index:2;
 			}
 
 			#mainlist .name {
