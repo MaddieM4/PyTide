@@ -4,7 +4,7 @@ import threading
 import models
 import json
 
-class Network(threading.Thread):
+class Network(models.LoopingThread):
 	'''The Network object is a thread, and it communicates between the connection plugin
 	(also a thread) and the rest of the program. It holds the "official" version of every
 	wavelet in its own memory.
@@ -13,7 +13,7 @@ class Network(threading.Thread):
 	when stuff happens, and the management of connection plugins. '''
 
 	def __init__(self, reg):
-		threading.Thread.__init__(self, name="PyTideNetwork")
+		models.LoopingThread.__init__(self, name="PyTideNetwork")
 		self.registry = reg
 		self.connection = None
 		self._status = "No connection"
@@ -25,7 +25,7 @@ class Network(threading.Thread):
 	def rcv_logindata(self, username, password):
 		self.connect(username, password)
 
-	def run(self):
+	def process(self):
 		if self.is_connected():
 			self.connection.getUpdates()
 			self.connection.submit()

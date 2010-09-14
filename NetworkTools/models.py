@@ -1,4 +1,5 @@
 import threading
+from gtk.gdk import threads_enter, threads_leave
 
 # I will fill in more stuff here as I understand the scope of the requirements
 
@@ -35,12 +36,27 @@ class User:
 		self.addr = address
 		self.pict = avatar
 
-# This space left intentionally blank for subclassing
-class Plugin(threading.Thread):
-	def __init__(self):
-		threading.Thread.__init__(self, name="PyTideNetworkPlugin")
+class LoopingThread(threading.Thread):
+	def __init__(self, name=None):
+		threading.Thread.__init__(self, name=name)
+		self.setDaemon(True)
+		self.stopper = threading.Event()
 
 	def run(self):
+		while 1:
+			threads_enter()
+			self.process()
+			threads_leave()
+
+	def process(self):
+		pass
+
+# This space left intentionally blank for subclassing
+class Plugin(LoopingThread):
+	def __init__(self):
+		LoopingThread.__init__(self, name="PyTideNetworkPlugin")
+
+	def process(self):
 		'''Handles stuff internally.
  
 		Do not modify external resources in run(), leave that to the
