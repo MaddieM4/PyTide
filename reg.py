@@ -1,4 +1,4 @@
-from gui import wavelist, browserwindow, loginwindow
+from gui import wavelist, waveviewer, browserwindow, loginwindow
 from NetworkTools import network
 
 class Registry:
@@ -33,10 +33,6 @@ class Registry:
 	def newNetwork(self):
 		self.Network = network.Network(self)
 
-	def newBrowserWindow(self, url, destroyCallback=None):
-		print "registry.newBrowserWindow(%s)" % url
-		return browserwindow.BrowserWindow(url, self, destroyCallback=destroyCallback)
-
 	def newLoginWindow(self, callback):
 		return loginwindow.LoginWindow(callback)
 
@@ -65,6 +61,13 @@ class Registry:
 		self.WaveLists.append(id)
 		msg = {'type':'newWaveList', \
 			'id':id}
+		self.msgAll(msg)
+
+	def newWaveViewer(self):
+		id = self.newId()
+		self.MasterList[id] = waveviewer.WaveViewer(self)
+		self.WaveViewers.append(id)
+		msg = {'type':'newWaveViewer', 'id': id}
 		self.msgAll(msg)
 
 	def fromID(self, id):

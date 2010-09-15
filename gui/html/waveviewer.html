@@ -1,0 +1,557 @@
+<html>
+	<head>
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/main.css">
+		<link rel="stylesheet" type="text/css" href="css/textbutton.css">
+		<link rel="stylesheet" type="text/css" href="css/searchinput.css">
+		<link rel="stylesheet" type="text/css" href="css/toolbar.css">
+		<link rel="stylesheet" type="text/css" href="css/menu.css">
+		<link rel="stylesheet" type="text/css" href="css/contact.css">
+
+		<style type="text/css">
+			#mainlist {
+				margin:0px;
+				padding:0px;
+				position:absolute;
+				top:81px;
+				left:0px;
+				right:0px;
+				bottom:37px;
+				overflow:auto;
+			}
+
+			#mainlist li {
+				border: 1px solid #EEE;
+				padding:2px 20px 5px 6px;
+				-webkit-user-drag: element;
+				-webkit-user-select: none;
+				-moz-user-select: -moz-all;
+				list-style-type:none;
+				position:relative;
+				margin-bottom:-1px;
+				z-index:0;
+			}
+
+			#mainlist li.selected {
+				background-color:#E0E8A4;
+				border-top-color: #CED697;
+				border-bottom-color: #CED697;
+				border-left-color: #F0F4D2;
+				z-index:1;
+			}
+
+			#mainlist li.open {
+				background-color:#789E35;
+				border-color: #CED697;
+				color: white;
+				z-index:2;
+			}
+
+			#mainlist .name {
+				width:100%;
+				height:1.2em;
+				overflow:hidden;
+			}
+
+			#mainlist .details {
+				padding-top:2px;
+				width:100%;
+			}
+
+			#mainlist .participants {
+				padding-right:3px;
+			}
+
+			#mainlist .participants div {
+				height: 30px;
+				overflow:hidden;
+			}
+
+			#mainlist .participants img {
+				border: 1px solid #CCC;
+				width:28px;
+				height:28px;
+			}
+
+			#mainlist .tags {
+				padding: 0px 28px 0px 3px;
+				border-left: 1px solid #CCC;
+				font-size:13px;
+			}
+
+			#mainlist .selected .tags, #mainlist .selected img {border-color:#607E2A;}
+
+			#mainlist .date {
+				width:65px;
+				font-size:10px;
+			}
+
+			#mainlist .date .msgs {color:#888;}
+			#mainlist .date .msgs .unread {
+				color: white;
+				font-weight: bold;
+				background-image:url("img/unread.png");
+				display: inline-block;
+				width:25px;
+				text-align: center;
+			}
+			#mainlist li.open .date, #mainlist li.open .date .msgs {color:white;}
+
+		</style>
+		<script type="text/javascript" src="jslib/jquery-1.4.2.min.js"></script>
+		<script type="text/javascript" src="jslib/comm.js"></script>
+	</head>
+
+	<body class ="noselect">
+		<div id="nav">
+			<div class="top">
+				<table class="textbutton noselect"><tr>
+					<td class="left"></td>
+					<td class="center">New wave</td>
+					<td class="right"/>
+				</tr></table>
+				<div class="searchcontainer">
+				<table class="search"><tr>
+					<td class="left"></td>
+					<td class="center"><input type="text" value="in:inbox"/></td>
+					<td class="right"></td>
+				</tr></table>
+				</div>
+			</div>
+			<div class="toolbar noselect">
+				<ul class="invisible select">
+					<li class="eye-open"><div>Read</div></li>
+					<li class="eye-open"><div>Mark as Read</div></li>
+					<li class="eye-open"><div>Unfollow</div></li>
+					<li class="storage"><div>Shove</div></li>
+					<li class="folder"><div>Folderize</div></li>
+					<li class="more">...</li>
+				</ul>
+				<ul class="nonselect">
+					<li class="inbox gotoInbox"><div>Inbox</div></li>
+					<li class="storage gotoArchive"><div>Archive</div></li>
+					<li class="contacts gotoContacts"><div>Contacts</div></li>
+					<li class="folder"><div>Folders</div></li>
+					<li class="folder gotoOptions"><div>Options</div></li>
+					<li class="more">...</li>
+				</ul>
+				<ul class="contactselect invisible">
+					<li class="inbox"><div>New Wave</div></li>
+					<li class="inbox"><div>Shared Waves</div></li>
+					<li class="inbox"><div>Search</div></li>
+					<li class="more">...</li>
+				</ul>
+			</div>
+		</div>
+		<ul id="mainlist">
+			<!--<li>
+				<div class="name">Name of Wavelet (Many participants)</div>
+				<table class="details"><tr>
+				<td>
+					<table> <tr>
+						<td class="participants">
+						<div>
+							<img class ="online" src="img/something28.jpg" alt="Someone"/>
+							<img class ="online" src="img/something28.jpg" alt="Someone"/>
+							<img class ="online" src="img/something28.jpg" alt="Someone"/>
+							<img class ="online" src="img/something28.jpg" alt="Someone"/>
+							<img class ="online" src="img/something28.jpg" alt="Someone"/>
+							<img class ="online" src="img/something28.jpg" alt="Someone"/>
+						</div>
+						</td>
+						<td class="tags">
+							<div class="tag blue">Stargate</div>
+							<div class="contenticons"></div>
+						</td>
+					</tr></table>
+				</td>
+				<td class="date">
+					Aug 4<div class="msgs">300 msgs</div>
+				</td>
+				</tr></table>
+			</li>
+			<li>
+				<div class="name">Few participants, really really reeally long name</div>
+				<table class="details"><tr>
+				<td>
+					<table> <tr>
+						<td class="participants">
+						<div>
+							<img class ="online" src="img/something28.jpg" alt="Someone"/>
+							<img class ="online" src="img/something28.jpg" alt="Someone"/>
+						</div>
+						</td>
+						<td class="tags">
+							<div class="tag blue">Stargate</div>
+							<div class="contenticons"></div>
+						</td>
+					</tr></table>
+				</td>
+				<td class="date">
+					Aug 4<div class="msgs">300 msgs</div>
+				</td>
+				</tr></table>
+			</li>
+			<li>
+				<div class="name">No tags</div>
+				<table class="details"><tr>
+				<td>
+					<table> <tr>
+						<td class="participants">
+						<div>
+							<img class ="online" src="img/something28.jpg" alt="Someone"/>
+							<img class ="online" src="img/something28.jpg" alt="Someone"/>
+							<img class ="online" src="img/something28.jpg" alt="Someone"/>
+							<img class ="online" src="img/something28.jpg" alt="Someone"/>
+							<img class ="online" src="img/something28.jpg" alt="Someone"/>
+							<img class ="online" src="img/something28.jpg" alt="Someone"/>
+						</div>
+						</td>
+					</tr></table>
+				</td>
+				<td class="date">
+					Aug 4<div class="msgs">300 msgs</div>
+				</td>
+				</tr></table>
+			</li>-->
+		</ul>
+		<!--<div class="menu">
+		 <p>Items in nonselect toolbar:</p>
+		<ul>
+			<li>Inbox</li>
+			<li>Archive</li>
+			<li>Contacts</li>
+			<li>Folders</li>
+		</ul>
+		<p>Items in select toolbar:</p>
+		<ul>
+			<li>Read</li>
+			<li>Mark as Read</li>
+			<li>Follow/Unfollow</li>
+			<li>Shove</li>
+			<li>Folderize</li>
+		</ul>
+		</div>-->
+		<div id="footer">
+		<div class="footerinner">
+			<div class="searches">
+				<a href="#">A saved sample search, sonny</a>
+				<a href="#">A saved sample search, sonny</a>
+			</div>
+			<div class="over">
+			<table class="textbutton noselect">
+				<td class="left"></td>
+				<td class="center">Save Search</td>
+				<td class="right"></td>
+			</table>
+			</div>
+		</div>
+		</div>
+
+	<script type="text/javascript" src="jslib/searchinput.js"></script>
+	<script type="text/javascript" src="jslib/button.js"></script>
+	<script type="text/javascript" src="jslib/contact.js"></script>
+	<script type="text/javascript">
+		function checkSelect() {
+			if ($('#mainlist li.selected .contact').length >0){
+				$("#nav .toolbar .contactselect").removeClass("invisible")
+				$("#nav .toolbar .select").addClass("invisible")				
+				$("#nav .toolbar .nonselect").addClass("invisible")				
+			} else if ($('#mainlist li.selected').length >0){
+				$("#nav .toolbar .contactselect").addClass("invisible")				
+				$("#nav .toolbar .select").removeClass("invisible")
+				$("#nav .toolbar .nonselect").addClass("invisible")
+			} else {
+				$("#nav .toolbar .contactselect").addClass("invisible")				
+				$("#nav .toolbar .select").addClass("invisible")
+				$("#nav .toolbar .nonselect").removeClass("invisible")
+			}
+			adj_toolbar();
+		}
+
+		menuLevel = 0;
+
+		function menuSlide(dir, fade) {
+			leftalter = ((dir=="left") ? "-=":"+=")+$(window).width();
+			rightalter = ((dir=="left") ? "+=":"-=")+$(window).width();
+			map = {};
+			map['left'] = leftalter;
+			map['right']= rightalter;
+			if (fade == "in") {
+				map['opacity'] = 1;
+			} else if (fade == "out") {
+				map['opacity'] = 0;
+			}
+			$('.menu').animate(map, function() {
+				// animation complete
+				// tidy up
+				left = parseInt($(this).css("left"));
+				if (left!=0) $(this).remove()
+			});
+		}
+
+		function newMenu() {
+			return $('<div class="menu"></div>').appendTo($('body'));
+		}
+
+		function newMenuLeft(nofade) {
+			menu = newMenu();
+			menu.css({"left":-$(window).width(),"right":$(window).width()});
+			if (nofade!=true) menu.css("opacity",0);
+			return menu;
+		}
+		function newMenuRight(nofade) {
+			menu = newMenu();
+			menu.css({"left":$(window).width(),"right":-$(window).width()});
+			if (nofade!=true) menu.css("opacity",0);
+			return menu;
+		}
+
+		function openMenu(html, level, exitcallback) {
+			fade = !($('.menu').length>0)
+			//console.log("fade = "+fade);
+			// if new menu is greater level, come from right, slide left
+			slideLeft = (level>menuLevel);
+			menu = slideLeft ? newMenuRight(!fade):newMenuLeft(!fade);
+			if (exitcallback==null){
+				exitcallback = function () {closeMenu()}
+			}
+			html = "<div class='menuexit'></div>" + html;
+			menu.html(html);
+			$('.menuexit').mouseenter(function (){$(this).addClass("over")})
+			$('.menuexit').mousedown(function (){$(this).addClass("down")})
+			$('.menuexit').mouseup(function (){$(this).removeClass("down")})
+			$('.menuexit').mouseleave(function (){$(this).removeClass("over").removeClass("down")})
+			$('.menuexit').click(exitcallback)
+			menuSlide((slideLeft ? "left":"right"),(fade)?"in":"none");
+			menuLevel = level;
+		}
+
+		function closeMenu() {
+			menuSlide(((menuLevel>0) ? "right":"left"),"out");
+			menuLevel = 0;
+		}
+
+		function openOptions() {
+			if ($('.toolbar .gotoOptions').hasClass('active')) {
+				$('.toolbar .gotoOptions').removeClass('active');
+				closeMenu();
+			} else {
+				$('.toolbar .gotoOptions').addClass('active');
+				html = "<h2>Options:</h2>";
+				openMenu(html,-2, function() {
+					$('.toolbar .gotoOptions').removeClass('active');
+					closeMenu();
+				});
+			}
+		}
+
+		$('.toolbar .more').click(function() {
+			if ($(this).hasClass("active")) {
+				closeMenu();
+				$(this).removeClass("active");
+				adj_toolbar();
+			} else {
+				openMenu("<ul class='tools'>"+pullTools()+"</ul>",3, function (){
+					$('.toolbar .more').removeClass('active');
+					closeMenu();
+				});
+				activateToolbars(true);
+				$(this).addClass("active");
+				$('.toolbar .gotoOptions').removeClass("active");
+			}
+		});
+
+		buttons = $('.textbutton');
+		toolbarbuttons = $('.toolbar li');
+
+		// Button graphics handling for all textbuttons
+		buttons.mousedown(function(){
+			$(this).addClass("depressed")
+		});
+		buttons.mouseup(function(){
+			$(this).removeClass("depressed")
+		});
+		buttons.mouseleave(function(){
+			$(this).removeClass("depressed")
+		});
+
+		// toolbar hover
+		toolbarbuttons.mouseenter(function () {
+			$(this).addClass("over");
+		});
+
+		toolbarbuttons.mousedown(function(){
+			$(this).addClass("down");
+		});
+
+		toolbarbuttons.mouseup(function() {
+			$(this).removeClass("down");
+		});
+
+		toolbarbuttons.mouseleave(function(){
+			$(this).removeClass("over").removeClass("down");
+		});
+
+		// switch toolbar depending on selection state
+		function initListSelectability() {
+			$('#mainlist li').mousedown(function(){
+				$(this).toggleClass('selected');
+				sendObject({"type":"waveSelected",
+					"value":$(this).hasClass('selected')});
+				checkSelect();
+			});
+		}
+
+		initListSelectability()
+
+		hiddenTools = new Array();
+
+		function hideTool(jqobj) {
+			hiddenTools[hiddenTools.length] = {"class":jqobj.attr("class"),"label":jqobj.text()};
+			jqobj.addClass("invisible");
+		}
+
+		function clearTools() {hiddenTools = new Array()}
+
+		function pullTools() {
+			retstring = ""
+			for (i in hiddenTools) {
+				retstring+="<li class='"+hiddenTools[i]['class']+"'><div>"+hiddenTools[i]['label']+"</div>";
+			}
+			return retstring;
+		}
+
+		// adjust toolbar in resize events
+		function adj_toolbar(){
+			clearTools();
+			toolbar = $('.toolbar ul:not(.invisible)');
+			totalwidth = $(window).width();
+			runningwidth = 0;
+			showMore = false;
+			toolbar.children(':not(.more)').removeClass('invisible').each(function(){
+				t = $(this)
+				runningwidth+=t.width()+20;
+				if (runningwidth > totalwidth || t.position().top > 58) {
+					hideTool(t);
+					showMore = true;
+				}
+			});
+			if (showMore) {
+				$('.toolbar .more').removeClass('invisible')
+			} else {
+				if (!$('.toolbar .more').hasClass('active')) {
+					$('.toolbar .more').addClass('invisible');
+				}
+			}
+		}
+
+		$(window).resize(adj_toolbar);
+		adj_toolbar()
+
+		function reloadList(newlist) {
+			results = newlist;
+			querytext = results['query'];
+			searchbox.val(querytext);
+			$('.toolbar .active').removeClass('active');
+			switch(querytext) {
+				case "in:inbox":
+					$('.toolbar .gotoInbox').addClass('active');
+					break;
+				case "in:all":
+					$('.toolbar .gotoArchive').addClass('active');
+					break;
+				case "::contacts":
+					$('.toolbar .gotoContacts').addClass('active');
+					break;
+			}
+			digests = results['digests'];
+			$('#mainlist li').remove();
+			for (i in digests) {
+				digest = digests[i];
+				$(renderDigest(digest)).appendTo('#mainlist');
+				}
+			initListSelectability()
+		}
+
+		shortmonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+		function renderTime(ms) {
+			var s = parseInt(ms)/1000;
+			var d = new Date(parseInt(ms));
+			if (new Date() - d > 1000*60*60*24) {
+				// more than a day of difference
+				return shortmonths[d.getMonth()]+" " +d.getDate();
+			} else {
+				// less than a day, show time
+				return ""+d.getHours()+":"+d.getMinutes();
+			}
+		}
+
+		function renderDigest(digest) {
+			item = "<li><div class='name'>"+digest['title']+"</div>";
+			participantlist = digest['participants']
+			item+= "<table class='details'><tr><td><table><tr><td class='participants'><div>"
+			for (i in participantlist) {
+				part = participantlist[i];
+				item += "<img class='online' alt='"+part['nick']+"' src='"+part['avatar']+"'/>"
+			}
+			item+="</div></td>";
+			// don't include a TD for tags at this point
+			item+="</tr></table></td>";
+			item+="<td class='date'>"+renderTime(digest['date']);
+			if (digest['unread'] == 0) {
+				item+='<div class="msgs">'+digest['total']+" msgs</div></td></tr></table></li>";
+			} else {
+				item+='<div class="msgs"><div class="unread">'+digest['unread']+"</div> of "+digest['total']+"</div></td></tr></table></li>";
+			}
+			// alert(item)
+			return item;
+		}
+
+		function contactsList(contacts) {
+			//alert(JSON.stringify(contacts));
+			$('.toolbar li').removeClass('active');
+			$('.toolbar .gotoContacts').addClass('active');
+			$('#mainlist li').remove();
+			for (i in contacts) {				
+				$('<li></li>').append(renderContact(contacts[i])).appendTo('#mainlist');
+			}
+			initListSelectability()
+		}
+
+		function query() {
+			sendObject({
+				'type':'query',
+				'value':searchbox.val()
+			});
+		}
+
+		$('#nav .search .right').click(function () {
+			query();
+		});
+
+		searchbox.keypress(function(event) {
+			if (event.keyCode=='13') query();
+		});
+
+		query();
+
+		function query_nav(str) {
+			searchbox.val(str);
+			query();
+		}
+
+		function activateToolbars(menuonly){
+			prefix = (menuonly) ? ".menu ":"";
+			$(prefix+'li.gotoInbox').click(function () {query_nav("in:inbox")});
+			$(prefix+'li.gotoArchive').click(function () {query_nav("in:all")});
+			$(prefix+'li.gotoContacts').click(function () {query_nav("::contacts")});
+			$(prefix+'li.gotoOptions').click(function () {openOptions()});
+			$('.menu .tools li').click(function (){$('.toolbar .more').removeClass('active');});
+		}
+
+		activateToolbars(false);
+	</script>
+
+	</body>
+</html>

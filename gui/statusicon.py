@@ -38,7 +38,8 @@ class StatusIcon(gtk.StatusIcon):
 			openlist.append(())
 		if self.registry.Network.is_connected():
 			optionlist += [
-				('New WaveList window',self.newWaveList,None)]
+				('New WaveList window',self.newWaveList,None),
+				('New WaveViewer window',self.newWaveViewer,None)]
 		else:
 			login = self.registry.Network.loginWindow
 			openlist.append((login.getTitle(),self.focusWin,login))
@@ -61,6 +62,9 @@ class StatusIcon(gtk.StatusIcon):
 
 	def newWaveList(self, data=None):
 		self.registry.newWaveList()
+
+	def newWaveViewer(self, data=None):
+		self.registry.newWaveViewer()
 
 	def blank(self, data=None):
 		pass
