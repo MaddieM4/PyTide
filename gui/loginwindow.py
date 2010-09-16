@@ -6,11 +6,11 @@ class LoginWindow(webgui.browserWindow):
 	def __init__(self, loginCallback):
 		try:
 			savelist = open('savedlogins')
-			logins = json.loads(savelist.read())
+			self.logins = json.loads(savelist.read())
 			savelist.close()
 		except IOError:
-			logins = {'pairs':[]}
-		print logins
+			self.logins = {'pairs':[]}
+		print self.logins
 		webgui.browserWindow.__init__(self, 
 			rel_to_abs('gui/html/loginwindow.html'), 
 			None,size=(300,170),
@@ -18,12 +18,13 @@ class LoginWindow(webgui.browserWindow):
 			echo=True)
 		self.loginCallback = loginCallback
 		self.setTitle("Log in to PyTide")
-		if len(logins['pairs']) > 0:
-			self.send("setLogins('"+json.dumps(logins)+"')")
 
 	def process(self, data):
-		if data != None and data['type'] == 'logindata':
+		if data == None: return
+		elif data['type'] == 'logindata':
 			self.loginCallback(data['username'],data['password'])
+		elif data['type'] == 'ready' and len(self.logins['pairs']) > 0:
+			self.send("setLogins('"+json.dumps(self.logins)+"')")
 
 	def setStatus(self, status):
 		self.send("setStatus('%s');" % status.replace("'","\'"))
