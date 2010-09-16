@@ -62,7 +62,7 @@ table td {
 	right:7px;
 	z-index:7;
 	padding-left:20px;
-	background:url('img/cover.png') repeat-y 0px 0px;
+	background:url('../img/cover.png') repeat-y 0px 0px;
 }
 
 .noselect {
