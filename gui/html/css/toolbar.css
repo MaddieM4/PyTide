@@ -47,6 +47,24 @@
 	z-index:83;
 }
 
+.toolbar .icononly {
+	padding-right:1px;
+}
+
+.toolbar .icononly.over, .toolbar .icononly.active {
+	padding-right:0px;
+}
+
+.toolbar .icononly div {
+	color: rgba(0,0,0,0);
+	letter-spacing:-22px;
+	background-position:0px 0px;
+}
+
+.toolbar .noicon div {
+	padding-left:2px;
+}
+
 .toolbar .more {
 	margin-right: 1px;
 	position:absolute;
@@ -94,5 +112,9 @@ li.contacts div {
 }
 li.eye-open div {
 	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAWCAYAAAAmaHdCAAABpElEQVR42u2UP0gCcRTHnZ0a3J3bgqaG9sM/KGI0KJQONupaKCESJ3hBizjcQS3ncEu36BIHpVIJojikpmZEp9YUctMN9es9uTvONJsDH3y4e/++93vH42exrOyfmNvt3ne5XNcAQZxO5zMgYtzr9a4tbXY4HBvQdAwNe5Ik7RBC4gBfLpevcrncdTAYlD0ej+Lz+U4WimEQROzQhPiAbcCm5+F9HaCq1SqXSCQe/X7/eyAQ2J0TgiIrNvI8b2cY5jIajX7oIyHoY7xer281m81DsIdYLHY6J5TNZulQKPTJsiwRRZFEIhED9DEeDoe/OI47ww+iGE3TjCGQTqfvBUEgiqJMSSaTBE0XQV/PYV0mk3nVJrDh+JZ8Pi8NBgMyHo8NzKfQMeexvlAovBin6Pf7571ej5hJpVIzAuj/rJFl+QlOcWQIdTqd20ajQXRKpRKBeacC+ETfnB8OhzVcAeBg5sd2u92LSqWiYsNvYH40Gt1oAtTCpZtMJlSr1bqDJXsrFotEB/12u11TVVWAZhbYXLq92s5Q+taaiGtx6+qC+Nu+Adp4svp3Z5U/AAAAAElFTkSuQmCC);
+	padding-left: 22px;
 }
-
+li.arrow div {
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAHCAYAAADebrddAAAAMklEQVR42mNgwAMaGhr+MRAL6uvr/4MwhgAhTJJisAaQu3BhNMVMDIQ8SJRCJCeywPgAQZBgfqH7Nz4AAAAASUVORK5CYII=);
+	background-position: 0px 7px;
+}

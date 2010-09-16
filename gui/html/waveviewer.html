@@ -9,94 +9,21 @@
 		<link rel="stylesheet" type="text/css" href="css/contact.css">
 
 		<style type="text/css">
-			#mainlist {
-				margin:0px;
-				padding:0px;
-				position:absolute;
-				top:81px;
-				left:0px;
-				right:0px;
-				bottom:37px;
-				overflow:auto;
-			}
-
-			#mainlist li {
-				border: 1px solid #EEE;
-				padding:2px 20px 5px 6px;
-				-webkit-user-drag: element;
-				-webkit-user-select: none;
-				-moz-user-select: -moz-all;
-				list-style-type:none;
+			#footer .find  {
+				float:left;
 				position:relative;
-				margin-bottom:-1px;
-				z-index:0;
+				top:-1px;
+				left:-5px;
+				height:25px;
+				width:180px;
+				padding-left:3px;
 			}
 
-			#mainlist li.selected {
-				background-color:#E0E8A4;
-				border-top-color: #CED697;
-				border-bottom-color: #CED697;
-				border-left-color: #F0F4D2;
-				z-index:1;
+			#footer .find.inactive {
+				color: #888;
 			}
 
-			#mainlist li.open {
-				background-color:#789E35;
-				border-color: #CED697;
-				color: white;
-				z-index:2;
-			}
-
-			#mainlist .name {
-				width:100%;
-				height:1.2em;
-				overflow:hidden;
-			}
-
-			#mainlist .details {
-				padding-top:2px;
-				width:100%;
-			}
-
-			#mainlist .participants {
-				padding-right:3px;
-			}
-
-			#mainlist .participants div {
-				height: 30px;
-				overflow:hidden;
-			}
-
-			#mainlist .participants img {
-				border: 1px solid #CCC;
-				width:28px;
-				height:28px;
-			}
-
-			#mainlist .tags {
-				padding: 0px 28px 0px 3px;
-				border-left: 1px solid #CCC;
-				font-size:13px;
-			}
-
-			#mainlist .selected .tags, #mainlist .selected img {border-color:#607E2A;}
-
-			#mainlist .date {
-				width:65px;
-				font-size:10px;
-			}
-
-			#mainlist .date .msgs {color:#888;}
-			#mainlist .date .msgs .unread {
-				color: white;
-				font-weight: bold;
-				background-image:url("img/unread.png");
-				display: inline-block;
-				width:25px;
-				text-align: center;
-			}
-			#mainlist li.open .date, #mainlist li.open .date .msgs {color:white;}
-
+			#footer .over {width:255px;}
 		</style>
 		<script type="text/javascript" src="jslib/jquery-1.4.2.min.js"></script>
 		<script type="text/javascript" src="jslib/comm.js"></script>
@@ -120,128 +47,49 @@
 			</div>
 			<div class="toolbar noselect">
 				<ul class="invisible select">
-					<li class="eye-open"><div>Read</div></li>
-					<li class="eye-open"><div>Mark as Read</div></li>
-					<li class="eye-open"><div>Unfollow</div></li>
+					<li class="arrow"><div>Next</div></li>
+					<li class="pencil"><div>Edit</div></li>
+					<li class="eye-open"><div>Mark as Unread</div></li>
 					<li class="storage"><div>Shove</div></li>
 					<li class="folder"><div>Folderize</div></li>
 					<li class="more">...</li>
 				</ul>
 				<ul class="nonselect">
+					<li class="arrow"><div>Next</div></li>
 					<li class="inbox gotoInbox"><div>Inbox</div></li>
 					<li class="storage gotoArchive"><div>Archive</div></li>
-					<li class="contacts gotoContacts"><div>Contacts</div></li>
-					<li class="folder"><div>Folders</div></li>
-					<li class="folder gotoOptions"><div>Options</div></li>
+					<li class="eye-open"><div>Unfollow</div></li>
+					<li class="arrow"><div>Jump</div></li>
+					<li class="eye-open"><div>Document Mode</div></li>
 					<li class="more">...</li>
 				</ul>
-				<ul class="contactselect invisible">
-					<li class="inbox"><div>New Wave</div></li>
-					<li class="inbox"><div>Shared Waves</div></li>
-					<li class="inbox"><div>Search</div></li>
+				<ul class="edit invisible">
+					<li class="icon-only bold"><div></div></li>
+					<li class="icon-only italic"><div></div></li>
+					<li class="icon-only underline"><div></div></li>
+					<li class="noicon"><div>Style</div></li>
+					<li class="icon-only bullets"><div></div></li>
+					<li class="icon-only indent-more"><div></div></li>
+					<li class="icon-only indent-less"><div></div></li>
+					<li class="icon-only justify-left"><div></div></li>
+					<li class="paperclip"><div>Insert</div></li>
 					<li class="more">...</li>
 				</ul>
 			</div>
 		</div>
-		<ul id="mainlist">
-			<!--<li>
-				<div class="name">Name of Wavelet (Many participants)</div>
-				<table class="details"><tr>
-				<td>
-					<table> <tr>
-						<td class="participants">
-						<div>
-							<img class ="online" src="img/something28.jpg" alt="Someone"/>
-							<img class ="online" src="img/something28.jpg" alt="Someone"/>
-							<img class ="online" src="img/something28.jpg" alt="Someone"/>
-							<img class ="online" src="img/something28.jpg" alt="Someone"/>
-							<img class ="online" src="img/something28.jpg" alt="Someone"/>
-							<img class ="online" src="img/something28.jpg" alt="Someone"/>
-						</div>
-						</td>
-						<td class="tags">
-							<div class="tag blue">Stargate</div>
-							<div class="contenticons"></div>
-						</td>
-					</tr></table>
-				</td>
-				<td class="date">
-					Aug 4<div class="msgs">300 msgs</div>
-				</td>
-				</tr></table>
-			</li>
-			<li>
-				<div class="name">Few participants, really really reeally long name</div>
-				<table class="details"><tr>
-				<td>
-					<table> <tr>
-						<td class="participants">
-						<div>
-							<img class ="online" src="img/something28.jpg" alt="Someone"/>
-							<img class ="online" src="img/something28.jpg" alt="Someone"/>
-						</div>
-						</td>
-						<td class="tags">
-							<div class="tag blue">Stargate</div>
-							<div class="contenticons"></div>
-						</td>
-					</tr></table>
-				</td>
-				<td class="date">
-					Aug 4<div class="msgs">300 msgs</div>
-				</td>
-				</tr></table>
-			</li>
-			<li>
-				<div class="name">No tags</div>
-				<table class="details"><tr>
-				<td>
-					<table> <tr>
-						<td class="participants">
-						<div>
-							<img class ="online" src="img/something28.jpg" alt="Someone"/>
-							<img class ="online" src="img/something28.jpg" alt="Someone"/>
-							<img class ="online" src="img/something28.jpg" alt="Someone"/>
-							<img class ="online" src="img/something28.jpg" alt="Someone"/>
-							<img class ="online" src="img/something28.jpg" alt="Someone"/>
-							<img class ="online" src="img/something28.jpg" alt="Someone"/>
-						</div>
-						</td>
-					</tr></table>
-				</td>
-				<td class="date">
-					Aug 4<div class="msgs">300 msgs</div>
-				</td>
-				</tr></table>
-			</li>-->
-		</ul>
-		<!--<div class="menu">
-		 <p>Items in nonselect toolbar:</p>
-		<ul>
-			<li>Inbox</li>
-			<li>Archive</li>
-			<li>Contacts</li>
-			<li>Folders</li>
-		</ul>
-		<p>Items in select toolbar:</p>
-		<ul>
-			<li>Read</li>
-			<li>Mark as Read</li>
-			<li>Follow/Unfollow</li>
-			<li>Shove</li>
-			<li>Folderize</li>
-		</ul>
-		</div>-->
 		<div id="footer">
 		<div class="footerinner">
 			<div class="searches">
-				<a href="#">A saved sample search, sonny</a>
-				<a href="#">A saved sample search, sonny</a>
+				Tags: 
+				<a href="#">Sample Tag</a>
+				<a href="#">Other Sample tag</a>
+				<input type="button" class="plusbutton_small"/>
 			</div>
 			<div class="over">
+			<input class="find inactive" value="Find"/>
 			<table class="textbutton noselect">
 				<td class="left"></td>
-				<td class="center">Save Search</td>
+				<td class="center">Next Wave</td>
 				<td class="right"></td>
 			</table>
 			</div>
