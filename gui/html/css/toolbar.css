@@ -47,22 +47,23 @@
 	z-index:83;
 }
 
-.toolbar .icononly {
+.toolbar .icononly, .toolbar.nolabels li{
 	padding-right:1px;
 }
 
-.toolbar .icononly.over, .toolbar .icononly.active {
+.toolbar .icononly.over, .toolbar .icononly.active, .toolbar.nolabels .over, .toolbar.nolabels .active {
 	padding-right:0px;
 }
 
-.toolbar .icononly div {
+.toolbar .icononly div, .toolbar.nolabels div {
 	color: rgba(0,0,0,0);
 	letter-spacing:-22px;
 	background-position:0px 0px;
 }
 
-.toolbar .noicon div {
+.toolbar .noicon div, .toolbar.noicons div {
 	padding-left:2px;
+	background-image:none;
 }
 
 .toolbar .more {

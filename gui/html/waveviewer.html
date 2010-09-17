@@ -256,6 +256,7 @@
 		hiddenTools = new Array();
 
 		function hideTool(jqobj) {
+			console.log(jqobj.text())
 			hiddenTools[hiddenTools.length] = {"class":jqobj.attr("class"),"label":jqobj.text()};
 			jqobj.addClass("invisible");
 		}
@@ -270,8 +271,12 @@
 			return retstring;
 		}
 
+		adjusting = false;
 		// adjust toolbar in resize events
 		function adj_toolbar(){
+			if (adjusting) return false;
+			adjusting=true;
+			console.log("adj_toolbar()")
 			clearTools();
 			toolbar = $('.toolbar ul:not(.invisible)');
 			totalwidth = $(window).width();
@@ -292,6 +297,7 @@
 					$('.toolbar .more').addClass('invisible');
 				}
 			}
+			adjusting=false;
 		}
 
 		$(window).resize(adj_toolbar);

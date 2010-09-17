@@ -97,6 +97,7 @@
 			}
 			#mainlist li.open .date, #mainlist li.open .date .msgs {color:white;}
 
+			.optionslist {list-style-type:square;}
 		</style>
 		<script type="text/javascript" src="jslib/jquery-1.4.2.min.js"></script>
 		<script type="text/javascript" src="jslib/comm.js"></script>
@@ -165,6 +166,8 @@
 	<script type="text/javascript" src="jslib/button.js"></script>
 	<script type="text/javascript" src="jslib/contact.js"></script>
 	<script type="text/javascript">
+		options = {}
+
 		function checkSelect() {
 			if ($('#mainlist li.selected .contact').length >0){
 				$("#nav .toolbar .contactselect").removeClass("invisible")
@@ -229,8 +232,7 @@
 			if (exitcallback==null){
 				exitcallback = function () {closeMenu()}
 			}
-			html = "<div class='menuexit'></div>" + html;
-			menu.html(html);
+			menu.html(html).prepend($("<div class='menuexit'></div>"));;
 			$('.menuexit').mouseenter(function (){$(this).addClass("over")})
 			$('.menuexit').mousedown(function (){$(this).addClass("down")})
 			$('.menuexit').mouseup(function (){$(this).removeClass("down")})
@@ -246,17 +248,68 @@
 		}
 
 		function openOptions() {
-			if ($('.toolbar .gotoOptions').hasClass('active')) {
-				$('.toolbar .gotoOptions').removeClass('active');
+			menuItem = $('.toolbar .gotoOptions');
+			if (menuItem.hasClass('active') && !menuItem.hasClass('submenu')) {
+				menuItem.removeClass('active');
 				closeMenu();
 			} else {
-				$('.toolbar .gotoOptions').addClass('active');
-				html = "<h2>Options:</h2>";
-				openMenu(html,-2, function() {
-					$('.toolbar .gotoOptions').removeClass('active');
+				menuItem.addClass('active').removeClass('submenu');
+				html = $("<div><h2>Options:</h2><div>");
+				list = $('<ul class="optionslist"></ul>');
+				list.append(OptionsItem("Toolbar",'How do you want toolbar items to display? \
+					<form> \
+						<input type="radio" name="tbdisplay" id="default" value="default"/> \
+						<label for="default">Default</label><br/> \
+						<input type="radio" name="tbdisplay" id="noicons" value="noicons"/> \
+						<label for="noicons">No Icons</label><br/> \
+						<input type="radio" name="tbdisplay" id="nolabels" value="nolabels"/> \
+						<label for="nolabels">No Labels</label><br/> \
+						<input type="radio" name="tbdisplay" id="autoshorten" value="autoshorten"/> \
+						<label for="autoshorten">Shorten to icons when needed</label><br/> \
+					</form> \
+				', 'tbshorten',function () {return $('input[name=tbdisplay]:checked').val()}));
+				html.append(list);
+				openMenu(html.children(),-2, function() {
+					menuItem.removeClass('active');
 					closeMenu();
 				});
 			}
+		}
+
+		function pullOption(name) {
+			switch (name) {
+				case "tbshorten":
+					selected = (options['tbshorten'])?options['tbshorten']:"default";
+					$('form #'+selected).attr("checked","checked");
+					break;
+			}
+		}
+
+		function pushOption(name, value) {
+			oldvalue = options[name];
+			options[name] = value;
+			switch (name) {
+				case "tbshorten":
+					t = $('.toolbar').removeClass('noicons').removeClass('nolabels');
+					if (value != "default" && value != "autoshorten") t.addClass(value);
+					adj_toolbar();
+					break;
+			}
+		}
+
+		function OptionsItem(name, contents, optionname, valuefunc) {
+			exitcallback = function(){pushOption(optionname,valuefunc()); openOptions()}
+			callback = function () {OptionsSubmenu(name, contents, exitcallback); pullOption(optionname)}
+			return $('<li>'+name+'</li>').click(callback);
+		}
+
+		function SubMenu(name, contents, rootlevel, menuitem, exitcallback) {
+			$(menuitem).addClass('submenu');
+			openMenu('<h2>'+name+'</h2>'+contents,rootlevel+1, exitcallback)
+		}
+
+		function OptionsSubmenu(name, contents, exitfunc) {
+			SubMenu(name,contents,-1,$('.toolbar .gotoOptions'),exitfunc)
 		}
 
 		$('.toolbar .more').click(function() {
@@ -335,15 +388,29 @@
 			return retstring;
 		}
 
+		adjusting=false;
 		// adjust toolbar in resize events
 		function adj_toolbar(){
+			if (adjusting) return false;
+			adjusting=true;
 			clearTools();
 			toolbar = $('.toolbar ul:not(.invisible)');
 			totalwidth = $(window).width();
 			runningwidth = 0;
 			showMore = false;
+			if (options['tbshorten']=='autoshorten') {
+				// test to see if normal style is too long
+				$('.toolbar').removeClass('noicons').removeClass('nolabels');
+				toolbar.children(':not(.more)').removeClass('invisible').each(function(){
+					runningwidth += $(this).width()+20;
+					if (runningwidth > totalwidth || $(this).position().top > 58) {
+						$('.toolbar').addClass('nolabels');
+					}
+				});
+				runningwidth=0;
+			}
 			toolbar.children(':not(.more)').removeClass('invisible').each(function(){
-				t = $(this)
+				t = $(this);
 				runningwidth+=t.width()+20;
 				if (runningwidth > totalwidth || t.position().top > 58) {
 					hideTool(t);
@@ -357,6 +424,7 @@
 					$('.toolbar .more').addClass('invisible');
 				}
 			}
+			adjusting=false;
 		}
 
 		$(window).resize(adj_toolbar);
