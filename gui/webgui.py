@@ -96,7 +96,7 @@ def kill_gtk_thread():
 
 class browserWindow:
 
-	def __init__(self, uri, registry, size=(300,600),minsize=(210,400), echo=True):
+	def __init__(self, uri, registry, size=(300,600),minsize=(250,400), echo=True):
 		self.echo = echo
 		self.registry = registry
 		self.window = gtk.Window()
