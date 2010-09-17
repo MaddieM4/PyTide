@@ -97,7 +97,10 @@
 			}
 			#mainlist li.open .date, #mainlist li.open .date .msgs {color:white;}
 
-			.optionslist {list-style-type:square;}
+			.optionslist {
+				list-style-type:square;
+				cursor: pointer;
+			}
 		</style>
 		<script type="text/javascript" src="jslib/jquery-1.4.2.min.js"></script>
 		<script type="text/javascript" src="jslib/comm.js"></script>
@@ -291,6 +294,7 @@
 			switch (name) {
 				case "tbshorten":
 					t = $('.toolbar').removeClass('noicons').removeClass('nolabels');
+					$('.toolbar li').removeClass('icononly').removeClass('noicon');
 					if (value != "default" && value != "autoshorten") t.addClass(value);
 					adj_toolbar();
 					break;
@@ -404,8 +408,7 @@
 				tc = toolbar.children(':not(.more)');
 				last = toolbar.children(':not(.more):last');
 				tc.removeClass('invisible').removeClass('icononly').each(function(index){
-					// console.log(last.position().top);
-					t = $(tc[tc.length-index-1]); console.log(tc.length-index-1);
+					t = $(tc[tc.length-index-1]);
 					var wid = last.position().left+last.outerWidth();
 					if (wid > totalwidth || last.position().top > 58) {
 						t.addClass('icononly');
@@ -505,6 +508,11 @@
 		}
 
 		function query() {
+			// prepare visually
+			$('#mainlist li').removeClass('selected').removeClass('open');
+			checkSelect();
+			// Future: turn magnifying glass red or green or something?
+			// send payload
 			sendObject({
 				'type':'query',
 				'value':searchbox.val()

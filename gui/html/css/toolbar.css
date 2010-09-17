@@ -51,7 +51,7 @@
 	padding-right:1px;
 }
 
-.toolbar .icononly.over, .toolbar .icononly.active, .toolbar.nolabels .over, .toolbar.nolabels .active {
+.toolbar .icononly.over, .toolbar.nolabels .over {
 	padding-right:0px;
 }
 
