@@ -2,3 +2,4 @@
 # on accident when they use git commit.
 savedlogins
 *.pyc
+*.save
