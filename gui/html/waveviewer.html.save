@@ -24,8 +24,6 @@
 			}
 
 			#footer .over {width:255px;}
-
-			#nav .top {height:21px;}
 		</style>
 		<script type="text/javascript" src="jslib/jquery-1.4.2.min.js"></script>
 		<script type="text/javascript" src="jslib/comm.js"></script>
@@ -36,8 +34,14 @@
 			<div class="top">
 				<table class="textbutton noselect"><tr>
 					<td class="left"></td>
-					<td class="center">+</td>
+					<td class="center">New wave</td>
 					<td class="right"/>
+				</tr></table>
+				<div class="searchcontainer">
+				<table class="search"><tr>
+					<td class="left"></td>
+					<td class="center"><input type="text" value="in:inbox"/></td>
+					<td class="right"></td>
 				</tr></table>
 				</div>
 			</div>
@@ -75,16 +79,10 @@
 		</div>
 		<div id="footer">
 		<div class="footerinner">
-			<div class="tags">
-				<div class="label">Tags:</div> 
+			<div class="searches">
+				Tags: 
 				<a href="#">Sample Tag</a>
 				<a href="#">Other Sample tag</a>
-				<input type="button" class="plusbutton_small"/>
-			</div>
-			<div class="jumps invisible">
-				<div class="label">Jump:</div> 
-				<a href="#">80's songs</a>
-				<a href="#">Classic Scifi</a>
 				<input type="button" class="plusbutton_small"/>
 			</div>
 			<div class="over">
@@ -241,16 +239,6 @@
 
 		toolbarbuttons.mouseleave(function(){
 			$(this).removeClass("over").removeClass("down");
-		});
-
-		$('#footer .label').click(function () {
-			if ($('#footer .tags').hasClass('invisible')) {
-				$('#footer .tags').removeClass('invisible');
-				$('#footer .jumps').addClass('invisible');
-			} else {
-				$('#footer .tags').addClass('invisible');
-				$('#footer .jumps').removeClass('invisible');
-			}
 		});
 
 		// switch toolbar depending on selection state

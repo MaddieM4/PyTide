@@ -6,7 +6,9 @@ from gui import rel_to_abs
 class WaveList(webgui.browserWindow):
 	def __init__(self,registry):
 		webgui.browserWindow.__init__(self,rel_to_abs("gui/html/wavelist.html"),registry, echo=False)
-		#self.query('in:inbox')
+		self.options = {
+			'tbshorten':'autoshorten'
+		}
 
 	def process(self, data):
 		if data != None:
@@ -14,6 +16,12 @@ class WaveList(webgui.browserWindow):
 				self.query(data['value'])
 			elif data['type'] == 'sendHTML':
 				print data['html']
+			elif data['type'] == 'getOptions':
+				# Send a dict of all set options
+				self.send("pushOptions(%s)" % json.dumps(self.options))
+			elif data['type'] == 'setOption':
+				# Future: pass on data to other windows and save to config
+				pass
 			print data
 		else:
 			return None

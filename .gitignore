@@ -1,3 +1,4 @@
 # We don't want our developers passing their passwords around
 # on accident when they use git commit.
 savedlogins
+*.pyc

@@ -301,6 +301,12 @@
 			}
 		}
 
+		function pushOptions(opts) {
+			for (name in opts) {
+				pushOption(name, opts[name]);
+			}
+		}
+
 		function OptionsItem(name, contents, optionname, valuefunc) {
 			exitcallback = function(){pushOption(optionname,valuefunc()); openOptions()}
 			callback = function () {OptionsSubmenu(name, contents, exitcallback); pullOption(optionname)}
@@ -526,6 +532,8 @@
 		searchbox.keypress(function(event) {
 			if (event.keyCode=='13') query();
 		});
+
+		sendObject({'type':'getOptions'});
 
 		query();
 
