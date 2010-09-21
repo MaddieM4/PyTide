@@ -11,6 +11,7 @@ class WaveList(webgui.browserWindow):
 		}
 
 	def process(self, data):
+		''' Recieve UI input data from window '''
 		if data != None:
 			if data['type'] == 'query':
 				self.query(data['value'])
@@ -27,6 +28,7 @@ class WaveList(webgui.browserWindow):
 			return None
 
 	def regmsg_receive(self, data):
+		''' Recieve message from registry. '''
 		print "smokebomb",data
 
 	@staticmethod
@@ -34,6 +36,7 @@ class WaveList(webgui.browserWindow):
 		return str.replace('"','\"')
 
 	def getTitleFromQuery(self, querytext):
+		''' Pretty self-explanatory. Takes in a query, returns the appropriate window title for it.'''
 		if querytext == "in:inbox":
 			return "Inbox"
 		elif querytext == "in:all":
@@ -43,6 +46,7 @@ class WaveList(webgui.browserWindow):
 		else: return 'Search "%s"' % querytext
 
 	def query(self, query):
+		'''Send a query to the Network, get a list of results back, and pass it on to the window.'''
 		if query == "": 
 			query="in:inbox"
 		self.setTitle(self.getTitleFromQuery(query))
