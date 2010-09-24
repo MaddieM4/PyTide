@@ -238,6 +238,7 @@
 					adj_toolbar();
 					break;
 			}
+			if (oldvalue != value) sendObject({'type':'setOption','key':name,'value':value});
 		}
 
 		function pushOptions(opts) {

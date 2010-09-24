@@ -26,6 +26,8 @@ class Registry:
 		self.config = {}
 		print "Making a Config"
 		self.config['wavelist'] = Config(namespace="wavelist", onload=self.pushglobalconf_WaveList)
+		for i in self.config:
+			self.config[i].setAutoTimer(4)
 
 	def newId(self):
 		self.idPos += 1
@@ -103,15 +105,22 @@ class Registry:
 		return False
 
 	def getWaveListConfig(self,key):
+		print "getWLC",key
 		try:
-			return self.config['wavelist'].get(key)
+			g = self.config['wavelist'].get(key)
+			if g == None: return self.getWaveListConfigDefault(key)
+			else: return g
 		except:
 			# return default
-			if key == "tbshorten": return "default"	
-			else: return None
+			return self.getWaveListConfigDefault(key)
+
+	def getWaveListConfigDefault(self,key):
+		if key == "tbshorten": return "default"	
+		else: return None
 
 	def setWaveListConfig(self,key,value):
-		return self.config['wavelist'].set(key, value)
+		self.config['wavelist'].set({key:value})
+		self.msgWaveLists({'type':'setOption','name':key,'value':value})
 
 	def pushglobalconf_WaveList(self, conf):
 		print "pgcWL"

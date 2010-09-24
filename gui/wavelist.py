@@ -20,17 +20,17 @@ class WaveList(webgui.browserWindow):
 				# Send a dict of all set options
 				self.send("pushOptions(%s)" % json.dumps(self.options))
 			elif data['type'] == 'setOption':
-				# Future: pass on data to other windows and save to config
-				pass
+				# pass on data to other windows and save to config
+				self.setConfig(data['key'],data['value'])
 			print data
 		else:
 			return None
 
 	def regmsg_receive(self, data):
 		''' Recieve message from registry. '''
-#		if 'type' in data:
-#			if data['type'] == 'setOption':
-#				self.send("pushOption(%s,%s)" % (data['name'],data['value']))
+		if 'type' in data:
+			if data['type'] == 'setOption':
+				self.send("pushOption('%s','%s')" % (data['name'],data['value']))
 		print "Reg >> Wavelist: ",data
 
 	@staticmethod
@@ -74,5 +74,7 @@ class WaveList(webgui.browserWindow):
 		self.options[key] = self.registry.getWaveListConfig(key)
 		self.send('pushOption("%s","%s")' % (key,self.options[key]))
 
-	def setConfig(self,key):
+	def setConfig(self,key, value=None):
+		if value != None:
+			self.options[key]=value
 		self.registry.setWaveListConfig(key, self.options[key])
