@@ -1,5 +1,6 @@
 from gui import wavelist, waveviewer, browserwindow, loginwindow
 from NetworkTools import network
+from persistance.config import Config
 
 class Registry:
 	"""reg is the registry, which allows windows to communicate 
@@ -22,6 +23,9 @@ class Registry:
 		self.BlipWindows = []
 		self.MasterList = {}
 		self.idPos = 0
+		self.config = {}
+		print "Making a Config"
+		self.config['wavelist'] = Config(namespace="wavelist", onload=self.pushglobalconf_WaveList)
 
 	def newId(self):
 		self.idPos += 1
@@ -97,3 +101,20 @@ class Registry:
 				self.MasterList.pop(i)
 				return True
 		return False
+
+	def getWaveListConfig(self,key):
+		try:
+			return self.config['wavelist'].get(key)
+		except:
+			# return default
+			if key == "tbshorten": return "default"	
+			else: return None
+
+	def setWaveListConfig(self,key,value):
+		return self.config['wavelist'].set(key, value)
+
+	def pushglobalconf_WaveList(self, conf):
+		print "pgcWL"
+		for i in conf:
+			print "\t",i
+			self.msgWaveLists({'type':'setOption','name':i,'value':conf[i]})

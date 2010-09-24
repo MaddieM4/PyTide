@@ -6,9 +6,8 @@ from gui import rel_to_abs
 class WaveList(webgui.browserWindow):
 	def __init__(self,registry):
 		webgui.browserWindow.__init__(self,rel_to_abs("gui/html/wavelist.html"),registry, echo=False)
-		self.options = {
-			'tbshorten':'autoshorten'
-		}
+		self.options = {}
+		self.getConfig('tbshorten')
 
 	def process(self, data):
 		''' Recieve UI input data from window '''
@@ -29,7 +28,10 @@ class WaveList(webgui.browserWindow):
 
 	def regmsg_receive(self, data):
 		''' Recieve message from registry. '''
-		print "smokebomb",data
+#		if 'type' in data:
+#			if data['type'] == 'setOption':
+#				self.send("pushOption(%s,%s)" % (data['name'],data['value']))
+		print "Reg >> Wavelist: ",data
 
 	@staticmethod
 	def escape(str):
@@ -67,3 +69,10 @@ class WaveList(webgui.browserWindow):
 				'date':digest.last_modified,
 				})
 		self.send("reloadList(%s)" % json.dumps(jres))
+
+	def getConfig(self,key):
+		self.options[key] = self.registry.getWaveListConfig(key)
+		self.send('pushOption("%s","%s")' % (key,self.options[key]))
+
+	def setConfig(self,key):
+		self.registry.setWaveListConfig(key, self.options[key])
