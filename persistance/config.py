@@ -1,6 +1,7 @@
 import threading
 import json
-from os.path import expanduser
+import persistance
+from os.path import join
 
 from gtk.gdk import threads_enter, threads_leave
 
@@ -177,12 +178,15 @@ class ConfigRW(threading.Thread):
 		self.namespace = namespace
 		self.action = action
 		self.context = context
-		self.filename = expanduser("~/.pytide")
+		self.filename = join(persistance.init_dir(),"config")
 		self.start()
 
 	def run(self):
 		threads_enter()
-		f = open(self.filename,'rw+')
+		try:
+			f = open(self.filename,'rw+')
+		except:
+			f = open(self.filename, 'w')
 		try:
 			allconfig = json.loads(f.read())
 		except:
