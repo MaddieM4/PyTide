@@ -24,7 +24,6 @@ class Registry:
 		self.MasterList = {}
 		self.idPos = 0
 		self.config = {}
-		print "Making a Config"
 		self.config['wavelist'] = Config(namespace="wavelist", onload=self.pushglobalconf_WaveList)
 		for i in self.config:
 			self.config[i].setAutoTimer(4)
@@ -39,8 +38,8 @@ class Registry:
 	def newNetwork(self):
 		self.Network = network.Network(self)
 
-	def newLoginWindow(self, callback):
-		return loginwindow.LoginWindow(callback)
+	def newLoginWindow(self, callback, loginConfig):
+		return loginwindow.LoginWindow(callback, loginConfig)
 
 	def msgWaveLists(self, msg, ignore=None):
 		'''Send an object to every registered WaveList. Triggers

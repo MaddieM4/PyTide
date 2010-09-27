@@ -182,20 +182,19 @@ class ConfigRW(threading.Thread):
 
 	def run(self):
 		threads_enter()
+		f = open(self.filename,'rw+')
 		try:
-			f = open(self.filename,'rw+')
 			allconfig = json.loads(f.read())
 		except:
-			open(self.filename,'w').close()
-			f = open(self.filename,'w')
-			allconfig = {self.namespace:{}}
+			allconfig = {}
 		if self.namespace in allconfig:
 			results = self.action(self.context,allconfig[self.namespace])
 		else:
 			results = self.action(self.context,{})
 		if results != None:
-			f.truncate(0)
+			f.seek(0)
 			allconfig[self.namespace] = results
 			f.write(json.dumps(allconfig))
+			f.truncate()
 		f.close()
 		threads_leave()

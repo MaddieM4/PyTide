@@ -1,4 +1,5 @@
 import NetworkTools
+from persistance.config import Config
 
 import threading
 import models
@@ -19,11 +20,11 @@ class Network(models.LoopingThread):
 		self._status = "No connection"
 		self.wavelets = []
 		self.contacts = []
-		self.loginWindow = self.registry.newLoginWindow(self.rcv_logindata)
+		# start loading configs now. Let access block later if necessary
+		self.savedlogins = Config(namespace="savedlogins")
+		self.savedlogins.setAutoTimer(3)
+		self.loginWindow = self.registry.newLoginWindow(self.connect, self.savedlogins)
 		self.start()
-
-	def rcv_logindata(self, username, password):
-		self.connect(username, password)
 
 	def process(self):
 		if self.is_connected():
@@ -81,19 +82,7 @@ class Network(models.LoopingThread):
 			}
 
 	def saveLogin(self, uname, pword):
-		print "saveLogin called for ", (uname,pword)
-		try:
-			sfile = open('savedlogins', 'r+')
-			logins = json.loads(sfile.read())
-		except IOError:
-			sfile = open('savedlogins', 'w')
-			logins = {'pairs':[]}
-		if not [uname, pword] in logins['pairs']:
-			logins['pairs'].append([uname,pword])
-		sfile.seek(0)
-		sfile.truncate()
-		sfile.write(json.dumps(logins))
-		sfile.close()
+		self.savedlogins.set({uname:pword})
 
 	def getContacts(self):
 		'''Return a list of all your personal contacts.'''

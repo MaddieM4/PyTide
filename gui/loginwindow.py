@@ -3,13 +3,8 @@ import json
 from gui import rel_to_abs
 
 class LoginWindow(webgui.browserWindow):
-	def __init__(self, loginCallback):
-		try:
-			savelist = open('savedlogins')
-			self.logins = json.loads(savelist.read())
-			savelist.close()
-		except IOError:
-			self.logins = {'pairs':[]}
+	def __init__(self, loginCallback, loginConfig):
+		self.logins = loginConfig
 		print self.logins
 		webgui.browserWindow.__init__(self, 
 			rel_to_abs('gui/html/loginwindow.html'), 
@@ -20,11 +15,13 @@ class LoginWindow(webgui.browserWindow):
 		self.setTitle("Log in to PyTide")
 
 	def process(self, data):
+		GA = self.logins.getAll()
 		if data == None: return
 		elif data['type'] == 'logindata':
 			self.loginCallback(data['username'],data['password'])
-		elif data['type'] == 'ready' and len(self.logins['pairs']) > 0:
-			self.send("setLogins('"+json.dumps(self.logins)+"')")
+		elif data['type'] == 'ready' and GA != {}:
+			pairs = {'pairs':[(i,GA[i]) for i in GA]}
+			self.send("setLogins('"+json.dumps(pairs)+"')")
 
 	def setStatus(self, status):
 		self.send("setStatus('%s');" % status.replace("'","\'"))
