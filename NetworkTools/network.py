@@ -87,3 +87,9 @@ class Network(models.LoopingThread):
 	def getContacts(self):
 		'''Return a list of all your personal contacts.'''
 		return self.connection.get_contacts()
+
+	def subscribe(documentlocation):
+		pass
+
+	def unsubscribe(document):
+		pass
