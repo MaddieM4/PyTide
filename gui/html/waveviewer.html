@@ -25,10 +25,13 @@
 
 			#footer .over {width:255px;}
 
-			#nav .top {height:21px;}
+			#nav .top {height:24px;}
 		</style>
 		<script type="text/javascript" src="jslib/jquery-1.4.2.min.js"></script>
 		<script type="text/javascript" src="jslib/comm.js"></script>
+		<script type="text/javascript">
+			options = {}
+		</script>
 	</head>
 
 	<body class ="noselect">
@@ -99,6 +102,7 @@
 		</div>
 
 	<script type="text/javascript" src="jslib/searchinput.js"></script>
+	<script type="text/javascript" src="jslib/toolbar.js"></script>
 	<script type="text/javascript" src="jslib/button.js"></script>
 	<script type="text/javascript" src="jslib/contact.js"></script>
 	<script type="text/javascript" src="jslib/menu.js"></script>
@@ -202,56 +206,6 @@
 		}
 
 		initListSelectability()
-
-		hiddenTools = new Array();
-
-		function hideTool(jqobj) {
-			console.log(jqobj.text())
-			hiddenTools[hiddenTools.length] = {"class":jqobj.attr("class"),"label":jqobj.text()};
-			jqobj.addClass("invisible");
-		}
-
-		function clearTools() {hiddenTools = new Array()}
-
-		function pullTools() {
-			retstring = ""
-			for (i in hiddenTools) {
-				retstring+="<li class='"+hiddenTools[i]['class']+"'><div>"+hiddenTools[i]['label']+"</div>";
-			}
-			return retstring;
-		}
-
-		adjusting = false;
-		// adjust toolbar in resize events
-		function adj_toolbar(){
-			if (adjusting) return false;
-			adjusting=true;
-			console.log("adj_toolbar()")
-			clearTools();
-			toolbar = $('.toolbar ul:not(.invisible)');
-			totalwidth = $(window).width();
-			runningwidth = 0;
-			showMore = false;
-			toolbar.children(':not(.more)').removeClass('invisible').each(function(){
-				t = $(this)
-				runningwidth+=t.width()+20;
-				if (runningwidth > totalwidth || t.position().top > 58) {
-					hideTool(t);
-					showMore = true;
-				}
-			});
-			if (showMore) {
-				$('.toolbar .more').removeClass('invisible')
-			} else {
-				if (!$('.toolbar .more').hasClass('active')) {
-					$('.toolbar .more').addClass('invisible');
-				}
-			}
-			adjusting=false;
-		}
-
-		$(window).resize(adj_toolbar);
-		adj_toolbar()
 
 		function reloadList(newlist) {
 			results = newlist;
