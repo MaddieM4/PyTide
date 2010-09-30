@@ -1,5 +1,23 @@
+#           Licensed to the Apache Software Foundation (ASF) under one
+#           or more contributor license agreements.  See the NOTICE file
+#           distributed with this work for additional information
+#           regarding copyright ownership.  The ASF licenses this file
+#           to you under the Apache License, Version 2.0 (the
+#           "License"); you may not use this file except in compliance
+#           with the License.  You may obtain a copy of the License at
+
+#             http://www.apache.org/licenses/LICENSE-2.0
+
+#           Unless required by applicable law or agreed to in writing,
+#           software distributed under the License is distributed on an
+#           "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#           KIND, either express or implied.  See the License for the
+#           specific language governing permissions and limitations
+#           under the License. 
+
 import threading
 import time
+import datetime
 from gtk.gdk import threads_enter, threads_leave
 
 import logging
@@ -9,10 +27,17 @@ logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG)
 # I will fill in more stuff here as I understand the scope of the requirements
 
 class Operation:
-	pass
+	def __init__(self, timestamp=datetime.datetime.now()):
+		pass
+
+	def apply(document):
+		pass		
 
 class OperationQueue:
 	'''A sequence of operations. Every wavelet has one.'''
+	def __init__(self, wavelet):
+		self.wavelet = wavelet
+		self.operations = []
 
 class Blip:
 	pass
@@ -80,9 +105,10 @@ class LoopingThread(threading.Thread):
 # This space left intentionally blank for subclassing
 # Although a bit of example code is here to get you started
 class Plugin(LoopingThread):
-	def __init__(self):
-		LoopingThread.__init__(self, name="PyTideNetworkPlugin")
-		self.documents = []
+	def __init__(self, network):
+		LoopingThread.__init__(self, name="PyTideNetworkPlugin", speed=0.5)
+		self.opqueues = []
+		self.network = network
 
 	def process(self):
 		'''Handles stuff internally.
@@ -92,14 +118,15 @@ class Plugin(LoopingThread):
 		pass
 
 	def subscribe(self, waveid):
-		'''Start loading a wave document into the network.'''
+		'''Start loading a wave document into the network. Returns a mostly-blank
+		document, but not before creating a personal opqueue for it.'''
 		d = Document(id=waveid)
-		self.documents.append(d)
+		self.opqueues.append(OperationQueue(d))
 		# start loading in plugin thread, sync to documents when network calls getUpdates()
 		return d
 
 	def unsubscribe(self, waveid):
-		for doc in self.documents:
+		for doc in self.network.documents:
 			if doc.id == waveid: 
 				del doc
 				return True
@@ -116,6 +143,3 @@ class Plugin(LoopingThread):
 	def submit(self):
 		'''Push all local operations to server.'''
 		pass
-
-	def documents(self):
-		return self.documents
