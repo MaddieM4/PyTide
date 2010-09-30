@@ -1,0 +1,24 @@
+.tooltip {
+	position:absolute;
+	z-index:100;
+	top:57px;
+	left:68px;
+	width:73px;
+	height:24px;
+	background: rgba(255,0,0,0.4);
+	position: absolute;
+}
+
+.tooltip .contents {
+	-moz-border-radius:10px;
+	border-radius: 10px;
+	background: rgba(0,0,0,0.7);
+	color: white;
+	position:absolute;
+	padding: 3px 7px;
+}
+
+.tooltip .target {
+	background: rgba(255,0,0,0.4);
+	position: absolute;
+}

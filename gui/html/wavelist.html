@@ -17,7 +17,7 @@
 				left:0px;
 				right:0px;
 				bottom:37px;
-				overflow:auto;
+				overflow:hidden;
 			}
 
 			#mainlist li {
@@ -166,15 +166,19 @@
 			</table>
 			</div>
 		</div>
-		</div>
+	</div>
+	<div class="scrollregion"><div class="scrollbar"></div><div class="clickable"></div></div>
 
 	<script type="text/javascript" src="jslib/searchinput.js"></script>
 	<script type="text/javascript" src="jslib/toolbar.js"></script>
 	<script type="text/javascript" src="jslib/button.js"></script>
 	<script type="text/javascript" src="jslib/contact.js"></script>
 	<script type="text/javascript" src="jslib/menu.js"></script>
+	<script type="text/javascript" src="jslib/scroll.js"></script>
 	<script type="text/javascript">
 		options = {}
+
+		bindScrollbar($('.scrollbar'),$('#mainlist'))
 
 		function checkSelect() {
 			if ($('#mainlist li.selected .contact').length >0){
