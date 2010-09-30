@@ -69,7 +69,7 @@ class LoopingThread(threading.Thread):
 	def run(self):
 		while 1:
 			threads_enter()
-			logging.debug("LoopingThread")
+#			logging.debug("LoopingThread")
 			self.process()
 			threads_leave()
 			time.sleep(self.speed)
