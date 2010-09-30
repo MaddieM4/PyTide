@@ -1,4 +1,5 @@
 import threading
+import time
 from gtk.gdk import threads_enter, threads_leave
 
 import logging
@@ -59,9 +60,10 @@ class LoopingThread(threading.Thread):
 	the gtk.gdk mutex. Please note that when you subclass this,
 	as you are meant to do, you are going to overwrite the PROCESS
 	function, not the RUN function.'''
-	def __init__(self, name=None):
+	def __init__(self, name=None,speed=3):
 		threading.Thread.__init__(self, name=name)
 		self.setDaemon(True)
+		self.speed=speed
 		self.stopper = threading.Event()
 
 	def run(self):
@@ -70,6 +72,7 @@ class LoopingThread(threading.Thread):
 			logging.debug("LoopingThread")
 			self.process()
 			threads_leave()
+			time.sleep(self.speed)
 
 	def process(self):
 		pass
