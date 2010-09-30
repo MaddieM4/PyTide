@@ -48,3 +48,10 @@ class GoogleWaveConnection(models.Plugin):
 
 	def getUpdates(self):
 		pass
+
+	def subscribe(waveid):
+		# fetch the wavelet, convert it to a models.py Document, and return it to the network.
+		pass
+
+	def unsubscribe(waveid):
+		pass

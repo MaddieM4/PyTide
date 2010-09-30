@@ -1,10 +1,17 @@
 import threading
 from gtk.gdk import threads_enter, threads_leave
 
+import logging
+LOG_FILENAME="loopingthread.log"
+logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG)
+
 # I will fill in more stuff here as I understand the scope of the requirements
 
 class Operation:
 	pass
+
+class OperationQueue:
+	'''A sequence of operations. Every wavelet has one.'''
 
 class Blip:
 	pass
@@ -14,6 +21,16 @@ class Wavelet:
 		self.digest = digest
 
 class Document:
+	'''A simple class to store and easily pass around wave snapshots. It has no
+	facilities to submit and recieve updates over the network, this is handled
+	by the plugin.'''
+	def __init__(self, id=None, jsonInput=None):
+		# Create a new document
+		self.wavelets = []
+		self.properties = {}
+		self.id = id or "unspecified"
+		open('~/.pytide/document','w').write(jsonInput)
+
 	def toJSON(self):
 		pass
 
@@ -37,6 +54,11 @@ class User:
 		self.pict = avatar
 
 class LoopingThread(threading.Thread):
+	'''This class allows you to make a thready object that calls
+	its function on an infinite loop, automatically working with
+	the gtk.gdk mutex. Please note that when you subclass this,
+	as you are meant to do, you are going to overwrite the PROCESS
+	function, not the RUN function.'''
 	def __init__(self, name=None):
 		threading.Thread.__init__(self, name=name)
 		self.setDaemon(True)
@@ -45,6 +67,7 @@ class LoopingThread(threading.Thread):
 	def run(self):
 		while 1:
 			threads_enter()
+			logging.debug("LoopingThread")
 			self.process()
 			threads_leave()
 
@@ -52,23 +75,35 @@ class LoopingThread(threading.Thread):
 		pass
 
 # This space left intentionally blank for subclassing
+# Although a bit of example code is here to get you started
 class Plugin(LoopingThread):
 	def __init__(self):
 		LoopingThread.__init__(self, name="PyTideNetworkPlugin")
+		self.documents = []
 
 	def process(self):
 		'''Handles stuff internally.
  
-		Do not modify external resources in run(), leave that to the
+		Do not modify external resources in process(), leave that to the
 		other functions. You don't want to make the program unstable, do ya?'''
 		pass
 
-	def getWavelet(self, waveid):
+	def subscribe(self, waveid):
 		'''Start loading a wave document into the network.'''
-		pass
+		d = Document(id=waveid)
+		self.documents.append(d)
+		# start loading in plugin thread, sync to documents when network calls getUpdates()
+		return d
+
+	def unsubscribe(self, waveid):
+		for doc in self.documents:
+			if doc.id == waveid: 
+				del doc
+				return True
+		return False
 
 	def getUpdates(self):
-		'''Does not return anything, it calls functions in self.network'''
+		'''Does not return anything, is called by network to sync internal data to Document objects'''
 		pass
 
 	def query(self, query):
@@ -78,3 +113,6 @@ class Plugin(LoopingThread):
 	def submit(self):
 		'''Push all local operations to server.'''
 		pass
+
+	def documents(self):
+		return self.documents
