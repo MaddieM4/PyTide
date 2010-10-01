@@ -31,6 +31,14 @@ function setScrollbarFromScrollable(scrollable) {
 	$(scrollable.data('controller')).css('top',""+percent+"%");
 }
 
+function setAllScrollbars() {
+	$('.scrollbar').each(function(){
+		setScrollbarFromScrollable($($(this).data('target')))
+	});
+}
+
+$(window).resize(setAllScrollbars);
+
 function reset_scroll(scrollable){
 	scrollable.scrollTop(0);
 	$(scrollable.data('controller')).css('top',"0%");	
