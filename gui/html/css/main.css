@@ -91,7 +91,7 @@ table td {
 	margin-bottom:79px;
 	margin-top:4px;
 	cursor: pointer;
-	z-index:100;
+	z-index:4;
 }
 
 .scrollbar {

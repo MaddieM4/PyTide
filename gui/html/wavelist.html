@@ -270,41 +270,6 @@
 			SubMenu(name,contents,-1,$('.toolbar .gotoOptions'),exitfunc)
 		}
 
-		$('.toolbar .more').click(function() {
-			if ($(this).hasClass("active")) {
-				closeMenu();
-				$(this).removeClass("active");
-				adj_toolbar();
-			} else {
-				openMenu("<ul class='tools'>"+pullTools()+"</ul>",3, function (){
-					$('.toolbar .more').removeClass('active');
-					closeMenu();
-				});
-				activateToolbars(true);
-				$(this).addClass("active");
-				$('.toolbar .gotoOptions').removeClass("active");
-			}
-		});
-
-		toolbarbuttons = $('.toolbar li');
-
-		// toolbar hover
-		toolbarbuttons.mouseenter(function () {
-			$(this).addClass("over");
-		});
-
-		toolbarbuttons.mousedown(function(){
-			$(this).addClass("down");
-		});
-
-		toolbarbuttons.mouseup(function() {
-			$(this).removeClass("down");
-		});
-
-		toolbarbuttons.mouseleave(function(){
-			$(this).removeClass("over").removeClass("down");
-		});
-
 		// switch toolbar depending on selection state
 		function initListSelectability() {
 			$('#mainlist li').mousedown(function(){
