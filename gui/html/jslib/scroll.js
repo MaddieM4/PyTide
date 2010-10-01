@@ -31,6 +31,11 @@ function setScrollbarFromScrollable(scrollable) {
 	$(scrollable.data('controller')).css('top',""+percent+"%");
 }
 
+function reset_scroll(scrollable){
+	scrollable.scrollTop(0);
+	$(scrollable.data('controller')).css('top',"0%");	
+}
+
 function scroll(e) {
 	// this is where the magic happens
 	if (scrollDriver != null) {

@@ -108,3 +108,9 @@ table td {
 	height:79px;
 	bottom:-79px;
 }
+
+
+li.longend {
+	padding-top:20px;
+	padding-bottom:150px;
+}
