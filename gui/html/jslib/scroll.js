@@ -1,6 +1,34 @@
 function bindScrollbar(scrollbar, scrollable) {
 	$(scrollbar).data('target',scrollable);
-	$(scrollable).mousemove(function(e){scroll(e)});
+	$(scrollable).data('controller',scrollbar).mousemove(function(e){scroll(e)}).bind('mousewheel',
+	    function(e, delta, deltaX,deltaY){
+		targ = $(this);
+		//alert(e.wheelDelta)
+		newscroll = targ.scrollTop()+(e.wheelDelta/-30);
+		maxscroll = getMaxScroll(targ);
+		newscroll = Math.max(Math.min(maxscroll, newscroll),0)
+		targ.scrollTop(newscroll)
+		setScrollbarFromScrollable(targ)
+	});
+	setScrollbarFromScrollable($(scrollable));
+}
+
+function unbindScrollbar(scrollbar) {
+	scrollable = $(scrollbar.data('target'))
+	scrollable.unbind('mousemove').removeData('controller')
+	scrollbar.removeData('target')
+}
+
+function getMaxScroll(scrollTarget) {
+	lastkid = $($(scrollTarget).children().last())
+	if (lastkid.length==0) {return 0}
+	return lastkid.position().top+lastkid.outerHeight()+scrollTarget.scrollTop()-scrollTarget.height();
+}
+
+function setScrollbarFromScrollable(scrollable) {
+	maxscroll = getMaxScroll(scrollable);
+	percent = scrollable.scrollTop()/maxscroll*100;
+	$(scrollable.data('controller')).css('top',""+percent+"%");
 }
 
 function scroll(e) {
@@ -11,8 +39,7 @@ function scroll(e) {
 		scrollDriver.css('top',""+percent+"%");
 		if (scrollTarget != null) {
 			scrollTarget = $(scrollTarget)
-			lastkid = $(scrollTarget).children().last()
-			maxscroll = lastkid.position().top+lastkid.outerHeight()+scrollTarget.scrollTop()-scrollTarget.height();
+			maxscroll = getMaxScroll(scrollTarget)
 			scrollTarget.scrollTop(maxscroll*percent/100)
 		}
 	}
