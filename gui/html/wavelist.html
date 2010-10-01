@@ -286,19 +286,7 @@
 			}
 		});
 
-		buttons = $('.textbutton');
 		toolbarbuttons = $('.toolbar li');
-
-		// Button graphics handling for all textbuttons
-		buttons.mousedown(function(){
-			$(this).addClass("depressed")
-		});
-		buttons.mouseup(function(){
-			$(this).removeClass("depressed")
-		});
-		buttons.mouseleave(function(){
-			$(this).removeClass("depressed")
-		});
 
 		// toolbar hover
 		toolbarbuttons.mouseenter(function () {

@@ -9,8 +9,13 @@ function renderButton(label, callback) {
 	html+= "<td class='right'></td>";
 	html+= "</tr></table>";
 	button = $(html).click(callback);
-	button.mousedown(function () {$(this).addClass("depressed")});
-	button.mouseup(function () {$(this).removeClass("depressed")});
-	button.mouseleave(function () {$(this).removeClass("depressed")});
 	return button;
 }
+
+$('.textbutton').live('mousedown',function(){
+	$(this).addClass("depressed")
+}).live('mouseup',function(){
+	$(this).removeClass("depressed")
+}).live('mouseleave',function(){
+	$(this).removeClass("depressed")
+});
