@@ -271,16 +271,12 @@
 		}
 
 		// switch toolbar depending on selection state
-		function initListSelectability() {
-			$('#mainlist li').mousedown(function(){
-				$(this).toggleClass('selected');
-				sendObject({"type":"waveSelected",
-					"value":$(this).hasClass('selected')});
-				checkSelect();
-			});
-		}
-
-		initListSelectability()
+		$('#mainlist li').live('mousedown',function(){
+			$(this).toggleClass('selected');
+			sendObject({"type":"waveSelected",
+				"value":$(this).hasClass('selected')});
+			checkSelect();
+		});
 
 		function reloadList(newlist) {
 			results = newlist;
@@ -304,7 +300,6 @@
 				digest = digests[i];
 				$(renderDigest(digest)).appendTo('#mainlist');
 				}
-			initListSelectability()
 		}
 
 		shortmonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -349,7 +344,6 @@
 			for (i in contacts) {				
 				$('<li></li>').append(renderContact(contacts[i])).appendTo('#mainlist');
 			}
-			initListSelectability()
 		}
 
 		function query() {
