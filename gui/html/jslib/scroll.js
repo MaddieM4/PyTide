@@ -1,5 +1,6 @@
 function bindScrollbar(scrollbar, scrollable) {
 	$(scrollbar).data('target',scrollable);
+	$(scrollable).mousemove(function(e){scroll(e)});
 }
 
 function scroll(e) {
