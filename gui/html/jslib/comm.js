@@ -16,4 +16,3 @@ function printHTML() {
 		'html':$('body').html()
 	});
 }
-
