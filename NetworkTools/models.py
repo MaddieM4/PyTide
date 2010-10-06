@@ -1,24 +1,23 @@
-#           Licensed to the Apache Software Foundation (ASF) under one
-#           or more contributor license agreements.  See the NOTICE file
-#           distributed with this work for additional information
-#           regarding copyright ownership.  The ASF licenses this file
-#           to you under the Apache License, Version 2.0 (the
-#           "License"); you may not use this file except in compliance
-#           with the License.  You may obtain a copy of the License at
-
-#             http://www.apache.org/licenses/LICENSE-2.0
-
-#           Unless required by applicable law or agreed to in writing,
-#           software distributed under the License is distributed on an
-#           "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-#           KIND, either express or implied.  See the License for the
-#           specific language governing permissions and limitations
-#           under the License. 
+# Copyright 2010 Nathanael Abbotts (nat.abbotts@gmail.com),
+#                Philip Horger (campadrenalin@gmail.com),
+# 
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#        http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
 
 import threading
 import time
 import datetime
 from gtk.gdk import threads_enter, threads_leave
+from collections import deque
 
 import logging
 LOG_FILENAME="loopingthread.log"
@@ -33,19 +32,35 @@ class Operation:
 	def apply(document):
 		pass		
 
-class OperationQueue:
-	'''A sequence of operations. Every wavelet has one.'''
-	def __init__(self, wavelet):
-		self.wavelet = wavelet
-		self.operations = []
 
-class Blip:
-	pass
+class Operation_Queue(deque):
+    """A queue of Operation objects
 
-class Wavelet:
-	def __init__(self, digest = None):
-		self.digest = digest
-
+    When instantiating, you can provide any number of Operation instances as
+    operations."""
+    def __init__(self, *args, position = 0,): #(self, wavelet, *args, position)
+        """Creates an Operation Queue.
+        
+        *args should all be Operation objects, which will be added to the queue
+            in sequential order.
+        """
+        super(Operation_Queue, self).__init__(args)
+        self.position = position
+        # Note that this operation queue does not have a wavelet attribute - 
+        # that is because I believe that a wavelet should have an opqueue, 
+        # not the reverse. This will be discussed elsewhere though.
+    def append(self, position, operation, arg):
+        op = Operation(position, operation, arg)
+        super(Operation_Queue, self).append(op)
+    
+# I'll be forking my blip models into here...
+##class Blip:
+##	pass
+##
+##class Wavelet:
+##	def __init__(self, digest = None):
+##		self.digest = digest
+##
 class Document:
 	'''A simple class to store and easily pass around wave snapshots. It has no
 	facilities to submit and recieve updates over the network, this is handled
