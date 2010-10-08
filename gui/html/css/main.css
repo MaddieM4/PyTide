@@ -116,13 +116,30 @@ li.longend {
 	align:center;
 }
 
+li.longend * {
+	margin: 0px auto;
+}
+
 li.longend .page_next {
-	background:url('../img/arrow-right.png') 0px 0px;
+	background:url('../img/arrow-right.png') 0px 50px;
 	height:50px;
 	width:83px;
 }
 li.longend .page_prev {
-	background:url('../img/arrow-left.png') 0px 0px;
+	background:url('../img/arrow-left.png') 0px 50px;
 	height:50px;
 	width:83px;
 }
+li.longend .page_new {
+	background:url('../img/circleplus.png') 0px 0px;
+	height: 50px;
+	width: 50px;
+}
+li.longend .page_prev.over, li.longend .page_next.over {
+	background-position: 0px 100px;
+}
+li.longend .page_prev.down, li.longend .page_next.down {
+	background-position: 0px 0px;
+}
+li.longend .page_new.over {background-position:100px 0px;}
+li.longend .page_new.down {background-position:50px 0px;}
