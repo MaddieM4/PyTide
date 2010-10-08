@@ -38,7 +38,7 @@ class Operation_Queue(deque):
 
     When instantiating, you can provide any number of Operation instances as
     operations."""
-    def __init__(self, *args, position = 0,): #(self, wavelet, *args, position)
+    def __init__(self, *args): #(self, wavelet, *args, position)
         """Creates an Operation Queue.
         
         *args should all be Operation objects, which will be added to the queue
