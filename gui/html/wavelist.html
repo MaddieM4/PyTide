@@ -300,7 +300,10 @@
 				digest = digests[i];
 				$(renderDigest(digest)).appendTo('#mainlist');
 				}
-			tail = $('<li class="longend"></li>').append($('<table><tr></tr></table>')).appendTo('#mainlist');
+			tail = $('<li class="longend"></li>').click(function(){
+				$('#mainlist li').removeClass('selected');
+				checkSelect();
+			}).append($('<table><tr></tr></table>')).appendTo('#mainlist');
 			tail= tail.find('tr')
 			if (results['page']>0) tail.append($('<td class="page_prev">').click(function(){query_nav(querytext, results['page']-1)}));
 			tail.append($('<td class="page_new">'));
