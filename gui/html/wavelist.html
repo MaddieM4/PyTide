@@ -302,9 +302,9 @@
 				}
 			tail = $('<li class="longend"></li>').append($('<table><tr></tr></table>')).appendTo('#mainlist');
 			tail= tail.find('tr')
-			tail.append($('<td class="page_prev">'));
+			if (results['page']>0) tail.append($('<td class="page_prev">').click(function(){query_nav(querytext, results['page']-1)}));
 			tail.append($('<td class="page_new">'));
-			tail.append($('<td class="page_next">'));
+			if (results['page']< results['maxpage']) tail.append($('<td class="page_next">').click(function(){query_nav(querytext,results['page']+1)}));
 			reset_scroll($('#mainlist'));
 		}
 
@@ -364,16 +364,19 @@
 			reset_scroll($('#mainlist'));
 		}
 
-		function query() {
+		function query(page) {
 			// prepare visually
 			$('#mainlist li').removeClass('selected').removeClass('open');
 			checkSelect();
 			// Future: turn magnifying glass red or green or something?
-			// send payload
-			sendObject({
+			// Build payload
+			payload = {
 				'type':'query',
 				'value':searchbox.val()
-			});
+			};
+			if (page!=null) payload['page']=page
+			// send payload
+			sendObject(payload);
 		}
 
 		$('#nav .search .right').click(function () {
@@ -388,9 +391,9 @@
 
 		query();
 
-		function query_nav(str) {
+		function query_nav(str,page) {
 			searchbox.val(str);
-			query();
+			query(page);
 		}
 
 		function activateToolbars(menuonly){

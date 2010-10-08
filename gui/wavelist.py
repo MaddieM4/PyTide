@@ -30,7 +30,10 @@ class WaveList(webgui.browserWindow):
 		''' Recieve UI input data from window '''
 		if data != None:
 			if data['type'] == 'query':
-				self.query(data['value'])
+				if 'page' in data:
+					self.query(data['value'], page=data['page'])
+				else:
+					self.query(data['value'])
 			elif data['type'] == 'sendHTML':
 				print data['html']
 			elif data['type'] == 'getOptions':
@@ -68,8 +71,11 @@ class WaveList(webgui.browserWindow):
 		'''Send a query to the Network, get a list of results back, and pass it on to the window.'''
 		if query == "": 
 			query="in:inbox"
-		self.setTitle(self.getTitleFromQuery(query))
-		results = self.registry.Network.query(query,page)
+		results = self.registry.Network.query(query,startpage=page)
+		if page!=0:
+			pagetext = ", Page "+str(page+1)
+		else: pagetext = ""
+		self.setTitle(self.getTitleFromQuery(query)+pagetext)
 		if "::contacts" in query:
 			contacts = [{'name':c.name or c.nick,'address':c.addr,'avatar':c.pict} for c in self.registry.Network.getContacts()]
 			self.send("contactsList(%s)" % json.dumps(contacts))

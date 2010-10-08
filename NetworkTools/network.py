@@ -50,7 +50,7 @@ class Network(models.LoopingThread):
 			self.connection.submit()
 
 	def query(self, query, startpage=0):
-		return self.connection.query(query, startpage=0)
+		return self.connection.query(query, startpage=startpage)
 
 	def connect(self, username, password):
 		print "Network connecting to %s" % username
