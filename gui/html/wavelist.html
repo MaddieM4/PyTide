@@ -328,15 +328,7 @@
 			}
 		}
 
-		$('.page_prev, .page_next, .page_new').live('mouseover', 
-			function() {$(this).addClass('over')}
-		).live('mouseout', function () {
-			$(this).removeClass('over')
-		}).live('mousedown', function () {
-			$(this).addClass('down')
-		}).live('mouseup', function () {
-			$(this).removeClass('down')
-		});
+		livehover('.page_next, .page_new, .page_prev');
 
 		shortmonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 		function renderTime(ms) {

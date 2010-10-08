@@ -16,3 +16,15 @@ function printHTML() {
 		'html':$('body').html()
 	});
 }
+
+function livehover(jq) {
+	$(jq).live('mouseover', 
+		function() {$(this).addClass('over')}
+	).live('mouseout', function () {
+		$(this).removeClass('over')
+	}).live('mousedown', function () {
+		$(this).addClass('down')
+	}).live('mouseup', function () {
+		$(this).removeClass('down')
+	});
+}

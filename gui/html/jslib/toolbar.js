@@ -87,12 +87,4 @@ $('.toolbar .more').live('click',function() {
 });
 
 // toolbar hover
-$('.toolbar li').live('mouseover', function () {
-	$(this).addClass("over");
-}).live('mousedown', function(){
-	$(this).addClass("down");
-}).live('mouseup', function() {
-	$(this).removeClass("down");
-}).live('mouseleave', function(){
-	$(this).removeClass("over").removeClass("down");
-});
+livehover('.toolbar li');
