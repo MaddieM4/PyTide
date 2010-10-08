@@ -300,15 +300,32 @@
 				digest = digests[i];
 				$(renderDigest(digest)).appendTo('#mainlist');
 				}
+			appendLongEnd(
+				function(){},
+				(results['maxpage']>results['page'])?function(){query_nav(querytext, results['page']+1)}:null,
+				(results['page']>0)?function(){query_nav(querytext,results['page']-1)}:null,
+				results['page'],
+				results['maxpage']);
+			reset_scroll($('#mainlist'));
+		}
+
+		function appendLongEnd(newfunc, forwardfunc, backfunc, dot, dotmax) {
 			tail = $('<li class="longend"></li>').click(function(){
 				$('#mainlist li').removeClass('selected');
 				checkSelect();
 			}).append($('<table><tr></tr></table>')).appendTo('#mainlist');
 			tail= tail.find('tr')
-			if (results['page']>0) tail.append($('<td class="page_prev">').click(function(){query_nav(querytext, results['page']-1)}));
-			tail.append($('<td class="page_new">'));
-			if (results['page']< results['maxpage']) tail.append($('<td class="page_next">').click(function(){query_nav(querytext,results['page']+1)}));
-			reset_scroll($('#mainlist'));
+			if (backfunc) tail.append($('<td class="page_prev">').click(backfunc));
+			if (newfunc) tail.append($('<td class="page_new">'));
+			if (forwardfunc) tail.append($('<td class="page_next">').click(forwardfunc));
+			if (dotmax==null) {dotmax = dot; dot = null} // use dot as dotmax when dotmax is null
+			if (dotmax!=null) {
+				// make dotmax dots
+				
+				if (dot!=null) {
+					// make dot-th dot green
+				}
+			}
 		}
 
 		$('.page_prev, .page_next, .page_new').live('mouseover', 
@@ -355,7 +372,7 @@
 			return item;
 		}
 
-		function contactsList(contacts) {
+		function contactsList(contacts,page, maxpage) {
 			//alert(JSON.stringify(contacts));
 			$('.toolbar li').removeClass('active');
 			$('.toolbar .gotoContacts').addClass('active');
@@ -363,7 +380,7 @@
 			for (i in contacts) {				
 				$('<li></li>').append(renderContact(contacts[i])).appendTo('#mainlist');
 			}
-			$('<li class="longend"></li>').appendTo('#mainlist');
+			appendLongEnd(function(){});
 			reset_scroll($('#mainlist'));
 		}
 
