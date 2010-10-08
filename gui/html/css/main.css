@@ -113,4 +113,16 @@ table td {
 li.longend {
 	padding-top:20px;
 	padding-bottom:150px;
+	align:center;
+}
+
+li.longend .page_next {
+	background:url('../img/arrow-right.png') 0px 0px;
+	height:50px;
+	width:83px;
+}
+li.longend .page_prev {
+	background:url('../img/arrow-left.png') 0px 0px;
+	height:50px;
+	width:83px;
 }

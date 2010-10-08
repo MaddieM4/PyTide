@@ -64,17 +64,18 @@ class WaveList(webgui.browserWindow):
 			return "Contacts"
 		else: return 'Search "%s"' % querytext
 
-	def query(self, query):
+	def query(self, query, page=0):
 		'''Send a query to the Network, get a list of results back, and pass it on to the window.'''
 		if query == "": 
 			query="in:inbox"
 		self.setTitle(self.getTitleFromQuery(query))
-		results = self.registry.Network.query(query)
+		results = self.registry.Network.query(query,page)
 		if "::contacts" in query:
 			contacts = [{'name':c.name or c.nick,'address':c.addr,'avatar':c.pict} for c in self.registry.Network.getContacts()]
 			self.send("contactsList(%s)" % json.dumps(contacts))
 			return
-		jres = {'query':self.escape(query),'digests':[]}
+		print results.page, "/", results.maxpage
+		jres = {'query':self.escape(query),'digests':[],'page':results.page,'maxpage':results.maxpage}
 		for digest in results.digests:
 			plist = digest.participants.serialize()
 			participants = [self.registry.Network.participantMeta(x) for x in plist]

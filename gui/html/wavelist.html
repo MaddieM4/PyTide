@@ -300,7 +300,10 @@
 				digest = digests[i];
 				$(renderDigest(digest)).appendTo('#mainlist');
 				}
-			//$('<li class="longend"></li>').appendTo('#mainlist');
+			tail = $('<li class="longend"></li>').appendTo('#mainlist');
+			tail.append($('<div class="page_prev">'));
+			tail.append($('<div class="page_new">'));
+			tail.append($('<div class="page_next">'));
 			reset_scroll($('#mainlist'));
 		}
 
