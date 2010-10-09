@@ -324,11 +324,15 @@
 				(results['maxpage']>results['page'])?function(){query_nav(querytext, results['page']+1)}:null,
 				(results['page']>0)?function(){query_nav(querytext,results['page']-1)}:null,
 				results['page'],
-				results['maxpage']+1);
+				results['maxpage']+1,
+				function (index,isactive) {
+					if (isactive) return function(){};
+					return function() {query_nav(querytext,index)}
+				});
 			reset_scroll($('#mainlist'));
 		}
 
-		function appendLongEnd(newfunc, forwardfunc, backfunc, dot, dotmax) {
+		function appendLongEnd(newfunc, forwardfunc, backfunc, dot, dotmax,dotfunction) {
 			tail = $('<li class="longend"></li>').click(function(){
 				$('#mainlist li').removeClass('selected');
 				checkSelect();
@@ -342,7 +346,10 @@
 				// make dotmax dots
 				dots = $('<ul class="dots">').appendTo($('.longend'));
 				for (d=0;d<dotmax;d++){
-					dots.append($('<li>'));
+					thisdot = $('<li>').appendTo(dots);
+					if (dotfunction!=null) {
+						thisdot.click(dotfunction(d,(d==dot)))
+					}
 				}
 				if (dot!=null) {
 					// make dot-th dot green
