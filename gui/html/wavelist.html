@@ -97,6 +97,21 @@
 			}
 			#mainlist li.open .date, #mainlist li.open .date .msgs {color:white;}
 
+			ul.dots {
+				list-style:none;
+				padding:0px;
+			}
+
+			ul.dots li {
+				display:inline;
+				padding:0px 0px 5px 5px;
+				margin: 0px;
+				background: url(../html/img/dots_small.png) 0px 0px;
+			}
+			ul.dots li.over {background-position:0px 10px;}
+			ul.dots li.down {background-position:10px 10px;}
+			ul.dots li.active {background-position:10px 0px;}
+
 			.optionslist {
 				list-style-type:square;
 				cursor: pointer;
@@ -321,14 +336,19 @@
 			if (dotmax==null) {dotmax = dot; dot = null} // use dot as dotmax when dotmax is null
 			if (dotmax!=null) {
 				// make dotmax dots
-				
+				dots = $('<ul class="dots">').appendTo($('.longend'));
+				for (d=0;d<=dotmax;d++){
+					dots.append($('<li>'));
+				}
 				if (dot!=null) {
 					// make dot-th dot green
+					$('ul.dots li:eq('+dot+')').addClass('active');
 				}
 			}
 		}
 
 		livehover('.page_next, .page_new, .page_prev');
+		livehover('ul.dots li')
 
 		shortmonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 		function renderTime(ms) {
