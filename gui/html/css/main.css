@@ -113,7 +113,7 @@ table td {
 li.longend {
 	padding-top:20px;
 	padding-bottom:150px;
-	align:center;
+	text-align:center;
 }
 
 li.longend * {

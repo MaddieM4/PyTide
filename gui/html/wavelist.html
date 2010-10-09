@@ -20,7 +20,7 @@
 				overflow:hidden;
 			}
 
-			#mainlist li:not(.longend) {
+			#mainlist > li:not(.longend) {
 				border: 1px solid #EEE;
 				padding:2px 20px 5px 6px;
 				-webkit-user-drag: element;
@@ -98,14 +98,18 @@
 			#mainlist li.open .date, #mainlist li.open .date .msgs {color:white;}
 
 			ul.dots {
-				list-style:none;
 				padding:0px;
+				padding-top:5px;
+				font-size:9px;
+				line-height:0px;
 			}
 
 			ul.dots li {
 				display:inline;
-				padding:0px 0px 5px 5px;
+				padding:0px 0px 0px 10px;
 				margin: 0px;
+				font-size:9px;
+				line-height:0px;
 				background: url(../html/img/dots_small.png) 0px 0px;
 			}
 			ul.dots li.over {background-position:0px 10px;}
@@ -286,7 +290,7 @@
 		}
 
 		// switch toolbar depending on selection state
-		$('#mainlist li:not(.longend)').live('mousedown',function(){
+		$('#mainlist > li:not(.longend)').live('mousedown',function(){
 			$(this).toggleClass('selected');
 			sendObject({"type":"waveSelected",
 				"value":$(this).hasClass('selected')});
@@ -320,7 +324,7 @@
 				(results['maxpage']>results['page'])?function(){query_nav(querytext, results['page']+1)}:null,
 				(results['page']>0)?function(){query_nav(querytext,results['page']-1)}:null,
 				results['page'],
-				results['maxpage']);
+				results['maxpage']+1);
 			reset_scroll($('#mainlist'));
 		}
 
@@ -337,7 +341,7 @@
 			if (dotmax!=null) {
 				// make dotmax dots
 				dots = $('<ul class="dots">').appendTo($('.longend'));
-				for (d=0;d<=dotmax;d++){
+				for (d=0;d<dotmax;d++){
 					dots.append($('<li>'));
 				}
 				if (dot!=null) {
