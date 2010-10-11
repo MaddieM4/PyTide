@@ -3,7 +3,7 @@
 #
 # Copyright 2010    Nathanael Abbotts (nat.abbotts@gmail.com),
 #                   Philip Horger,
-# 
+#
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
 #    You may obtain a copy of the License at
@@ -17,49 +17,49 @@
 #    limitations under the License.
 #
 
-class Document:
-	'''A simple class to store and easily pass around wave snapshots. It has no
-	facilities to submit and recieve updates over the network, this is handled
-	by the plugin.'''
-	def __init__(self, id=None, jsonInput=None):
-		# Create a new document
-		self.wavelets = []
-		self.properties = {}
-		self.id = id or "unspecified"
-		open('~/.pytide/document','w').write(jsonInput)
-
-	def toJSON(self):
-		pass
-
-class Digest:
-	def __init__(title, id, participants, blipsTotal, blipsUnread, date, folder=None,features=[]):
-		self.title = title
-		self.id = id
-		self.participants = participants
-		self.blipsTotal = blipsTotal
-		self.blipsUnread = blipsUnread
-		self.date = date
-		self.folder = folder
-		self.features = features
-
 import random
 from string import ascii_lowercase, digits
 import re
 
 
-import error
 import user
-#Not implimented yet modules are encased in this try statement.
-try:
-    import blip
-except ImportError:
-    class blip:
-        class Blip:
-            pass
+import blip
+
+
+class Document(object):
+    '''A simple class to store and easily pass around wave snapshots. It has
+    no facilities to submit and recieve updates over the network, this is
+    handled by the plugin.'''
+    def __init__(self, identifier = None, json_input = None):
+	# Create a new document
+	self.wavelets = []
+	self.properties = {}
+	if not identifer:
+            identifer = "unspecified"
+	self.id = identifier
+	if not json_input:
+            json_input = []
+        with open('~/.pytide/document','w') as f:
+            f.write(json_input)
+		
+    def to_json(self):
+	pass
+
+class Digest(object):
+    def __init__(title, identifier, participants, blips_total, blips_unread,
+                 date, folder = None, features = None):
+	self.title = title
+	self.id = identifier
+	self.participants = participants
+	self.blips_total = blips_total
+	self.blips_tnread = blips_unread
+	self.date = date
+	self.folder = folder
+	self.features = features
 
 
 class Wave(object):
-    """Models a Wave. 
+    """Models a Wave.
 
     This object should not be directly instantiated, instead, the server method
     should be used, which will return a new Wave object.
@@ -73,23 +73,24 @@ class Wave(object):
 
         Instances of this class should not be directly created."""
         sep = '!w+'
-        def __init__(self, domain, reserved = ()):
+        def __init__(self, domain, reserved):
+            """Instantiate a new wave id. An iterable of reserved wave ids must
+            be provided."""
             self._domain = domain
             self._id = None
             while (not self._id) or (self._id in reserved):
                 self._id = random.sample(ascii_lowercase + digits, 11)
-                # TODO: Decide if reserved() should make a call to self.server()
-                # Considering that the Wave object creating this won't have
-                # access to this list through any other method. 
         def __str__(self):
             return self.sep.join((self._domain, self._id))
+        def __repr__(self):
+            return self.__str__()
         @property
         def domain(self):
             return self._domain
         @property
         def id(self):
             return self._id
-        
+
     def __init__(self, domain, creator):
         """Creates a new wave with a new Wave.ID object, and a root Wavelet.
 
@@ -112,7 +113,7 @@ class Wave(object):
                              waveinstantiated = False)
         self._wavelet_id_mapping[str(self._root.id)] = self._root.id
         self._wavelets = {self._root.id: self._root}
-    
+
     @property
     def id(self):
         """Returns the ID objectinstance for this wave."""
@@ -147,7 +148,7 @@ class Wave(object):
 
         This method should be invoked by a server, not by a client. Clients
         should use the server's method that references this."""
-        #TODO: Update with server's method name once defined. 
+        #TODO: Update with server's method name once defined.
         if id in self._wavelets:
             wavelet = self._wavelets[id]
         elif id in self._wavelet_id_mapping:
@@ -209,7 +210,7 @@ class Wavelet(object):
                 self._id = random.sample(ascii_lowercase + digits, 11)
                 # TODO: Decide if reserved() should make a call to Wavelet.Wave
                 # Considering that the Wavelet object creating this won't have
-                # access to this list through any other method. 
+                # access to this list through any other method.
         def __str__(self):
             """Returns string form full identifer. (domain.com!wavelet_id)"""
             return self.sep.join((self._domain, self._id))
@@ -233,10 +234,10 @@ class Wavelet(object):
         # NOTE: Digest has not been made a property, as it was not clear if it
         # should be able to be reasigned or not. Clarification?
         self.digest = digest
-        
+
         self._wave = wave
         self._participants = user.Participants(creator)
-        self._root_blip = blip.Blip
+        self._root_blip = blip.Blip()
         #!...
     @property
     def domain(self):

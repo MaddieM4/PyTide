@@ -1,9 +1,8 @@
-#
 # Copyright Notice:
 #
 # Copyright 2010    Nathanael Abbotts (nat.abbotts@gmail.com),
 #                   Philip Horger,
-# 
+#
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
 #    You may obtain a copy of the License at
@@ -17,10 +16,4 @@
 #    limitations under the License.
 #
 
-class User(object):
-    """Used for contacts and participants and such. """
-    def __init__(self, name='', nick='', address = None, avatar = None):
-	self.name = name
-	self.nick = nick
-	self.addr = address
-	self.pict = avatar
+__all__ = ['wave', 'blip', 'operation', 'threads', 'user']

@@ -30,7 +30,7 @@ class LoopingThread(threading.Thread):
     as you are meant to do, you are going to overwrite the PROCESS
     function, not the RUN function.'''
     def __init__(self, name=None,speed=3):
-    	super(self.__class__, self).__init__(self, name=name)
+    	super(LoopingThread, self).__init__(name=name)
     	self.setDaemon(True)
     	self.speed=speed
     	self.stopper = threading.Event()
@@ -50,7 +50,7 @@ class LoopingThread(threading.Thread):
 # Although a bit of example code is here to get you started
 class Plugin(LoopingThread):
     def __init__(self, network):
-	super(self.__class__, self).__init__(self, name="PyTideNetworkPlugin", speed=0.5)
+	super(Plugin, self).__init__(name="PyTideNetworkPlugin", speed=0.5)
 	self.opqueues = []
 	self.network = network
 
@@ -61,8 +61,8 @@ class Plugin(LoopingThread):
 	other functions. You don't want to make the program unstable, do ya?'''
 	pass
 
-	def subscribe(self, waveid):
-	'''Start loading a wave document into the network. Returns a mostly-blank
+    def subscribe(self, waveid):
+        '''Start loading a wave document into the network. Returns a mostly-blank
 	document, but not before creating a personal opqueue for it.'''
 	d = wave.Document(id=waveid)
 	self.opqueues.append(OperationQueue(d))

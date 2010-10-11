@@ -26,7 +26,7 @@ from waveapi import waveservice
 
 class GoogleWaveConnection(models.threads.Plugin):
 	def __init__(self, username, password, network):
-		super(self.__class__, self).__init__(self, network)
+		super(GoogleWaveConnection, self).__init__(network)
 		self.username = username
 		self.password = password
 

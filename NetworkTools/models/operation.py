@@ -20,25 +20,26 @@
 import datetime
 from collections import deque
 
-class Operation:
-	def __init__(self, timestamp=datetime.datetime.now()):
-		pass
+class Operation(object):
+	def __init__(self, timestamp = None):
+		if not timestamp:
+                        timestamp = datetime.datetime.now()
 
 	def apply(document):
 		pass
 	    
-class Operation_Queue(deque):
+class OperationQueue(deque):
     """A queue of Operation objects
 
     When instantiating, you can provide any number of Operation instances as
     operations."""
-    def __init__(self, *args, position = 0,): #(self, wavelet, *args, position)
+    def __init__(self, position = 0, *args): #(self, wavelet, *args, position)
         """Creates an Operation Queue.
         
         *args should all be Operation objects, which will be added to the queue
             in sequential order.
         """
-        super(super.__class__, self).__init__(args)
+        super(OperationQueue, self).__init__(args)
         self.position = position
         # Note that this operation queue does not have a wavelet attribute - 
         # that is because I believe that a wavelet should have an opqueue, 
