@@ -4,7 +4,7 @@ function bindScrollbar(scrollbar, scrollable) {
 	    function(e, delta, deltaX,deltaY){
 		targ = $(this);
 		//alert(e.wheelDelta)
-		newscroll = targ.scrollTop()+(e.wheelDelta/-30);
+		newscroll = targ.scrollTop()+(e.wheelDelta/-5);
 		maxscroll = getMaxScroll(targ);
 		newscroll = Math.max(Math.min(maxscroll, newscroll),0)
 		targ.scrollTop(newscroll)
