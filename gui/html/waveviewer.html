@@ -21,9 +21,16 @@
 				border: 3px solid #AAA;
 				margin: 5px 23px 5px 50px;
 				padding: 5px 5px 8px 5px;
-				border-radius:10px;
+				border-radius:8px;
 				background-color: #FFF;
+				position:relative;
 			}
+
+			#mainlist li.over {border-color:#88F;}
+			#mainlist li.down {border-color:#33F;}
+			#mainlist li.selected {border-color:#789E35;}
+			#mainlist li.selected.over {border-color:#98BE55;}
+			#mainlist li.selected.down {border-color:#587E15;}
 
 			#mainlist .creator_name {
 				display:inline;
@@ -46,11 +53,19 @@
 			}
 
 			#mainlist img.creator_avatar {
-				height:15px;
-				width:15px;
+				height:32px;
+				width:32px;
+				left:-48px;
+				top:-3px;
+				position:absolute;
+				border: 1px solid #AAA;
 			}
 
-			#mainlist li.over {
+			#mainlist li.unread img.creator_avatar {
+				border-width:2px;
+				top:-4px;
+				left:-49px;
+				border-color:#688E25;
 			}
 
 			#footer .find  {
@@ -96,6 +111,13 @@
 					<li class="folder"><div>Folderize</div></li>
 					<li class="more">...</li>
 				</ul>
+				<ul class="invisible multiselect">
+					<li class="arrow"><div>Next</div></li>
+					<li class="eye-open"><div>Mark as Unread</div></li>
+					<li class="storage"><div>Shove</div></li>
+					<li class="folder"><div>Folderize</div></li>
+					<li class="more">...</li>
+				</ul>
 				<ul class="nonselect">
 					<li class="arrow"><div>Next</div></li>
 					<li class="inbox gotoInbox"><div>Inbox</div></li>
@@ -120,7 +142,7 @@
 			</div>
 		</div>
 		<ul id="mainlist">
-			<li><img class="creator_avatar" src="../html/img/something.jpg"/>
+			<li class="unread"><img class="creator_avatar" src="../html/img/something.jpg"/>
 			    <div class="creator_name">Philip Horger</div>
 				This is a blip
 			</li>
@@ -151,7 +173,7 @@
 		</div>
 	</div>
 
-	<div class='tooltip'>
+	<div class='tooltip invisible'>
 		<div class='contents'>Blah b</div>
 		<div class="target"></div>
 	</div>
@@ -170,14 +192,22 @@
 			if ($('#mainlist li.editing').length >0){
 				$("#nav .toolbar .edit").removeClass("invisible")
 				$("#nav .toolbar .select").addClass("invisible")
+				$("#nav .toolbar .multiselect").addClass("invisible")
 				$("#nav .toolbar .nonselect").addClass("invisible")
-			} else if ($('#mainlist li.selected').length >0){
+			} else if ($('#mainlist li.selected').length==1){
 				$("#nav .toolbar .edit").addClass("invisible")
 				$("#nav .toolbar .select").removeClass("invisible")
+				$("#nav .toolbar .multiselect").addClass("invisible")
+				$("#nav .toolbar .nonselect").addClass("invisible")
+			} else if ($('#mainlist li.selected').length>1){
+				$("#nav .toolbar .edit").addClass("invisible")
+				$("#nav .toolbar .select").addClass("invisible")
+				$("#nav .toolbar .multiselect").removeClass("invisible")
 				$("#nav .toolbar .nonselect").addClass("invisible")
 			} else {
 				$("#nav .toolbar .edit").addClass("invisible")
 				$("#nav .toolbar .select").addClass("invisible")
+				$("#nav .toolbar .multiselect").addClass("invisible")
 				$("#nav .toolbar .nonselect").removeClass("invisible")
 			}
 			adj_toolbar();
