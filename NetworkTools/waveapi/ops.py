@@ -42,9 +42,12 @@ DOCUMENT_APPEND_MARKUP = 'document.appendMarkup'
 DOCUMENT_INLINE_BLIP_INSERT = 'document.inlineBlip.insert'
 DOCUMENT_MODIFY = 'document.modify'
 ROBOT_CREATE_WAVELET = 'robot.createWavelet'
+ROBOT_FETCH_MY_PROFILE = 'robot.fetchMyProfile'
+ROBOT_FETCH_PROFILES = 'robot.fetchProfiles'
 ROBOT_FETCH_WAVE = 'robot.fetchWave'
 ROBOT_NOTIFY = 'robot.notifyCapabilitiesHash'
 ROBOT_SEARCH = 'robot.search'
+
 
 # Assign always NOTIFY_OP_ID to the notify operation so
 # we can easily filter it out later
@@ -308,7 +311,7 @@ class OperationQueue(object):
     if not num_results is None:
       op.set_param('numResults', num_results)
     return op
-
+  
   def robot_fetch_wave(self, wave_id, wavelet_id):
     """Requests a snapshot of the specified wave.
 
@@ -464,3 +467,8 @@ class OperationQueue(object):
                        index=position,
                        blipData=inline_blip_data)
     return inline_blip_data
+
+  def robot_fetch_my_profile(self):
+    return self.new_operation(ROBOT_FETCH_MY_PROFILE)
+  
+  
