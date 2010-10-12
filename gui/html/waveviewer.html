@@ -28,9 +28,26 @@
 			#mainlist .creator_name {
 				display:inline;
 				font-weight:bold;
-				padding-right:10px;
-				background:url('../html/img/dots_small.png') no-repeat;
-				background-position:right 5px;
+				padding-right:14px;
+				margin-right: 4px;
+				background-repeat: no-repeat;
+				background-position:right 50%;
+				background-image:url('../html/img/unknown.png');
+			}
+
+			#mainlist .creator_name.online {
+				background-image:url('../html/img/online.png');
+			}
+			#mainlist .creator_name.offline {
+				background-image:url('../html/img/offline.png');
+			}
+			#mainlist .creator_name.busy {
+				background-image:url('../html/img/busy.png');
+			}
+
+			#mainlist img.creator_avatar {
+				height:15px;
+				width:15px;
 			}
 
 			#mainlist li.over {
@@ -103,8 +120,11 @@
 			</div>
 		</div>
 		<ul id="mainlist">
-			<li><div class="creator_name">Philip Horger</div>This is a blip</li>
-			<li>This is another</li>
+			<li><img class="creator_avatar" src="../html/img/something.jpg"/>
+			    <div class="creator_name">Philip Horger</div>
+				This is a blip
+			</li>
+			<li><div class="creator_name online">Yuri</div>This is another</li>
 		</ul>
 		<div id="footer">
 		<div class="footerinner">
