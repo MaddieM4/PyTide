@@ -10,6 +10,82 @@
 		<link rel="stylesheet" type="text/css" href="css/tooltip.css">
 
 		<style type="text/css">
+			body {
+				background-color: #F6FFF6;
+			}
+
+			#mainlist {
+				margin:0px;
+				padding:5px 23px 0px 10px;
+				position:absolute;
+				top:81px;
+				left:0px;
+				right:0px;
+				bottom:37px;
+				overflow:hidden;
+			}
+
+			#mainlist li {
+				list-style-type:none;
+				border: 3px solid #AAA;
+				margin: 5px 5px 5px 50px;
+				padding: 5px 5px 8px 5px;
+				border-radius:8px;
+				background-color: #FFF;
+				position:relative;
+			}
+			#mainlist li.over {border-color:#88F;}
+			#mainlist li.down {border-color:#22F;}
+			#mainlist li.unread {border-color:#789E35;}
+			#mainlist li.unread.over {border-color:#98BE55;}
+			#mainlist li.unread.down {border-color:#587E15;}
+			#mainlist li.selected {border-color:#44F;}
+			#mainlist li.selected.over {border-color:#66F;}
+			#mainlist li.selected.down {border-color:#22F;}
+
+			#mainlist .creator_name {
+				border-radius:3px;
+				display:inline;
+				font-weight:bold;
+				padding:0px 14px 1px 2px;
+				margin-right: 4px;
+				background-repeat: no-repeat;
+				background-position:right 50%;
+				background-image:url('../html/img/unknown.png');
+			}
+
+			#mainlist .creator_name.online {
+				background-image:url('../html/img/online.png');
+			}
+			#mainlist .creator_name.offline {
+				background-image:url('../html/img/offline.png');
+			}
+			#mainlist .creator_name.busy {
+				background-image:url('../html/img/busy.png');
+			}
+
+			#mainlist img.creator_avatar {
+				height:32px;
+				width:32px;
+				left:-48px;
+				top:-3px;
+				position:absolute;
+				border: 1px solid #AAA;
+			}
+
+			#mainlist li.unread > img.creator_avatar {
+				border-width:2px;
+				top:-4px;
+				left:-49px;
+				border-color:#688E25;
+			}
+			#mainlist li.selected > img.creator_avatar {
+				border-width:2px;
+				top:-4px;
+				left:-49px;
+				border-color:#44F;
+			}
+
 			#footer .find  {
 				float:left;
 				position:relative;
@@ -41,24 +117,30 @@
 				<table class="textbutton noselect"><tr>
 					<td class="left"></td>
 					<td class="center">+</td>
-					<td class="right"/>
+					<td class="right"></td>
 				</tr></table>
-				</div>
 			</div>
 			<div class="toolbar noselect">
 				<ul class="invisible select">
 					<li class="arrow"><div>Next</div></li>
 					<li class="pencil"><div>Edit</div></li>
 					<li class="eye-open"><div>Mark as Unread</div></li>
-					<li class="storage"><div>Shove</div></li>
-					<li class="folder"><div>Folderize</div></li>
+					<li class="trash"><div>Delete</div></li>
+					<li class="arrow"><div>Export to New Wave</div></li>
+					<li class="more">...</li>
+				</ul>
+				<ul class="invisible multiselect">
+					<li class="arrow"><div>Next</div></li>
+					<li class="eye-open"><div>Mark as Unread</div></li>
+					<li class="trash"><div>Delete</div></li>
+					<li class="arrow"><div>Export to New Wave</div></li>
 					<li class="more">...</li>
 				</ul>
 				<ul class="nonselect">
 					<li class="arrow"><div>Next</div></li>
 					<li class="inbox gotoInbox"><div>Inbox</div></li>
 					<li class="storage gotoArchive"><div>Archive</div></li>
-					<li class="eye-open"><div>Unfollow</div></li>
+					<li class="trash"><div>Trash</div></li>
 					<li class="arrow"><div>Jump</div></li>
 					<li class="eye-open"><div>Document Mode</div></li>
 					<li class="more">...</li>
@@ -77,6 +159,26 @@
 				</ul>
 			</div>
 		</div>
+		<ul id="mainlist">
+			<li class="unread"><img class="creator_avatar" src="../html/img/something.jpg"/>
+			    <div class="creator_name">Philip Horger</div>
+				This is a blip
+			</li>
+			<ul>
+				<li><img class="creator_avatar" src="https://lh6.googleusercontent.com/_tsWs83xehHE/TFgD2QbwzYI/AAAAAAAAFbg/O-Z1aVTdEvs/s104-c/me_cy_very_small.jpg"/>
+				    <div class="creator_name online">Yuri</div>
+					This is another
+				</li>
+			</ul>
+			<li><img class="creator_avatar" src="https://lh6.googleusercontent.com/_tsWs83xehHE/TFgD2QbwzYI/AAAAAAAAFbg/O-Z1aVTdEvs/s104-c/me_cy_very_small.jpg"/>
+			    <div class="creator_name online">Yuri</div>
+				This is <ul>
+				<li><img class="creator_avatar" src="https://lh6.googleusercontent.com/_tsWs83xehHE/TFgD2QbwzYI/AAAAAAAAFbg/O-Z1aVTdEvs/s104-c/me_cy_very_small.jpg"/>
+				    <div class="creator_name online">Yuri</div>
+					This is another
+				</li></ul>another
+			</li>
+		</ul>
 		<div id="footer">
 		<div class="footerinner">
 			<div class="tags">
@@ -102,7 +204,7 @@
 		</div>
 	</div>
 
-	<div class='tooltip'>
+	<div class='tooltip invisible'>
 		<div class='contents'>Blah b</div>
 		<div class="target"></div>
 	</div>
@@ -115,22 +217,35 @@
 	<script type="text/javascript" src="jslib/jquery.mousewheel.js"></script>
 	<script type="text/javascript" src="jslib/scroll.js"></script>
 	<script type="text/javascript">
+		// bindScrollbar($('.scrollbar'),objecttobindto)
+
 		function checkSelect() {
-			if ($('#mainlist li.selected .contact').length >0){
-				$("#nav .toolbar .contactselect").removeClass("invisible")
-				$("#nav .toolbar .select").addClass("invisible")				
-				$("#nav .toolbar .nonselect").addClass("invisible")				
-			} else if ($('#mainlist li.selected').length >0){
-				$("#nav .toolbar .contactselect").addClass("invisible")				
+			if ($('#mainlist li.editing').length >0){
+				$("#nav .toolbar .edit").removeClass("invisible")
+				$("#nav .toolbar .select").addClass("invisible")
+				$("#nav .toolbar .multiselect").addClass("invisible")
+				$("#nav .toolbar .nonselect").addClass("invisible")
+			} else if ($('#mainlist li.selected').length==1){
+				$("#nav .toolbar .edit").addClass("invisible")
 				$("#nav .toolbar .select").removeClass("invisible")
+				$("#nav .toolbar .multiselect").addClass("invisible")
+				$("#nav .toolbar .nonselect").addClass("invisible")
+			} else if ($('#mainlist li.selected').length>1){
+				$("#nav .toolbar .edit").addClass("invisible")
+				$("#nav .toolbar .select").addClass("invisible")
+				$("#nav .toolbar .multiselect").removeClass("invisible")
 				$("#nav .toolbar .nonselect").addClass("invisible")
 			} else {
-				$("#nav .toolbar .contactselect").addClass("invisible")				
+				$("#nav .toolbar .edit").addClass("invisible")
 				$("#nav .toolbar .select").addClass("invisible")
+				$("#nav .toolbar .multiselect").addClass("invisible")
 				$("#nav .toolbar .nonselect").removeClass("invisible")
 			}
 			adj_toolbar();
 		}
+
+		livehover('#mainlist li');
+		$('#mainlist li').live('click', function () {$(this).toggleClass('selected'); checkSelect()});
 
 		function openOptions() {
 			if ($('.toolbar .gotoOptions').hasClass('active')) {
@@ -146,6 +261,7 @@
 			}
 		}
 
+		// Switch between tags and jumps when the label is clicked
 		$('#footer .label').click(function () {
 			if ($('#footer .tags').hasClass('invisible')) {
 				$('#footer .tags').removeClass('invisible');
@@ -155,43 +271,6 @@
 				$('#footer .jumps').removeClass('invisible');
 			}
 		});
-
-		// switch toolbar depending on selection state
-		function initListSelectability() {
-			$('#mainlist li').mousedown(function(){
-				$(this).toggleClass('selected');
-				sendObject({"type":"waveSelected",
-					"value":$(this).hasClass('selected')});
-				checkSelect();
-			});
-		}
-
-		initListSelectability()
-
-		function reloadList(newlist) {
-			results = newlist;
-			querytext = results['query'];
-			searchbox.val(querytext);
-			$('.toolbar .active').removeClass('active');
-			switch(querytext) {
-				case "in:inbox":
-					$('.toolbar .gotoInbox').addClass('active');
-					break;
-				case "in:all":
-					$('.toolbar .gotoArchive').addClass('active');
-					break;
-				case "::contacts":
-					$('.toolbar .gotoContacts').addClass('active');
-					break;
-			}
-			digests = results['digests'];
-			$('#mainlist li').remove();
-			for (i in digests) {
-				digest = digests[i];
-				$(renderDigest(digest)).appendTo('#mainlist');
-				}
-			initListSelectability()
-		}
 
 		shortmonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 		function renderTime(ms) {
@@ -204,60 +283,6 @@
 				// less than a day, show time
 				return ""+d.getHours()+":"+d.getMinutes();
 			}
-		}
-
-		function renderDigest(digest) {
-			item = "<li><div class='name'>"+digest['title']+"</div>";
-			participantlist = digest['participants']
-			item+= "<table class='details'><tr><td><table><tr><td class='participants'><div>"
-			for (i in participantlist) {
-				part = participantlist[i];
-				item += "<img class='online' alt='"+part['nick']+"' src='"+part['avatar']+"'/>"
-			}
-			item+="</div></td>";
-			// don't include a TD for tags at this point
-			item+="</tr></table></td>";
-			item+="<td class='date'>"+renderTime(digest['date']);
-			if (digest['unread'] == 0) {
-				item+='<div class="msgs">'+digest['total']+" msgs</div></td></tr></table></li>";
-			} else {
-				item+='<div class="msgs"><div class="unread">'+digest['unread']+"</div> of "+digest['total']+"</div></td></tr></table></li>";
-			}
-			// alert(item)
-			return item;
-		}
-
-		function contactsList(contacts) {
-			//alert(JSON.stringify(contacts));
-			$('.toolbar li').removeClass('active');
-			$('.toolbar .gotoContacts').addClass('active');
-			$('#mainlist li').remove();
-			for (i in contacts) {				
-				$('<li></li>').append(renderContact(contacts[i])).appendTo('#mainlist');
-			}
-			initListSelectability()
-		}
-
-		function query() {
-			sendObject({
-				'type':'query',
-				'value':searchbox.val()
-			});
-		}
-
-		$('#nav .search .right').click(function () {
-			query();
-		});
-
-		searchbox.keypress(function(event) {
-			if (event.keyCode=='13') query();
-		});
-
-		query();
-
-		function query_nav(str) {
-			searchbox.val(str);
-			query();
 		}
 
 		function activateToolbars(menuonly){
