@@ -80,7 +80,7 @@ class WaveList(webgui.browserWindow):
 			contacts = [{'name':c.name or c.nick,'address':c.addr,'avatar':c.pict} for c in self.registry.Network.getContacts()]
 			self.send("contactsList(%s)" % json.dumps(contacts))
 			return
-		print results.page, "/", results.maxpage
+		print results.page, "/", results.maxpage, "\t",results.num_results
 		jres = {'query':self.escape(query),'digests':[],'page':results.page,'maxpage':results.maxpage}
 		for digest in results.digests:
 			plist = digest.participants.serialize()
