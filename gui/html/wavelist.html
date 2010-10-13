@@ -163,7 +163,7 @@
 				<ul class="contactselect invisible">
 					<li class="arrow"><div>New Wave</div></li>
 					<li class="inbox"><div>Shared Waves</div></li>
-					<li class="search"><div>Search</div></li>
+					<li class="search gotocontactsearch"><div>Search</div></li>
 					<li class="more">...</li>
 				</ul>
 			</div>
@@ -279,13 +279,13 @@
 			return $('<li>'+name+'</li>').click(callback);
 		}
 
-		function SubMenu(name, contents, rootlevel, menuitem, exitcallback) {
+		function SubMenu(name, contents, menuitem, exitcallback) {
 			$(menuitem).addClass('submenu');
-			openMenu('<h2>'+name+'</h2>'+contents,rootlevel+1, exitcallback)
+			openMenu('<h2>'+name+'</h2>'+contents,menuLevel+1, exitcallback)
 		}
 
 		function OptionsSubmenu(name, contents, exitfunc) {
-			SubMenu(name,contents,-1,$('.toolbar .gotoOptions'),exitfunc)
+			SubMenu(name,contents,$('.toolbar .gotoOptions'),exitfunc)
 		}
 
 		// switch toolbar depending on selection state
