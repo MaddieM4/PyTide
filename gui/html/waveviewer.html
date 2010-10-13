@@ -14,28 +14,40 @@
 				background-color: #F6FFF6;
 			}
 
-			#mainlist {padding-left:5px;}
+			#mainlist {
+				margin:0px;
+				padding:5px 23px 0px 10px;
+				position:absolute;
+				top:81px;
+				left:0px;
+				right:0px;
+				bottom:37px;
+				overflow:hidden;
+			}
 
 			#mainlist li {
 				list-style-type:none;
 				border: 3px solid #AAA;
-				margin: 5px 23px 5px 50px;
+				margin: 5px 5px 5px 50px;
 				padding: 5px 5px 8px 5px;
 				border-radius:8px;
 				background-color: #FFF;
 				position:relative;
 			}
-
 			#mainlist li.over {border-color:#88F;}
-			#mainlist li.down {border-color:#33F;}
-			#mainlist li.selected {border-color:#789E35;}
-			#mainlist li.selected.over {border-color:#98BE55;}
-			#mainlist li.selected.down {border-color:#587E15;}
+			#mainlist li.down {border-color:#22F;}
+			#mainlist li.unread {border-color:#789E35;}
+			#mainlist li.unread.over {border-color:#98BE55;}
+			#mainlist li.unread.down {border-color:#587E15;}
+			#mainlist li.selected {border-color:#44F;}
+			#mainlist li.selected.over {border-color:#66F;}
+			#mainlist li.selected.down {border-color:#22F;}
 
 			#mainlist .creator_name {
+				border-radius:3px;
 				display:inline;
 				font-weight:bold;
-				padding-right:14px;
+				padding:0px 14px 1px 2px;
 				margin-right: 4px;
 				background-repeat: no-repeat;
 				background-position:right 50%;
@@ -61,11 +73,17 @@
 				border: 1px solid #AAA;
 			}
 
-			#mainlist li.unread img.creator_avatar {
+			#mainlist li.unread > img.creator_avatar {
 				border-width:2px;
 				top:-4px;
 				left:-49px;
 				border-color:#688E25;
+			}
+			#mainlist li.selected > img.creator_avatar {
+				border-width:2px;
+				top:-4px;
+				left:-49px;
+				border-color:#44F;
 			}
 
 			#footer .find  {
@@ -107,22 +125,22 @@
 					<li class="arrow"><div>Next</div></li>
 					<li class="pencil"><div>Edit</div></li>
 					<li class="eye-open"><div>Mark as Unread</div></li>
-					<li class="storage"><div>Shove</div></li>
-					<li class="folder"><div>Folderize</div></li>
+					<li class="trash"><div>Delete</div></li>
+					<li class="arrow"><div>Export to New Wave</div></li>
 					<li class="more">...</li>
 				</ul>
 				<ul class="invisible multiselect">
 					<li class="arrow"><div>Next</div></li>
 					<li class="eye-open"><div>Mark as Unread</div></li>
-					<li class="storage"><div>Shove</div></li>
-					<li class="folder"><div>Folderize</div></li>
+					<li class="trash"><div>Delete</div></li>
+					<li class="arrow"><div>Export to New Wave</div></li>
 					<li class="more">...</li>
 				</ul>
 				<ul class="nonselect">
 					<li class="arrow"><div>Next</div></li>
 					<li class="inbox gotoInbox"><div>Inbox</div></li>
 					<li class="storage gotoArchive"><div>Archive</div></li>
-					<li class="eye-open"><div>Unfollow</div></li>
+					<li class="trash"><div>Trash</div></li>
 					<li class="arrow"><div>Jump</div></li>
 					<li class="eye-open"><div>Document Mode</div></li>
 					<li class="more">...</li>
@@ -146,7 +164,20 @@
 			    <div class="creator_name">Philip Horger</div>
 				This is a blip
 			</li>
-			<li><div class="creator_name online">Yuri</div>This is another</li>
+			<ul>
+				<li><img class="creator_avatar" src="https://lh6.googleusercontent.com/_tsWs83xehHE/TFgD2QbwzYI/AAAAAAAAFbg/O-Z1aVTdEvs/s104-c/me_cy_very_small.jpg"/>
+				    <div class="creator_name online">Yuri</div>
+					This is another
+				</li>
+			</ul>
+			<li><img class="creator_avatar" src="https://lh6.googleusercontent.com/_tsWs83xehHE/TFgD2QbwzYI/AAAAAAAAFbg/O-Z1aVTdEvs/s104-c/me_cy_very_small.jpg"/>
+			    <div class="creator_name online">Yuri</div>
+				This is <ul>
+				<li><img class="creator_avatar" src="https://lh6.googleusercontent.com/_tsWs83xehHE/TFgD2QbwzYI/AAAAAAAAFbg/O-Z1aVTdEvs/s104-c/me_cy_very_small.jpg"/>
+				    <div class="creator_name online">Yuri</div>
+					This is another
+				</li></ul>another
+			</li>
 		</ul>
 		<div id="footer">
 		<div class="footerinner">
