@@ -79,6 +79,7 @@ class Registry:
 		'''Create a new wavelist. This also sends a message
 		to all other objects proclaiming the birth, so to
 		speak. This message does not get an ignore capability.'''
+		self.setIcon("active")
 		id = self.newId()
 		self.MasterList[id] = wavelist.WaveList(self)
 		self.WaveLists.append(id)
@@ -87,6 +88,7 @@ class Registry:
 		self.msgAll(msg)
 
 	def newWaveViewer(self):
+		self.setIcon("active")
 		id = self.newId()
 		self.MasterList[id] = waveviewer.WaveViewer(self)
 		self.WaveViewers.append(id)
@@ -118,6 +120,7 @@ class Registry:
 
 				# remove from master list without deleting actual object
 				self.MasterList.pop(i)
+				if len(self.MasterList)==0: self.setIcon("inactive")
 				return True
 		return False
 
@@ -155,6 +158,9 @@ class Registry:
 			return True
 		elif statestr == "inactive":
 			self.icon.setIconState(iconstates.ICON_INACTIVE)
+			return True
+		elif statestr == "unread":
+			self.icon.setIconState(iconstates.ICON_UNREAD)
 			return True
 		else:
 			return False

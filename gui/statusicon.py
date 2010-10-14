@@ -23,7 +23,7 @@ import iconstates
 class StatusIcon(gtk.StatusIcon):
 	def __init__(self, registry):
 		gtk.StatusIcon.__init__(self)
-		self.setIconState(iconstates.ICON_ERROR)
+		self.setIconState(iconstates.ICON_INACTIVE)
 		self.registry = registry
 		self.registry.icon = self
 		self.connect('popup-menu', self.on_right_click)

@@ -32,35 +32,35 @@
     <linearGradient
        id="linearGradient3763">
       <stop
-         style="stop-color:#049000;stop-opacity:1;"
+         style="stop-color:#007b90;stop-opacity:1;"
          offset="0"
          id="stop3765" />
       <stop
          id="stop3771"
          offset="0.23335554"
-         style="stop-color:#049000;stop-opacity:1;" />
+         style="stop-color:#007b90;stop-opacity:1;" />
       <stop
-         style="stop-color:#22ca00;stop-opacity:1;"
+         style="stop-color:#ffff00;stop-opacity:1;"
          offset="0.23335554"
          id="stop3773" />
       <stop
          id="stop3856"
          offset="0.53040874"
-         style="stop-color:#29f500;stop-opacity:1;" />
+         style="stop-color:#ffff00;stop-opacity:1;" />
       <stop
-         style="stop-color:#049000;stop-opacity:1;"
+         style="stop-color:#007b90;stop-opacity:1;"
          offset="0.53040874"
          id="stop3860" />
       <stop
          id="stop3862"
          offset="0.76153976"
-         style="stop-color:#049000;stop-opacity:1;" />
+         style="stop-color:#007b90;stop-opacity:1;" />
       <stop
-         style="stop-color:#22ca00;stop-opacity:1;"
+         style="stop-color:#ffff00;stop-opacity:1;"
          offset="0.76153976"
          id="stop3858" />
       <stop
-         style="stop-color:#46ff21;stop-opacity:1;"
+         style="stop-color:#ffff00;stop-opacity:1;"
          offset="1"
          id="stop3767" />
     </linearGradient>
@@ -237,6 +237,18 @@
          id="stop3767-5" />
     </linearGradient>
     <filter
+       inkscape:collect="always"
+       id="filter4202"
+       x="-0.096912808"
+       width="1.1938256"
+       y="-0.89298234"
+       height="2.7859647">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="1.8942049"
+         id="feGaussianBlur4204" />
+    </filter>
+    <filter
        color-interpolation-filters="sRGB"
        inkscape:collect="always"
        id="filter4364">
@@ -267,7 +279,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5.5"
-     inkscape:cx="22.753455"
+     inkscape:cx="25.818182"
      inkscape:cy="31.0004"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -286,7 +298,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
