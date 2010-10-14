@@ -61,7 +61,6 @@ class Network(threads.LoopingThread):
 				self.connection = gwave.GoogleWaveConnection(username, password, self)
 				self.status("Connected")
 				self.loginWindow.hide()
-				self.registry.setIcon("inactive")
 				self.registry.newWaveList()
 				self.saveLogin(username, password)
 				return True
