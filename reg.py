@@ -15,7 +15,7 @@
 #           specific language governing permissions and limitations
 #           under the License. 
 
-from gui import wavelist, waveviewer, browserwindow, loginwindow
+from gui import wavelist, waveviewer, browserwindow, loginwindow, iconstates
 from NetworkTools import network
 from persistance.config import Config
 
@@ -39,6 +39,7 @@ class Registry:
 		self.WaveViewers = []
 		self.BlipWindows = []
 		self.MasterList = {}
+		self.icon = None
 		self.idPos = 0
 		self.config = {}
 		self.config['wavelist'] = Config(namespace="wavelist", onload=self.pushglobalconf_WaveList)
@@ -143,3 +144,17 @@ class Registry:
 		for i in conf:
 			print "\t",i
 			self.msgWaveLists({'type':'setOption','name':i,'value':conf[i]})
+
+	def setIcon(self,statestr):
+		if (self.icon == None): return False
+		if statestr == "error":
+			self.icon.setIconState(iconstates.ICON_ERROR)
+			return True
+		elif statestr == "active":
+			self.icon.setIconState(iconstates.ICON_ACTIVE)
+			return True
+		elif statestr == "inactive":
+			self.icon.setIconState(iconstates.ICON_INACTIVE)
+			return True
+		else:
+			return False

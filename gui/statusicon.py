@@ -18,11 +18,14 @@
 import gtk
 import time
 
+import iconstates
+
 class StatusIcon(gtk.StatusIcon):
 	def __init__(self, registry):
 		gtk.StatusIcon.__init__(self)
-		self.set_from_file("gui/html/img/logo/bw.svg")
+		self.setIconState(iconstates.ICON_ERROR)
 		self.registry = registry
+		self.registry.icon = self
 		self.connect('popup-menu', self.on_right_click)
 		self.connect('activate', self.on_left_click)
 		gtk.main()
@@ -82,6 +85,9 @@ class StatusIcon(gtk.StatusIcon):
 
 	def newWaveViewer(self, data=None):
 		self.registry.newWaveViewer()
+
+	def setIconState(self, iconpath):
+		self.set_from_file(iconpath)
 
 	def blank(self, data=None):
 		pass
