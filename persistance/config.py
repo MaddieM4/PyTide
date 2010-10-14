@@ -66,10 +66,10 @@ class Config:
 		self.lock = threading.Lock()
 		self.autosave = None
 		self.autosave_time = -1
-		if namespace != None:
-			self.load(namespace=namespace, action=onload)
 		self.data={}
 		self.set(data)
+		if namespace != None:
+			self.load(namespace=namespace, action=onload)
 
 	def set(self, data):
 		'''Set a value in storage. Does not save anything; for that, call save().'''
