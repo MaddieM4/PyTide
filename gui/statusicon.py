@@ -21,7 +21,7 @@ import time
 class StatusIcon(gtk.StatusIcon):
 	def __init__(self, registry):
 		gtk.StatusIcon.__init__(self)
-		self.set_from_file("gui/html/img/something.jpg")
+		self.set_from_file("gui/html/img/logo/bw.svg")
 		self.registry = registry
 		self.connect('popup-menu', self.on_right_click)
 		self.connect('activate', self.on_left_click)
