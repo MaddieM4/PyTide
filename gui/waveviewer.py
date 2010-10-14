@@ -28,6 +28,7 @@ class WaveViewer(webgui.browserWindow):
 			size=(700,800),
 			minsize=(300,300),
 			echo=False)
+		self.setTitle("WaveViewer (demo)")
 
 	def process(self, data):
 		if data != None:

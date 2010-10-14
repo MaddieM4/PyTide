@@ -107,8 +107,11 @@ class Registry:
 	def getWaveLists(self):
 		return [self.fromID(id) for id in self.WaveLists]
 
+	def getWaveViewers(self):
+		return [self.fromID(id) for id in self.WaveViewers]
+
 	def getAllWindows(self):
-		return self.getWaveLists()
+		return self.getWaveLists()+self.getWaveViewers()
 
 	def unregister(self, obj):
 		for i in self.MasterList:
