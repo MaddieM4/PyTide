@@ -143,3 +143,14 @@ li.longend .page_prev.down, li.longend .page_next.down {
 }
 li.longend .page_new.over {background-position:100px 0px;}
 li.longend .page_new.down {background-position:50px 0px;}
+
+input.find {
+	height:25px;
+	width:180px;
+	padding-left:3px;
+	float: left;
+}
+
+input.find.inactive {
+	color: #888;
+}

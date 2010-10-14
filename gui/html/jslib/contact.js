@@ -9,6 +9,7 @@ function renderContact(contact) {
 	result += "<div class='buttonseries'></div>"
 	result += "</div>";
 	jqobj = $(result);
+	jqobj.data(contact);
 	buttonseries = jqobj.children('.buttonseries')
 	renderButton('Hit this person with a stick',function (){
 		alert("Ow! What the %#*$?!! WHY DID YOU DO THAT???!");

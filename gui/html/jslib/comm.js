@@ -28,3 +28,9 @@ function livehover(jq) {
 		$(this).removeClass('down')
 	});
 }
+
+function newlinecallback(object, callback) {
+	$(object).keypress(function (event) {
+		if (event.keyCode == 13) callback();
+	});
+}

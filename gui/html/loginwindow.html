@@ -57,12 +57,8 @@
 		<div id="status"></div>
 		<input type="button" value="Log in" id="submit" onclick="send()"/>
 		<script type="text/javascript">
-			function checkenter(event) {
-				if (event.keyCode=='13') send();
-			}
-
-			$('#username').focus().keypress(checkenter)
-			$('#password').keypress(checkenter)
+			newlinecallback($('#username').focus(),send)
+			newlinecallback($('#password'),send)
 			sendObject({'type':'ready'})
 		</script>
 	</body>

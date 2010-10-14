@@ -97,9 +97,13 @@
 			}
 			#mainlist li.open .date, #mainlist li.open .date .msgs {color:white;}
 
+			#mainlist li.status {
+				text-align:center;
+			}
+
 			ul.dots {
 				padding:0px;
-				padding-top:5px;
+				padding-top:10px;
 				font-size:9px;
 				line-height:0px;
 			}
@@ -163,7 +167,7 @@
 				<ul class="contactselect invisible">
 					<li class="arrow"><div>New Wave</div></li>
 					<li class="inbox"><div>Shared Waves</div></li>
-					<li class="search gotocontactsearch"><div>Search</div></li>
+					<li class="search gotoContactSearch"><div>Search</div></li>
 					<li class="more">...</li>
 				</ul>
 			</div>
@@ -288,8 +292,46 @@
 			SubMenu(name,contents,$('.toolbar .gotoOptions'),exitfunc)
 		}
 
+		function openContactSearch() {
+			selcon = $('#mainlist li.selected .contact');
+			addresses = [];
+			selcon.each(function(index, element){
+				addresses[addresses.length]=$(element).data().address;
+			});
+			basicquery = "";
+			for (i in addresses) {
+				basicquery+="with:"+addresses[i]+" ";
+			}
+			contents = $('<div><h2>Contact Search</h2><p></p></div>');
+			findbox = FindBox('Search terms');
+			cbfunc = function(){
+				query_nav(basicquery+findbox.val());
+				closeMenu();
+				$('.gotoContactSearch').removeClass('active');
+			}
+			newlinecallback(findbox, cbfunc);
+			contents.children('p').append(findbox);
+			contents.children('p').append($(renderButton('search',cbfunc)));
+			console.log(contents.children('p').length)
+			openMenu(contents, 3, function(){
+					closeMenu();
+					$('.gotoContactSearch').removeClass('active');
+				});
+		}
+
+		function ContactSearch() {
+			gtcs = $('.gotoContactSearch');
+			if (gtcs.hasClass('active')) {
+				closeMenu();
+				gtcs.removeClass('active');
+			} else {
+				openContactSearch();
+				gtcs.addClass('active');
+			}
+		}
+
 		// switch toolbar depending on selection state
-		$('#mainlist > li:not(.longend)').live('mousedown',function(){
+		$('#mainlist > li:not(.longend .status)').live('mousedown',function(){
 			$(this).toggleClass('selected');
 			sendObject({"type":"waveSelected",
 				"value":$(this).hasClass('selected')});
@@ -425,10 +467,7 @@
 			query();
 		});
 
-		searchbox.keypress(function(event) {
-			if (event.keyCode=='13') query();
-		});
-
+		newlinecallback(searchbox,query);
 		sendObject({'type':'getOptions'});
 
 		query();
@@ -444,6 +483,7 @@
 			$(prefix+'li.gotoArchive').click(function () {query_nav("in:all")});
 			$(prefix+'li.gotoContacts').click(function () {query_nav("::contacts")});
 			$(prefix+'li.gotoOptions').click(function () {openOptions()});
+			$(prefix+'li.gotoContactSearch').click(function () {ContactSearch()});
 			$('.menu .tools li').click(function (){$('.toolbar .more').removeClass('active');});
 		}
 
