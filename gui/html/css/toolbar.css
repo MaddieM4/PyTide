@@ -58,7 +58,6 @@
 .toolbar .icononly div, .toolbar.nolabels div {
 	color: rgba(0,0,0,0);
 	letter-spacing:-22px;
-	background-position:0px 0px;
 }
 
 .toolbar .noicon div, .toolbar.noicons div {
