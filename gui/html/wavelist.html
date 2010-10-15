@@ -330,7 +330,7 @@
 		}
 
 		// switch toolbar depending on selection state
-		$('#mainlist > li:not(.longend .status)').live('mousedown',function(){
+		$('#mainlist > li:not(.longend):not(.status)').live('mousedown',function(){
 			$(this).toggleClass('selected');
 			sendObject({"type":"waveSelected",
 				"value":$(this).hasClass('selected')});
