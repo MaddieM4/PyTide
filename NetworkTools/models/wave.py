@@ -241,20 +241,25 @@ class Wavelet(object):
         #!...
     @property
     def domain(self):
-        """returns the string form domain (same as Wavelet.id.domain)"""
+        """Return the string form domain (same as Wavelet.id.domain)"""
         return self._id.domain
     @property
     def id(self):
-        """returns the Wavelet.ID object associated with this wavelet"""
+        """Return the Wavelet.ID object associated with this wavelet"""
         return self._id
     @property
     def wave(self):
-        """returns the Wave object that this wavelet is linked to."""
+        """Return the Wave object that this wavelet is linked to."""
         return self._wave
+    @property
+    def root_blip(self):
+        """Return the Blib object assigned to the root position in the wave."""
+        return self._root_blip
     def is_participant(self, user):
         """Checks if user is a participant of the wavelet."""
         if user in self._participants:
             return True
         else:
             return False
+    
     # ------------------------ CODE INCOMPLETE ---------------------------------
