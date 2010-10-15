@@ -39,6 +39,8 @@ class WaveViewer(webgui.browserWindow):
 			return None
 
 	def regmsg_receive(self, data):
+		if data['type'] == 'kill':
+			self.close()
 		print "smokebomb",data
 
 	@staticmethod

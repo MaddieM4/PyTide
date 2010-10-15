@@ -54,6 +54,9 @@ class WaveList(webgui.browserWindow):
 			if data['type'] == 'setOption':
 				self.options[data['name']] = data['value']
 				self.send("pushOption('%s','%s')" % (data['name'],data['value']))
+			elif data['type'] == 'kill':
+				self.close()
+				
 		print "Reg >> Wavelist: ",data
 
 	@staticmethod

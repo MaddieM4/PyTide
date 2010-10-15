@@ -70,10 +70,17 @@ class Registry:
 			if wl != ignore:
 				wl.regmsg_receive(msg)
 
+	def msgWaveViewers(self, msg, ignore=None):
+		for wlid in self.WaveViewers:
+			wl = self.MasterList[wlid]
+			if wl != ignore:
+				wl.regmsg_receive(msg)
+
 	def msgAll(self, msg, ignore=None):
 		'''Call all the individual msgSomething functions with
 		the given arguments.'''
 		self.msgWaveLists(msg,ignore)
+		self.msgWaveViewers(msg,ignore)
 
 	def newWaveList(self):
 		'''Create a new wavelist. This also sends a message
@@ -112,6 +119,9 @@ class Registry:
 
 	def getAllWindows(self):
 		return self.getWaveLists()+self.getWaveViewers()
+
+	def killAllWindows(self):
+		self.msgAll({'type':'kill'})
 
 	def unregister(self, obj):
 		for i in self.MasterList:

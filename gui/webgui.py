@@ -168,3 +168,7 @@ class browserWindow:
 		print "unregistering self"
 		self.registry.unregister(self)
 		return False
+
+	def close(self):
+		self.destroy(self.window, None)
+		self.window.destroy()

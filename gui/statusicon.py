@@ -64,7 +64,9 @@ class StatusIcon(gtk.StatusIcon):
 			login = self.registry.Network.loginWindow
 			openlist.append((login.getTitle(),self.focusWin,login))
 
-		self.popupMenu(event_button, event_time, openlist+optionlist+[('Quit',self.quit, None)] )
+		self.popupMenu(event_button, event_time, openlist+optionlist+[(),
+			('Deflate',self.deflate, None),
+			('Quit',self.quit, None)] )
 
 	def on_left_click(self,icon):
 		if self.registry.Network.is_connected():
@@ -79,6 +81,9 @@ class StatusIcon(gtk.StatusIcon):
 
 	def quit(self, data=None):
 		gtk.main_quit()
+
+	def deflate(self, data=None):
+		self.registry.killAllWindows()
 
 	def newWaveList(self, data=None):
 		self.registry.newWaveList()
