@@ -58,13 +58,14 @@ class StatusIcon(gtk.StatusIcon):
 			openlist.append(())
 		if self.registry.Network.is_connected():
 			optionlist += [
-				('New Inbox window',self.newWaveList,None)]
+				('New Inbox window',self.newWaveList,None),
+				(),
+				('Deflate',self.deflate, None)]
 		else:
 			login = self.registry.Network.loginWindow
-			openlist.append((login.getTitle(),self.focusWin,login))
+			openlist += [(login.getTitle(),self.focusWin,login),()]
 
-		self.popupMenu(event_button, event_time, openlist+optionlist+[(),
-			('Deflate',self.deflate, None),
+		self.popupMenu(event_button, event_time, openlist+optionlist+[
 			('Quit',self.quit, None)] )
 
 	def on_left_click(self,icon):
