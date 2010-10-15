@@ -58,8 +58,7 @@ class StatusIcon(gtk.StatusIcon):
 			openlist.append(())
 		if self.registry.Network.is_connected():
 			optionlist += [
-				('New WaveList window',self.newWaveList,None),
-				('New WaveViewer window',self.newWaveViewer,None)]
+				('New Inbox window',self.newWaveList,None)]
 		else:
 			login = self.registry.Network.loginWindow
 			openlist.append((login.getTitle(),self.focusWin,login))
@@ -70,7 +69,8 @@ class StatusIcon(gtk.StatusIcon):
 
 	def on_left_click(self,icon):
 		if self.registry.Network.is_connected():
-			popuplist = [('No updates',self.blank,None)]
+			popuplist = [('This is a blip (1)',self.newWaveViewer,None)]
+#[('No updates',self.blank,None)]
 		else:
 			popuplist = [("You're not logged in.",self.blank,None)]
 		self.popupMenu(1, gtk.get_current_event_time(),popuplist)
