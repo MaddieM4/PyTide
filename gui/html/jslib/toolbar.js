@@ -70,3 +70,21 @@ function adj_toolbar(){
 $(window).resize(adj_toolbar);
 adj_toolbar()
 
+$('.toolbar .more').live('click',function() {
+	if ($(this).hasClass("active")) {
+		closeMenu();
+		$(this).removeClass("active");
+		adj_toolbar();
+	} else {
+		openMenu("<ul class='tools'>"+pullTools()+"</ul>",3, function (){
+			$('.toolbar .more').removeClass('active');
+			closeMenu();
+		});
+		activateToolbars(true);
+		$(this).addClass("active");
+		$('.toolbar .gotoOptions').removeClass("active");
+	}
+});
+
+// toolbar hover
+livehover('.toolbar li');

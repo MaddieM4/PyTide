@@ -9,7 +9,11 @@ div.contact img {
 	width:64px;
 	float:left;
 	margin-right: 10px;
-	padding-top:4px;
+	margin-top:4px;
+	-moz-border-radius:4px;
+	border-radius:4px;
+	/* -moz-box-shadow: rgba(0,0,0,.5) 2px 2px 6px;
+	-webkit-box-shadow: rgba(0,0,0,.5) 2px 2px 6px;*/
 }
 
 div.contact .name {
@@ -20,6 +24,7 @@ div.contact .name {
 div.contact .name span {
 	font-weight:normal;
 	font-style:italic;
+	float:right;
 }
 
 div.contact .buttonseries {
@@ -34,4 +39,5 @@ div.contact .buttonseries {
 
 div.contact .buttonseries .textbutton {
 	float:right;
+	padding-right:7px;
 }

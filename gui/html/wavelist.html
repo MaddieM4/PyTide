@@ -17,10 +17,10 @@
 				left:0px;
 				right:0px;
 				bottom:37px;
-				overflow:auto;
+				overflow:hidden;
 			}
 
-			#mainlist li {
+			#mainlist > li:not(.longend) {
 				border: 1px solid #EEE;
 				padding:2px 20px 5px 6px;
 				-webkit-user-drag: element;
@@ -97,6 +97,29 @@
 			}
 			#mainlist li.open .date, #mainlist li.open .date .msgs {color:white;}
 
+			#mainlist li.status {
+				text-align:center;
+			}
+
+			ul.dots {
+				padding:0px;
+				padding-top:10px;
+				font-size:9px;
+				line-height:0px;
+			}
+
+			ul.dots li {
+				display:inline;
+				padding:0px 0px 0px 10px;
+				margin: 0px;
+				font-size:9px;
+				line-height:0px;
+				background: url(../html/img/dots_small.png) 0px 0px;
+			}
+			ul.dots li.over {background-position:0px 10px;}
+			ul.dots li.down {background-position:10px 10px;}
+			ul.dots li.active {background-position:10px 0px;}
+
 			.optionslist {
 				list-style-type:square;
 				cursor: pointer;
@@ -128,9 +151,8 @@
 			<div class="toolbar noselect">
 				<ul class="invisible select">
 					<li class="eye-open"><div>Read</div></li>
-					<li class="eye-open"><div>Mark as Read</div></li>
-					<li class="eye-open"><div>Unfollow</div></li>
-					<li class="storage"><div>Shove</div></li>
+					<li class="pencil"><div>Mark Read</div></li>
+					<li class="trash"><div>Shove</div></li>
 					<li class="folder"><div>Folderize</div></li>
 					<li class="more">...</li>
 				</ul>
@@ -143,9 +165,9 @@
 					<li class="more">...</li>
 				</ul>
 				<ul class="contactselect invisible">
-					<li class="inbox"><div>New Wave</div></li>
+					<li class="arrow"><div>New Wave</div></li>
 					<li class="inbox"><div>Shared Waves</div></li>
-					<li class="inbox"><div>Search</div></li>
+					<li class="search gotoContactSearch"><div>Search</div></li>
 					<li class="more">...</li>
 				</ul>
 			</div>
@@ -166,15 +188,19 @@
 			</table>
 			</div>
 		</div>
-		</div>
+	</div>
+	<div class="scrollregion"><div class="scrollbar"></div><div class="clickable"></div></div>
 
 	<script type="text/javascript" src="jslib/searchinput.js"></script>
 	<script type="text/javascript" src="jslib/toolbar.js"></script>
 	<script type="text/javascript" src="jslib/button.js"></script>
 	<script type="text/javascript" src="jslib/contact.js"></script>
 	<script type="text/javascript" src="jslib/menu.js"></script>
+	<script type="text/javascript" src="jslib/scroll.js"></script>
 	<script type="text/javascript">
 		options = {}
+
+		bindScrollbar($('.scrollbar'),$('#mainlist'))
 
 		function checkSelect() {
 			if ($('#mainlist li.selected .contact').length >0){
@@ -257,73 +283,59 @@
 			return $('<li>'+name+'</li>').click(callback);
 		}
 
-		function SubMenu(name, contents, rootlevel, menuitem, exitcallback) {
+		function SubMenu(name, contents, menuitem, exitcallback) {
 			$(menuitem).addClass('submenu');
-			openMenu('<h2>'+name+'</h2>'+contents,rootlevel+1, exitcallback)
+			openMenu('<h2>'+name+'</h2>'+contents,menuLevel+1, exitcallback)
 		}
 
 		function OptionsSubmenu(name, contents, exitfunc) {
-			SubMenu(name,contents,-1,$('.toolbar .gotoOptions'),exitfunc)
+			SubMenu(name,contents,$('.toolbar .gotoOptions'),exitfunc)
 		}
 
-		$('.toolbar .more').click(function() {
-			if ($(this).hasClass("active")) {
-				closeMenu();
-				$(this).removeClass("active");
-				adj_toolbar();
-			} else {
-				openMenu("<ul class='tools'>"+pullTools()+"</ul>",3, function (){
-					$('.toolbar .more').removeClass('active');
-					closeMenu();
-				});
-				activateToolbars(true);
-				$(this).addClass("active");
-				$('.toolbar .gotoOptions').removeClass("active");
+		function openContactSearch() {
+			selcon = $('#mainlist li.selected .contact');
+			addresses = [];
+			selcon.each(function(index, element){
+				addresses[addresses.length]=$(element).data().address;
+			});
+			basicquery = "";
+			for (i in addresses) {
+				basicquery+="with:"+addresses[i]+" ";
 			}
-		});
+			contents = $('<div><h2>Contact Search</h2><p></p></div>');
+			findbox = FindBox('Search terms');
+			cbfunc = function(){
+				query_nav(basicquery+findbox.val());
+				closeMenu();
+				$('.gotoContactSearch').removeClass('active');
+			}
+			newlinecallback(findbox, cbfunc);
+			contents.children('p').append(findbox);
+			contents.children('p').append($(renderButton('search',cbfunc)));
+			openMenu(contents, 3, function(){
+					closeMenu();
+					$('.gotoContactSearch').removeClass('active');
+				});
+		}
 
-		buttons = $('.textbutton');
-		toolbarbuttons = $('.toolbar li');
-
-		// Button graphics handling for all textbuttons
-		buttons.mousedown(function(){
-			$(this).addClass("depressed")
-		});
-		buttons.mouseup(function(){
-			$(this).removeClass("depressed")
-		});
-		buttons.mouseleave(function(){
-			$(this).removeClass("depressed")
-		});
-
-		// toolbar hover
-		toolbarbuttons.mouseenter(function () {
-			$(this).addClass("over");
-		});
-
-		toolbarbuttons.mousedown(function(){
-			$(this).addClass("down");
-		});
-
-		toolbarbuttons.mouseup(function() {
-			$(this).removeClass("down");
-		});
-
-		toolbarbuttons.mouseleave(function(){
-			$(this).removeClass("over").removeClass("down");
-		});
+		function ContactSearch() {
+			gtcs = $('.gotoContactSearch');
+			if (gtcs.hasClass('active')) {
+				closeMenu();
+				gtcs.removeClass('active');
+			} else {
+				openContactSearch();
+				gtcs.addClass('active');
+			}
+		}
 
 		// switch toolbar depending on selection state
-		function initListSelectability() {
-			$('#mainlist li').mousedown(function(){
-				$(this).toggleClass('selected');
-				sendObject({"type":"waveSelected",
-					"value":$(this).hasClass('selected')});
-				checkSelect();
-			});
-		}
-
-		initListSelectability()
+		$('#mainlist > li:not(.longend):not(.status)').live('mousedown',function(){
+			$(this).toggleClass('selected');
+			sendObject({"type":"waveSelected",
+				"value":$(this).hasClass('selected')});
+			checkSelect();
+		});
 
 		function reloadList(newlist) {
 			results = newlist;
@@ -347,8 +359,47 @@
 				digest = digests[i];
 				$(renderDigest(digest)).appendTo('#mainlist');
 				}
-			initListSelectability()
+			appendLongEnd(
+				function(){},
+				(results['maxpage']>results['page'])?function(){query_nav(querytext, results['page']+1)}:null,
+				(results['page']>0)?function(){query_nav(querytext,results['page']-1)}:null,
+				results['page'],
+				results['maxpage']+1,
+				function (index,isactive) {
+					if (isactive) return function(){};
+					return function() {query_nav(querytext,index)}
+				});
+			reset_scroll($('#mainlist'));
 		}
+
+		function appendLongEnd(newfunc, forwardfunc, backfunc, dot, dotmax,dotfunction) {
+			tail = $('<li class="longend"></li>').click(function(){
+				$('#mainlist li').removeClass('selected');
+				checkSelect();
+			}).append($('<table><tr></tr></table>')).appendTo('#mainlist');
+			tail= tail.find('tr')
+			if (backfunc) tail.append($('<td class="page_prev">').click(backfunc));
+			if (newfunc) tail.append($('<td class="page_new">'));
+			if (forwardfunc) tail.append($('<td class="page_next">').click(forwardfunc));
+			if (dotmax==null) {dotmax = dot; dot = null} // use dot as dotmax when dotmax is null
+			if (dotmax!=null) {
+				// make dotmax dots
+				dots = $('<ul class="dots">').appendTo($('.longend'));
+				for (d=0;d<dotmax;d++){
+					thisdot = $('<li>').appendTo(dots);
+					if (dotfunction!=null) {
+						thisdot.click(dotfunction(d,(d==dot)))
+					}
+				}
+				if (dot!=null) {
+					// make dot-th dot green
+					$('ul.dots li:eq('+dot+')').addClass('active');
+				}
+			}
+		}
+
+		livehover('.page_next, .page_new, .page_prev');
+		livehover('ul.dots li')
 
 		shortmonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 		function renderTime(ms) {
@@ -384,7 +435,7 @@
 			return item;
 		}
 
-		function contactsList(contacts) {
+		function contactsList(contacts,page, maxpage) {
 			//alert(JSON.stringify(contacts));
 			$('.toolbar li').removeClass('active');
 			$('.toolbar .gotoContacts').addClass('active');
@@ -392,36 +443,37 @@
 			for (i in contacts) {				
 				$('<li></li>').append(renderContact(contacts[i])).appendTo('#mainlist');
 			}
-			initListSelectability()
+			appendLongEnd(function(){});
+			reset_scroll($('#mainlist'));
 		}
 
-		function query() {
+		function query(page) {
 			// prepare visually
 			$('#mainlist li').removeClass('selected').removeClass('open');
 			checkSelect();
 			// Future: turn magnifying glass red or green or something?
-			// send payload
-			sendObject({
+			// Build payload
+			payload = {
 				'type':'query',
 				'value':searchbox.val()
-			});
+			};
+			if (page!=null) payload['page']=page
+			// send payload
+			sendObject(payload);
 		}
 
 		$('#nav .search .right').click(function () {
 			query();
 		});
 
-		searchbox.keypress(function(event) {
-			if (event.keyCode=='13') query();
-		});
-
+		newlinecallback(searchbox,query);
 		sendObject({'type':'getOptions'});
 
 		query();
 
-		function query_nav(str) {
+		function query_nav(str,page) {
 			searchbox.val(str);
-			query();
+			query(page);
 		}
 
 		function activateToolbars(menuonly){
@@ -430,6 +482,7 @@
 			$(prefix+'li.gotoArchive').click(function () {query_nav("in:all")});
 			$(prefix+'li.gotoContacts').click(function () {query_nav("::contacts")});
 			$(prefix+'li.gotoOptions').click(function () {openOptions()});
+			$(prefix+'li.gotoContactSearch').click(function () {ContactSearch()});
 			$('.menu .tools li').click(function (){$('.toolbar .more').removeClass('active');});
 		}
 

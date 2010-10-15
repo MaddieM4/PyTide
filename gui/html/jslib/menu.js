@@ -45,7 +45,7 @@ function openMenu(html, level, exitcallback) {
 	if (exitcallback==null){
 		exitcallback = function () {closeMenu()}
 	}
-	menu.html(html).prepend($("<div class='menuexit'></div>"));;
+	menu.append($(html)).prepend($("<div class='menuexit'></div>"));;
 	$('.menuexit').mouseenter(function (){$(this).addClass("over")})
 	$('.menuexit').mousedown(function (){$(this).addClass("down")})
 	$('.menuexit').mouseup(function (){$(this).removeClass("down")})

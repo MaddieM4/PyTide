@@ -17,3 +17,20 @@ function printHTML() {
 	});
 }
 
+function livehover(jq) {
+	$(jq).live('mouseover', 
+		function() {$(this).addClass('over')}
+	).live('mouseout', function () {
+		$(this).removeClass('over down')
+	}).live('mousedown', function () {
+		$(this).addClass('down')
+	}).live('mouseup', function () {
+		$(this).removeClass('down')
+	});
+}
+
+function newlinecallback(object, callback) {
+	$(object).keypress(function (event) {
+		if (event.keyCode == 13) callback();
+	});
+}

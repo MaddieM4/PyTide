@@ -44,8 +44,14 @@ class GoogleWaveConnection(models.threads.Plugin):
 	def process(self):
 		pass
 
-	def query(self, query):
-		return self.service.search(query)
+	def query(self, query, startpage=0):
+		results=self.service.search(query, index=startpage*20,num_results=21)
+		results.page = startpage
+		if results.num_results < 21:
+			results.maxpage = startpage
+		else:
+			results.maxpage = startpage+1 # more pages exist, we will just assume one more
+		return results
 
 	def new_wavelet(self):
 		pass

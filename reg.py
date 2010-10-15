@@ -15,7 +15,7 @@
 #           specific language governing permissions and limitations
 #           under the License. 
 
-from gui import wavelist, waveviewer, browserwindow, loginwindow
+from gui import wavelist, waveviewer, browserwindow, loginwindow, iconstates
 from NetworkTools import network
 from persistance.config import Config
 
@@ -39,6 +39,7 @@ class Registry:
 		self.WaveViewers = []
 		self.BlipWindows = []
 		self.MasterList = {}
+		self.icon = None
 		self.idPos = 0
 		self.config = {}
 		self.config['wavelist'] = Config(namespace="wavelist", onload=self.pushglobalconf_WaveList)
@@ -69,15 +70,23 @@ class Registry:
 			if wl != ignore:
 				wl.regmsg_receive(msg)
 
+	def msgWaveViewers(self, msg, ignore=None):
+		for wlid in self.WaveViewers:
+			wl = self.MasterList[wlid]
+			if wl != ignore:
+				wl.regmsg_receive(msg)
+
 	def msgAll(self, msg, ignore=None):
 		'''Call all the individual msgSomething functions with
 		the given arguments.'''
 		self.msgWaveLists(msg,ignore)
+		self.msgWaveViewers(msg,ignore)
 
 	def newWaveList(self):
 		'''Create a new wavelist. This also sends a message
 		to all other objects proclaiming the birth, so to
 		speak. This message does not get an ignore capability.'''
+		self.setIcon("active")
 		id = self.newId()
 		self.MasterList[id] = wavelist.WaveList(self)
 		self.WaveLists.append(id)
@@ -86,6 +95,7 @@ class Registry:
 		self.msgAll(msg)
 
 	def newWaveViewer(self):
+		self.setIcon("active")
 		id = self.newId()
 		self.MasterList[id] = waveviewer.WaveViewer(self)
 		self.WaveViewers.append(id)
@@ -104,8 +114,14 @@ class Registry:
 	def getWaveLists(self):
 		return [self.fromID(id) for id in self.WaveLists]
 
+	def getWaveViewers(self):
+		return [self.fromID(id) for id in self.WaveViewers]
+
 	def getAllWindows(self):
-		return self.getWaveLists()
+		return self.getWaveLists()+self.getWaveViewers()
+
+	def killAllWindows(self):
+		self.msgAll({'type':'kill'})
 
 	def unregister(self, obj):
 		for i in self.MasterList:
@@ -117,6 +133,7 @@ class Registry:
 
 				# remove from master list without deleting actual object
 				self.MasterList.pop(i)
+				if len(self.MasterList)==0: self.setIcon("inactive")
 				return True
 		return False
 
@@ -143,3 +160,20 @@ class Registry:
 		for i in conf:
 			print "\t",i
 			self.msgWaveLists({'type':'setOption','name':i,'value':conf[i]})
+
+	def setIcon(self,statestr):
+		if (self.icon == None): return False
+		if statestr == "error":
+			self.icon.setIconState(iconstates.ICON_ERROR)
+			return True
+		elif statestr == "active":
+			self.icon.setIconState(iconstates.ICON_ACTIVE)
+			return True
+		elif statestr == "inactive":
+			self.icon.setIconState(iconstates.ICON_INACTIVE)
+			return True
+		elif statestr == "unread":
+			self.icon.setIconState(iconstates.ICON_UNREAD)
+			return True
+		else:
+			return False

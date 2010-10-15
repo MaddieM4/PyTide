@@ -24,13 +24,17 @@ class WaveList(webgui.browserWindow):
 	def __init__(self,registry):
 		webgui.browserWindow.__init__(self,rel_to_abs("gui/html/wavelist.html"),registry, echo=False)
 		self.options = {}
+		self.ready = False
 		self.getConfig('tbshorten')
 
 	def process(self, data):
 		''' Recieve UI input data from window '''
 		if data != None:
 			if data['type'] == 'query':
-				self.query(data['value'])
+				if 'page' in data:
+					self.query(data['value'], page=data['page'])
+				else:
+					self.query(data['value'])
 			elif data['type'] == 'sendHTML':
 				print data['html']
 			elif data['type'] == 'getOptions':
@@ -40,6 +44,7 @@ class WaveList(webgui.browserWindow):
 				# pass on data to other windows and save to config
 				self.setConfig(data['key'],data['value'])
 			print data
+			self.ready = True
 		else:
 			return None
 
@@ -47,7 +52,11 @@ class WaveList(webgui.browserWindow):
 		''' Recieve message from registry. '''
 		if 'type' in data:
 			if data['type'] == 'setOption':
+				self.options[data['name']] = data['value']
 				self.send("pushOption('%s','%s')" % (data['name'],data['value']))
+			elif data['type'] == 'kill':
+				self.close()
+				
 		print "Reg >> Wavelist: ",data
 
 	@staticmethod
@@ -64,17 +73,21 @@ class WaveList(webgui.browserWindow):
 			return "Contacts"
 		else: return 'Search "%s"' % querytext
 
-	def query(self, query):
+	def query(self, query, page=0):
 		'''Send a query to the Network, get a list of results back, and pass it on to the window.'''
 		if query == "": 
 			query="in:inbox"
-		self.setTitle(self.getTitleFromQuery(query))
-		results = self.registry.Network.query(query)
+		results = self.registry.Network.query(query,startpage=page)
+		if page!=0:
+			pagetext = ", Page "+str(page+1)
+		else: pagetext = ""
+		self.setTitle(self.getTitleFromQuery(query)+pagetext)
 		if "::contacts" in query:
 			contacts = [{'name':c.name or c.nick,'address':c.addr,'avatar':c.pict} for c in self.registry.Network.getContacts()]
 			self.send("contactsList(%s)" % json.dumps(contacts))
 			return
-		jres = {'query':self.escape(query),'digests':[]}
+		print results.page, "/", results.maxpage, "\t",results.num_results
+		jres = {'query':self.escape(query),'digests':[],'page':results.page,'maxpage':results.maxpage}
 		for digest in results.digests:
 			plist = digest.participants.serialize()
 			participants = [self.registry.Network.participantMeta(x) for x in plist]
@@ -89,7 +102,8 @@ class WaveList(webgui.browserWindow):
 
 	def getConfig(self,key):
 		self.options[key] = self.registry.getWaveListConfig(key)
-		self.send('pushOption("%s","%s")' % (key,self.options[key]))
+		if self.ready:
+			self.send('pushOption("%s","%s")' % (key,self.options[key]))
 
 	def setConfig(self,key, value=None):
 		if value != None:
