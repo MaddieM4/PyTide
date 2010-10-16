@@ -35,7 +35,7 @@ class Annotation(object):
         return self._start
     @property
     def end(self):
-        return self._start                                                       self._value)
+        return self._end
     @property
     def name(self):
         return self._name
@@ -75,7 +75,7 @@ class Annotations(object):
         """
         self._data = set()
 
-    
+
     def _resolve_pair(self, annotation_1, annotation_2):
         if annotation_2.end < annotation_1.end:
             # If the annotations are in the wrong order, swap them.
@@ -83,7 +83,7 @@ class Annotations(object):
             annotation_2 = annotation_1
             annotation_1 = a1
             del a1
-            
+
         if annotation_2.start < annotation_1.end: #If there is an overlap
             # test: end of 1 >= start of another. Simplest overlap.
             if annotation_1.end >= annotation_2.start:
@@ -118,9 +118,9 @@ class Annotations(object):
                 elif ((annotation_2.start < annotation_1.end) or
                       (annotation_1.start < annotation_2.end)):
                     self._resolve_pair(annotation_1, annotation_2)
-        
-    
-    
+
+
+
     def _add_annotation(self, annotation):
         for current_annotation in self._data:
             if ((current_annotation.start < annotation.end) or
@@ -134,7 +134,7 @@ class Annotations(object):
     # ------------------------ BoilerPlate Methods ----------------------------
     def copy(self):
         return self._data.copy()
-    
+
     def __getitem__(self, pos):
         """Return a list of tuples containing all the annotations at pos.
 
@@ -192,7 +192,7 @@ class Annotations(object):
     def __iter__(self):
         for ann in self._data:
             yield ann
-    
+
     def __getslice__(self, start, end):
         x = []
         for i in range(start, end):
