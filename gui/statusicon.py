@@ -28,6 +28,7 @@ class StatusIcon(gtk.StatusIcon):
 		self.registry.icon = self
 		self.connect('popup-menu', self.on_right_click)
 		self.connect('activate', self.on_left_click)
+		self.unreadBase = gtk.gdk.pixbuf_new_from_file("gui/html/img/unread.png")
 		gtk.main()
 
 	def popupMenu(self, event_button, event_time, itemList=None):
@@ -37,6 +38,14 @@ class StatusIcon(gtk.StatusIcon):
 		for item in itemList:
 			if len(item)==3:
 				menuItem = gtk.MenuItem(item[0])
+				menu.append(menuItem)
+				menuItem.connect_object("activate",item[1],item[2])
+				menuItem.show()
+			elif len(item)==4:
+				menuItem = gtk.ImageMenuItem(item[0])
+				img = gtk.Image()
+				img.set_from_file('gui/html/img/unread.png')
+				menuItem.set_image(img)
 				menu.append(menuItem)
 				menuItem.connect_object("activate",item[1],item[2])
 				menuItem.show()
@@ -69,9 +78,9 @@ class StatusIcon(gtk.StatusIcon):
 			('Quit',self.quit, None)] )
 
 	def on_left_click(self,icon):
-		if self.registry.Network.is_connected():
-			popuplist = [('This is a blip (1)',self.newWaveViewer,None)]
-#[('No updates',self.blank,None)]
+		if True:#self.registry.Network.is_connected():
+			popuplist = [('This is a blip',self.newWaveViewer,None,self.draw_unread_count(1))]
+					#[('No updates',self.blank,None)]
 		else:
 			popuplist = [("You're not logged in.",self.blank,None)]
 		self.popupMenu(1, gtk.get_current_event_time(),popuplist)
@@ -97,3 +106,13 @@ class StatusIcon(gtk.StatusIcon):
 
 	def blank(self, data=None):
 		pass
+
+	def draw_unread_count(self, count):
+		# Copy unread base indicator to new pixmap
+		pixmap, mask = self.unreadBase.render_pixmap_and_mask()
+		# Drawing steps
+		print pixmap.get_size()
+		# Convert to Image
+		final = gtk.image_new_from_pixmap(pixmap, mask)
+		final.show()
+		return final

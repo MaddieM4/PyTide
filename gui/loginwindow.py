@@ -34,6 +34,8 @@ class LoginWindow(webgui.browserWindow):
 	def process(self, data):
 		GA = self.logins.getAll()
 		if data == None: return
+		elif type(data).__name__=="str":
+			print "str:", data
 		elif data['type'] == 'logindata':
 			self.loginCallback(data['username'],data['password'])
 		elif data['type'] == 'ready' and GA != {}:
