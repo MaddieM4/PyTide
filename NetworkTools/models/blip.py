@@ -19,8 +19,6 @@
 
 from collections import deque
 
-#from UserDict import DictMixin
-
 class Annotation(object):
     def __init__(self, start, end, name, value):
         self._name = name
@@ -33,23 +31,40 @@ class Annotation(object):
                                                            self._name,
                                                            self._value)
     @property
+    def start(self):
+        return self._start
+    @property
+    def end(self):
+        return self._start                                                       self._value)
+    @property
     def name(self):
         return self._name
     @property
     def value(self):
         return self._value
-    @property
-    def start(self):
-        return self._start
-    @property
-    def end(self):
-        return self._start
+
     @property
     def range(self):
         return (self._start, self._end)
+    @property
+    def annotation(self):
+        """A tuple containing the name and value of the annotation."""
+        return (self._name, self._value)
+    def __eq__(self, y):
+        if isinstance(y, Annotation):
+            return ((self._name == y._name) and
+                    (self._value == y._value) and
+                    (self._start == y._start) and
+                    (self._end == y._end))
+        else:
+            return False
+    def __ne__(self, y):
+        return not self.__eq__(y)
+    def __hash__(self):
+        return hash(( self._start, self._end, self._name, self._value))
 
 
-class Annotations(object,): #UserDict.DictMixin):
+class Annotations(object):
     """ """
     def __init__(self):
         """Creates a set() to contain the annotations.
@@ -59,7 +74,64 @@ class Annotations(object,): #UserDict.DictMixin):
         to also merge annotations.
         """
         self._data = set()
+
+    
+    def _resolve_pair(self, annotation_1, annotation_2):
+        if annotation_2.end < annotation_1.end:
+            # If the annotations are in the wrong order, swap them.
+            a1 = annotation_2
+            annotation_2 = annotation_1
+            annotation_1 = a1
+            del a1
+            
+        if annotation_2.start < annotation_1.end: #If there is an overlap
+            # test: end of 1 >= start of another. Simplest overlap.
+            if annotation_1.end >= annotation_2.start:
+                new_annotation = Annotation(start = annotation_1.start,
+                                            end = annotation_2.end,
+                                            name = annotation_1.name,
+                                            value = annotation_1.value)
+                self._data.symmetric_difference_update(set((annotation_1,
+                                                            annotation_2,
+                                                            new_annotation)))
+                return new_annotation
+            elif ((annotation_2.start <= annotation_1.start) and
+                  (annotation_1.end <= annotation_2.end)):
+                # If annotation 1 is completely contained by annotation 2:
+                self._data.remove(annotation_1)
+                return annotation_2
+        # If the 2 annotations do not match any scenarios, raise an exception
+        # If this exception is raised, report to me: nat.abbotts@gmail.com
+        # and I will update the code to account for the new situation.
+        # This is because I cannot see any other possibility.
+        raise Exception("Cannot resolve")
+    def resolve(self):
+        """Resolve all stored annotations.
+
+        If two annotations overlap, and hold the same name and value,
+            they are replaced with a single annotation.
+        """
+        for annotation_1 in self._data:
+            for annotation_2 in self._data:
+                if annotation_1 == annotation_2:
+                    continue
+                elif ((annotation_2.start < annotation_1.end) or
+                      (annotation_1.start < annotation_2.end)):
+                    self._resolve_pair(annotation_1, annotation_2)
         
+    
+    
+    def _add_annotation(self, annotation):
+        for current_annotation in self._data:
+            if ((current_annotation.start < annotation.end) or
+                (annotation.start < current_annotation.end)):
+                annotation = self._resolve_pair(annotation, current_annotation)
+    def annotate(self, start, end, name, value):
+        self._add_annotation(Annotation(start = start,
+                                        end = end,
+                                        name = name,
+                                        value = value))
+    # ------------------------ BoilerPlate Methods ----------------------------
     def copy(self):
         return self._data.copy()
     
@@ -126,13 +198,16 @@ class Annotations(object,): #UserDict.DictMixin):
         for i in range(start, end):
             x.append(self.__getitem__(i))
         return list(set(x))
-    def append(self, x):
-        self._data.add(x)
-def _test():
-    x = Annotations()
-    for i,j in zip(range(1, 10), range(6, 15, -1)):   
-        x.append(Annotation(i,j,"color%s" % i, "red"))
-    return x
+    def __setslice__(self, start, end, annotation):
+        # There is *technically* no need for the first if clause, but
+        # isinstance() is faster than "__iter__" in dir(annotation),
+        # and as a tuple is most likely what will be called, it was decided
+        # that two clauses are used.
+        if isinstance(annotation, tuple) and (len(annotation == 2)):
+            annotate(start, end, *annotation)
+            return
+        elif (len(annotation) == 2) and ("__iter__" in dir(annotation)):
+            annotate(start, end, *annotation)
 
 
 
