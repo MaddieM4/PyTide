@@ -20,37 +20,94 @@
 from collections import deque
 
 class Annotation(object):
+    """A single Annotation.
+
+    To instantiate, provide the following values:
+        start - an integer representing the start position in the blip.
+        end   - an integer representing the end position in the blip.
+            If we consider the following four letter blip, a start and end of
+            (1, 3) would cover the letters "ex".
+            0 1 2 3 4
+            |t|e|x|t|
+        name  - a string identical to the annotation name. This usually takes
+                the form of "type/specific". A common example is "style" as the
+                type, and "fontFamily" as the specific, making up the name of
+                "style/fontFamily". This is merely a convention, and is not
+                required - "magic" is as valid as "style/fontFamily".
+        value - a string identical to the annotation value (can be empty). This
+                can be anything, but the simplest value usually used would be a
+                boolean, "" representing False, "true" representing True.
+
+    The Annotation object provides these instantiating values as properties,
+    along side a few other useful properties to save time.
+        start - the starting position (see above)
+        end   - the ending position (see above)
+        name  - the annotation name (see above)
+        value - the annotation value (see above)
+        range - a tuple containing the start and end of the annotation (in that
+                order).
+        annotation - a tuple containing the annotation name and value (in that
+                order).
+
+    In order for an Annotation to behave properly in a set, the following
+    methods were defined:
+        __hash__ - the hash of an annotation is equal to the hash of all it's
+                    instantiating properties.
+        __eq__   - compares two Annotations, to determine if they are equal.
+                    Eqality is determined using the same values as hashing, so
+                    if hash(ann_1) == hash(ann_2) evaluates as true then
+                    ann_1 == ann_2 is also true.
+        __ne__   - Ineqality for an annotation is simply opposite to equality.
+                    As such, __ne__ just returns the inversion of __eq__.
+
+    Because Annotations are stored in a set, they are immutable. As such, the
+    properties provided are read only properties. It is strongly advised that
+    you do not modify the attributes of an Annotation ( _start, _end, _name,
+    _value), as the Annotation will no longer behave correctly and will cause
+    bugs. 
+    """
+    # ----------------------------- Base Methods ------------------------------
     def __init__(self, start, end, name, value):
-        self._name = name
-        self._value = value
         self._start = start
         self._end = end
+        self._name = name
+        self._value = value
     def __repr__(self):
         return "Annotation((%s : %s) = \"%s\", \"%s\")" % (self._start,
                                                            self._end,
                                                            self._name,
                                                            self._value)
+    # ----------------------------- Properties --------------------------------
     @property
     def start(self):
+        """An integer representing the Annotation's start position in a blip."""
         return self._start
     @property
     def end(self):
+        """An integer representing the Annotation's end position in a blip."""
         return self._end
     @property
     def name(self):
+        """The name of the Annotation."""
         return self._name
     @property
     def value(self):
+        """The value of the Annotation."""
         return self._value
-
     @property
     def range(self):
+        """A tuple containing the start and end positions of the Annotation."""
         return (self._start, self._end)
     @property
     def annotation(self):
-        """A tuple containing the name and value of the annotation."""
+        """A tuple containing the name and value of the Annotation."""
         return (self._name, self._value)
+    # ----------------------------- Set behavior ------------------------------
     def __eq__(self, y):
+        """Determine equality with another Annotation, based on initial values.
+
+        The initial values are the start, end, name and value of the Annotation.
+        """
         if isinstance(y, Annotation):
             return ((self._name == y._name) and
                     (self._value == y._value) and
@@ -59,9 +116,21 @@ class Annotation(object):
         else:
             return False
     def __ne__(self, y):
+        """Determine inequality with another Annotation.
+
+        Ineqality for an annotation is simply the inverse of eqality, so a call
+        is made to __eq__ to determine eqality, and the inverse of this is
+        returned.
+        """
         return not self.__eq__(y)
     def __hash__(self):
-        return hash(( self._start, self._end, self._name, self._value))
+        """Return the hash of the Annotation.
+
+        This hash is based on the initial values of the Annotation, just as
+        eqality is.
+        The intial values are the start, end, name and value of the Annotation.
+        """
+        return hash((self._start, self._end, self._name, self._value))
 
 
 class Annotations(object):
