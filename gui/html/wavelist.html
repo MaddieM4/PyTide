@@ -337,6 +337,16 @@
 			query_nav(querybuild);
 		}
 
+		errors = {
+			'connection':"You've been disconnected. Check your internet connection to see you don't have
+				anything unplugged, or your wifi is still working."
+		}
+		function setError(id) {
+			$('#mainlist').prepend($("<li class='status'>"+errors[id]+"</li>"));
+		}
+
+		function clearlist() {$('#mainlist li').remove()}
+
 		// switch toolbar depending on selection state
 		$('#mainlist > li:not(.longend):not(.status)').live('mousedown',function(){
 			$(this).toggleClass('selected');
@@ -362,7 +372,7 @@
 					break;
 			}
 			digests = results['digests'];
-			$('#mainlist li').remove();
+			// $('#mainlist li').remove();
 			for (i in digests) {
 				digest = digests[i];
 				$(renderDigest(digest)).appendTo('#mainlist');
@@ -444,10 +454,10 @@
 		}
 
 		function contactsList(contacts,page, maxpage) {
-			//alert(JSON.stringify(contacts));
+			// alert(JSON.stringify(contacts));
 			$('.toolbar li').removeClass('active');
 			$('.toolbar .gotoContacts').addClass('active');
-			$('#mainlist li').remove();
+			// $('#mainlist li').remove();
 			for (i in contacts) {				
 				$('<li></li>').append(renderContact(contacts[i])).appendTo('#mainlist');
 			}

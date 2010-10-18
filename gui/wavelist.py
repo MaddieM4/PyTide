@@ -82,6 +82,10 @@ class WaveList(webgui.browserWindow):
 			pagetext = ", Page "+str(page+1)
 		else: pagetext = ""
 		self.setTitle(self.getTitleFromQuery(query)+pagetext)
+
+		if results == False:
+			self.send("clearList(); setError('connection')")
+
 		if "::contacts" in query:
 			contacts = [{'name':c.name or c.nick,'address':c.addr,'avatar':c.pict} for c in self.registry.Network.getContacts()]
 			self.send("contactsList(%s)" % json.dumps(contacts))
@@ -98,7 +102,7 @@ class WaveList(webgui.browserWindow):
 				'total':digest.blip_count,
 				'date':digest.last_modified,
 				})
-		self.send("reloadList(%s)" % json.dumps(jres))
+		self.send("clearList(); reloadList(%s)" % json.dumps(jres))
 
 	def getConfig(self,key):
 		self.options[key] = self.registry.getWaveListConfig(key)

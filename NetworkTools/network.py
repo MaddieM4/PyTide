@@ -49,7 +49,11 @@ class Network(threads.LoopingThread):
 			self.connection.submit()
 
 	def query(self, query, startpage=0):
-		return self.connection.query(query, startpage=startpage)
+		try:
+			return self.connection.query(query, startpage=startpage)
+		except NetworkTools.ConnectionFailure:
+			self.registry.setIcon('error')
+			return None
 
 	def connect(self, username, password):
 		print "Network connecting to %s" % username
