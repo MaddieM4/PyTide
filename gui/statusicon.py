@@ -77,7 +77,7 @@ class StatusIcon(gtk.StatusIcon):
 			('Quit',self.quit, None)] )
 
 	def on_left_click(self,icon):
-		if True:#self.registry.Network.is_connected():
+		if self.registry.Network.is_connected():
 			popuplist = [('This is a blip',self.newWaveViewer,None,self.draw_unread_count(1))]
 					#[('No updates',self.blank,None)]
 		else:
