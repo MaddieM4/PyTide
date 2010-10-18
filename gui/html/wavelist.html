@@ -99,6 +99,9 @@
 
 			#mainlist li.status {
 				text-align:center;
+				background-color: #FFA;
+				border-top-color: #777;
+				border-bottom-color: #999;
 			}
 
 			ul.dots {
@@ -338,8 +341,7 @@
 		}
 
 		errors = {
-			'connection':"You've been disconnected. Check your internet connection to see you don't have
-				anything unplugged, or your wifi is still working."
+			'connection':'<p>You\'ve been disconnected.</p><p>Check your internet connection to see you don\'t have anything unplugged, or your wifi is still working.</p>'
 		}
 		function setError(id) {
 			$('#mainlist').prepend($("<li class='status'>"+errors[id]+"</li>"));
