@@ -357,7 +357,7 @@
 			checkSelect();
 		});
 
-		function reloadList(newlist) {
+		function reloadList(newlist, useLongEnd) {
 			results = newlist;
 			querytext = results['query'];
 			searchbox.val(querytext);
@@ -379,16 +379,19 @@
 				digest = digests[i];
 				$(renderDigest(digest)).appendTo('#mainlist');
 				}
-			appendLongEnd(
-				function(){},
-				(results['maxpage']>results['page'])?function(){query_nav(querytext, results['page']+1)}:null,
-				(results['page']>0)?function(){query_nav(querytext,results['page']-1)}:null,
-				results['page'],
-				results['maxpage']+1,
-				function (index,isactive) {
-					if (isactive) return function(){};
-					return function() {query_nav(querytext,index)}
+			if (useLongEnd) {
+				appendLongEnd(
+					function(){},
+					(results['maxpage']>results['page'])?function(){query_nav(querytext, results['page']+1)}:null,
+					(results['page']>0)?function(){query_nav(querytext,results['page']-1)}:null,
+					results['page'],
+					results['maxpage']+1,
+					function (index,isactive) {
+						if (isactive) return function(){};
+						return function() {query_nav(querytext,index)
+					}
 				});
+			}
 			reset_scroll($('#mainlist'));
 		}
 
@@ -455,7 +458,7 @@
 			return item;
 		}
 
-		function contactsList(contacts,page, maxpage) {
+		function contactsList(contacts, useLongEnd) {
 			// alert(JSON.stringify(contacts));
 			$('.toolbar li').removeClass('active');
 			$('.toolbar .gotoContacts').addClass('active');
@@ -463,7 +466,9 @@
 			for (i in contacts) {				
 				$('<li></li>').append(renderContact(contacts[i])).appendTo('#mainlist');
 			}
-			appendLongEnd(function(){});
+			if (useLongEnd) {
+				appendLongEnd(function(){});
+			}
 			reset_scroll($('#mainlist'));
 		}
 

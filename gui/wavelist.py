@@ -17,8 +17,14 @@
 
 import webgui
 import json
+import re
 
 from gui import rel_to_abs
+
+withcontact = re.compile("with:(\S*)")
+
+def getContactsFromQuery(query):
+	return withcontact.findall(query)
 
 class WaveList(webgui.browserWindow):
 	def __init__(self,registry):
@@ -87,8 +93,14 @@ class WaveList(webgui.browserWindow):
 			return
 		if "::contacts" in query:
 			contacts = [{'name':c.name or c.nick,'address':c.addr,'avatar':c.pict} for c in self.registry.Network.getContacts()]
-			self.send("clearList(); contactsList(%s)" % json.dumps(contacts))
+			self.send("clearList(); contactsList(%s,true)" % json.dumps(contacts))
 			return
+		else:
+			# check for WITH keywords and make a microquery for them
+			addresses = getContactsFromQuery(query)
+			# populate addresses according to regexp
+			contacts = [{'name':c.name or c.nick,'address':c.addr,'avatar':c.pict} for c in self.registry.Network.getContacts()]
+			self.send("contactsList(%s, false);" % json.dumps(contacts))
 		print results.page, "/", results.maxpage, "\t",results.num_results
 		jres = {'query':self.escape(query),'digests':[],'page':results.page,'maxpage':results.maxpage}
 		for digest in results.digests:
@@ -101,7 +113,7 @@ class WaveList(webgui.browserWindow):
 				'total':digest.blip_count,
 				'date':digest.last_modified,
 				})
-		self.send("clearList(); reloadList(%s)" % json.dumps(jres))
+		self.send("clearList(); reloadList(%s, true)" % json.dumps(jres))
 
 	def getConfig(self,key):
 		self.options[key] = self.registry.getWaveListConfig(key)
