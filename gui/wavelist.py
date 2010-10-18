@@ -82,13 +82,12 @@ class WaveList(webgui.browserWindow):
 			pagetext = ", Page "+str(page+1)
 		else: pagetext = ""
 		self.setTitle(self.getTitleFromQuery(query)+pagetext)
-
 		if results == False:
 			self.send("clearList(); setError('connection')")
-
+			return
 		if "::contacts" in query:
 			contacts = [{'name':c.name or c.nick,'address':c.addr,'avatar':c.pict} for c in self.registry.Network.getContacts()]
-			self.send("contactsList(%s)" % json.dumps(contacts))
+			self.send("clearList(); contactsList(%s)" % json.dumps(contacts))
 			return
 		print results.page, "/", results.maxpage, "\t",results.num_results
 		jres = {'query':self.escape(query),'digests':[],'page':results.page,'maxpage':results.maxpage}
