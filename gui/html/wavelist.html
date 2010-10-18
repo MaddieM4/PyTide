@@ -166,7 +166,7 @@
 				</ul>
 				<ul class="contactselect invisible">
 					<li class="arrow"><div>New Wave</div></li>
-					<li class="inbox"><div>Shared Waves</div></li>
+					<li class="inbox gotoSharedWaves"><div>Shared Waves</div></li>
 					<li class="search gotoContactSearch"><div>Search</div></li>
 					<li class="more">...</li>
 				</ul>
@@ -329,6 +329,14 @@
 			}
 		}
 
+		function openSharedWaves() {
+			querybuild = "";
+			$('#mainlist li.selected').each(function(){
+				querybuild+="with:"+$(this).data().address+" ";
+			});
+			query_nav(querybuild);
+		}
+
 		// switch toolbar depending on selection state
 		$('#mainlist > li:not(.longend):not(.status)').live('mousedown',function(){
 			$(this).toggleClass('selected');
@@ -483,6 +491,7 @@
 			$(prefix+'li.gotoContacts').click(function () {query_nav("::contacts")});
 			$(prefix+'li.gotoOptions').click(function () {openOptions()});
 			$(prefix+'li.gotoContactSearch').click(function () {ContactSearch()});
+			$(prefix+'li.gotoSharedWaves').click(function () {ContactSearch()});
 			$('.menu .tools li').click(function (){$('.toolbar .more').removeClass('active');});
 		}
 
