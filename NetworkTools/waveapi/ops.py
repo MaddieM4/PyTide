@@ -469,6 +469,8 @@ class OperationQueue(object):
     return inline_blip_data
 
   def robot_fetch_my_profile(self):
-    return self.new_operation(ROBOT_FETCH_MY_PROFILE)
+    return self.new_operation(ROBOT_FETCH_MY_PROFILE,None,None)
   
+  def robot_fetch_profiles(self):
+    return self.new_operation(ROBOT_FETCH_PROFILES, None, None)
   

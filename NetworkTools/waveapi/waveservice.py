@@ -448,3 +448,21 @@ class WaveService(object):
     res = self.make_rpc(pending)
     pending.clear()
     return res
+
+  def fetch_profile(self, address=None):
+    """Use the custom robot_fetch_my_profile operation to get a profile.
+	Highly experimental at this time, I'm not even sure what the return type is!
+    """
+    util.check_is_valid_proxy_for_id(address)
+    operation_queue = ops.OperationQueue(address)
+    operation_queue.robot_fetch_my_profile()
+    return self._first_rpc_result(self.make_rpc(operation_queue))
+
+  def fetch_profiles(self, address=None):
+    """Use the custom robot_fetch_my_profile operation to get a profile.
+	Highly experimental at this time, I'm not even sure what the return type is!
+    """
+    util.check_is_valid_proxy_for_id(address)
+    operation_queue = ops.OperationQueue(address)
+    operation_queue.robot_fetch_profiles()
+    return self._first_rpc_result(self.make_rpc(operation_queue))
