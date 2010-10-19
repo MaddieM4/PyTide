@@ -341,7 +341,8 @@
 		}
 
 		errors = {
-			'connection':'<p>You\'ve been disconnected.</p><p>Check your internet connection to see you don\'t have anything unplugged, or your wifi is still working.</p>'
+			'connection':'<p>You\'ve been disconnected.</p><p>Check your internet connection to see you don\'t have anything unplugged, or your wifi is still working.</p>',
+			'emptyquery':'<p>Your search returned zero results.</p><p>Maybe you mistyped something, or we built a query wrong?</p>'
 		}
 		function setError(id) {
 			$('#mainlist').prepend($("<li class='status'>"+errors[id]+"</li>"));
@@ -374,7 +375,7 @@
 					break;
 			}
 			digests = results['digests'];
-			// $('#mainlist li').remove();
+			if (digests.length == 0) $('#mainlist').append("<li class='status'>"+errors['emptyquery']+"</li>");
 			for (i in digests) {
 				digest = digests[i];
 				$(renderDigest(digest)).appendTo('#mainlist');

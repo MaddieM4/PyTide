@@ -21,7 +21,7 @@ import re
 
 from gui import rel_to_abs
 
-withcontact = re.compile("with:(\S*)")
+withcontact = re.compile("with[ :](\S*)")
 
 def getContactsFromQuery(query):
 	return withcontact.findall(query)
