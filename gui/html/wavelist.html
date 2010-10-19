@@ -153,9 +153,9 @@
 			</div>
 			<div class="toolbar noselect">
 				<ul class="invisible select">
-					<li class="eye-open"><div>Read</div></li>
+					<li class="eye-open"><div>Open</div></li>
 					<li class="pencil"><div>Mark Read</div></li>
-					<li class="trash"><div>Shove</div></li>
+					<li class="trash"><div>Leave</div></li>
 					<li class="folder"><div>Folderize</div></li>
 					<li class="more">...</li>
 				</ul>
@@ -341,8 +341,7 @@
 		}
 
 		errors = {
-			'connection':'<p>You\'ve been disconnected.</p><p>Check your internet connection to see you don\'t have anything unplugged, or your wifi is still working.</p>',
-			'emptyquery':'<p>Your search returned zero results.</p><p>Maybe you mistyped something, or we built a query wrong?</p>'
+			'connection':'<p>You\'ve been disconnected.</p><p>Check your internet connection to see you don\'t have anything unplugged, or your wifi is still working.</p>'
 		}
 		function setError(id) {
 			$('#mainlist').prepend($("<li class='status'>"+errors[id]+"</li>"));
@@ -375,7 +374,7 @@
 					break;
 			}
 			digests = results['digests'];
-			if (digests.length == 0) $('#mainlist').append("<li class='status'>"+errors['emptyquery']+"</li>");
+			// $('#mainlist li').remove();
 			for (i in digests) {
 				digest = digests[i];
 				$(renderDigest(digest)).appendTo('#mainlist');
