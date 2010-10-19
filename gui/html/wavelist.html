@@ -334,7 +334,7 @@
 
 		function openSharedWaves() {
 			querybuild = "";
-			$('#mainlist li.selected').each(function(){
+			$('#mainlist li.selected .contact').each(function(){
 				querybuild+="with:"+$(this).data().address+" ";
 			});
 			query_nav(querybuild);
@@ -347,7 +347,7 @@
 			$('#mainlist').prepend($("<li class='status'>"+errors[id]+"</li>"));
 		}
 
-		function clearlist() {$('#mainlist li').remove()}
+		function clearList() {$('#mainlist li').remove()}
 
 		// switch toolbar depending on selection state
 		$('#mainlist > li:not(.longend):not(.status)').live('mousedown',function(){
@@ -508,7 +508,7 @@
 			$(prefix+'li.gotoContacts').click(function () {query_nav("::contacts")});
 			$(prefix+'li.gotoOptions').click(function () {openOptions()});
 			$(prefix+'li.gotoContactSearch').click(function () {ContactSearch()});
-			$(prefix+'li.gotoSharedWaves').click(function () {ContactSearch()});
+			$(prefix+'li.gotoSharedWaves').click(function () {openSharedWaves()});
 			$('.menu .tools li').click(function (){$('.toolbar .more').removeClass('active');});
 		}
 

@@ -84,23 +84,25 @@ class WaveList(webgui.browserWindow):
 		if query == "": 
 			query="in:inbox"
 		results = self.registry.Network.query(query,startpage=page)
+		self.send("clearList()")
 		if page!=0:
 			pagetext = ", Page "+str(page+1)
 		else: pagetext = ""
 		self.setTitle(self.getTitleFromQuery(query)+pagetext)
-		if results == False:
-			self.send("clearList(); setError('connection')")
+		if results == None:
+			self.send("setError('connection')")
 			return
 		if "::contacts" in query:
 			contacts = [{'name':c.name or c.nick,'address':c.addr,'avatar':c.pict} for c in self.registry.Network.getContacts()]
-			self.send("clearList(); contactsList(%s,true)" % json.dumps(contacts))
+			self.send("contactsList(%s,true)" % json.dumps(contacts))
 			return
 		else:
 			# check for WITH keywords and make a microquery for them
 			addresses = getContactsFromQuery(query)
-			# populate addresses according to regexp
-			contacts = [{'name':c.name or c.nick,'address':c.addr,'avatar':c.pict} for c in self.registry.Network.getContacts()]
-			self.send("contactsList(%s, false);" % json.dumps(contacts))
+			contacts = []
+			for address in addresses:
+				contacts += [{'name':c.name or c.nick,'address':c.addr,'avatar':c.pict} for c in self.registry.Network.getContacts()]
+			self.send("contactsList(%s, false)" % json.dumps(contacts))
 		print results.page, "/", results.maxpage, "\t",results.num_results
 		jres = {'query':self.escape(query),'digests':[],'page':results.page,'maxpage':results.maxpage}
 		for digest in results.digests:
@@ -113,7 +115,7 @@ class WaveList(webgui.browserWindow):
 				'total':digest.blip_count,
 				'date':digest.last_modified,
 				})
-		self.send("clearList(); reloadList(%s, true)" % json.dumps(jres))
+		self.send("reloadList(%s, true)" % json.dumps(jres))
 
 	def getConfig(self,key):
 		self.options[key] = self.registry.getWaveListConfig(key)

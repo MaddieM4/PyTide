@@ -50,7 +50,9 @@ class Network(threads.LoopingThread):
 
 	def query(self, query, startpage=0):
 		try:
-			return self.connection.query(query, startpage=startpage)
+			results = self.connection.query(query, startpage=startpage)
+			self.registry.setIcon('active')
+			return results
 		except NetworkTools.ConnectionFailure:
 			self.registry.setIcon('error')
 			return None

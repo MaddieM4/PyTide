@@ -45,7 +45,11 @@ class GoogleWaveConnection(models.threads.Plugin):
 		pass
 
 	def query(self, query, startpage=0):
-		results=self.service.search(query, index=startpage*20,num_results=21)
+		try:
+			results=self.service.search(query, index=startpage*20,num_results=21)
+		except:
+			raise NetworkTools.ConnectionFailure("Connection to Google Wave failed")
+			return
 		results.page = startpage
 		if results.num_results < 21:
 			results.maxpage = startpage
