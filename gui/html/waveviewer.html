@@ -77,14 +77,32 @@
 				font-weight:bold;
 			}
 
-			li p {
+			#mainlist:not(.document) li p {
 				margin-bottom:0px;
+			}
+
+			li .participants {
+				font-size:10px;
+				font-style:italic;
+				width:100%;
+				border-top: 1px solid #AAA;
+				padding-top:3px;
+				margin-top:10px;
+				margin-bottom:-2px;
+			}
+
+			li .participants img {
+				width:10px;
+				height:10px;
+				margin: 2px 3px -1px;
+				border: 1px solid #AAA;
 			}
 
 			#mainlist.document li:not(.root), 
 			#mainlist.document li.root .title,
 			#mainlist.document li.root .creator_avatar,
-			#mainlist.document li.root .creator_name {
+			#mainlist.document li.root .participants,
+			#mainlist li.root .creator_name {
 				display:none;
 			}
 
@@ -177,6 +195,7 @@
 			    <div class="creator_name">Philip Horger</div>
 				<span class="title">This is a blip</span>
 				<p>And this is the text inside it.</p>
+				<div class="participants"><img src="../html/img/something.jpg"/>Philip Horger</div>
 			</li>
 			<ul>
 				<li><img class="creator_avatar" src="https://lh6.googleusercontent.com/_tsWs83xehHE/TFgD2QbwzYI/AAAAAAAAFbg/O-Z1aVTdEvs/s104-c/me_cy_very_small.jpg"/>
@@ -189,7 +208,10 @@
 				This is <ul>
 				<li><img class="creator_avatar" src="https://lh6.googleusercontent.com/_tsWs83xehHE/TFgD2QbwzYI/AAAAAAAAFbg/O-Z1aVTdEvs/s104-c/me_cy_very_small.jpg"/>
 				    <div class="creator_name online">Yuri</div>
-					This is another
+					This is another HAHAHA PHILIP HAS TOTALLY EDITED THIS
+				    <div class="participants"><img src="https://lh6.googleusercontent.com/_tsWs83xehHE/TFgD2QbwzYI/AAAAAAAAFbg/O-Z1aVTdEvs/s104-c/me_cy_very_small.jpg"/>Yuri,
+					<img src="../html/img/something.jpg"/>Philip Horger
+				    </div>
 				</li></ul>another
 			</li>
 		</ul>
