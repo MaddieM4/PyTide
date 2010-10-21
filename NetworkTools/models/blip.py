@@ -64,7 +64,7 @@ class Annotation(object):
     properties provided are read only properties. It is strongly advised that
     you do not modify the attributes of an Annotation ( _start, _end, _name,
     _value), as the Annotation will no longer behave correctly and will cause
-    bugs. 
+    bugs.
     """
     # ----------------------------- Base Methods ------------------------------
     def __init__(self, start, end, name, value):
