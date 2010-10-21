@@ -24,6 +24,7 @@ div.contact .name {
 div.contact .name span {
 	font-weight:normal;
 	font-style:italic;
+	font-size:0.7em;
 	float:right;
 }
 

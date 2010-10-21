@@ -23,63 +23,20 @@ import json
 import gtk
 import gobject
 
-try:
-	import webkit
-	weblib = "webkit"
-except:
-	try:
-		import GtkMozEmbed
-		weblib = "mozkit"
-	except:
-		weblib = None
+import webkit
 
-if weblib == None:
-	raise Exception("You don't have a supported browser kit. Try 'sudo apt-get install python-webkit' ")
-	quit()
+def create_browser():
+	return webkit.WebView()
 
-class WebkitMethods():
+def inject_javascript(browser, script):
+	browser.execute_script(script)
 
-	@staticmethod
-	def create_browser():
-		return webkit.WebView()
+def connect_title_changed(browser, callback):
+	def callback_wrapper(widget, frame, title): callback(title)
+	browser.connect('title-changed', callback_wrapper)
 
-	@staticmethod
-	def inject_javascript(browser, script):
-		browser.execute_script(script)
-
-	@staticmethod
-	def connect_title_changed(browser, callback):
-		def callback_wrapper(widget, frame, title): callback(title)
-		browser.connect('title-changed', callback_wrapper)
-
-	@staticmethod
-	def open_uri(browser, uri):
-		browser.open(uri)
-
-class MozkitMethods():
-
-	@staticmethod
-	def create_browser():
-		return gtkmozembed.MozEmbed()
-
-	@staticmethod
-	def inject_javascript(browser, script):
-		uri = 'javascript:%s' % urllib.quote(script +'\n;void(0)')
-		browser.load_url(uri)
-
-	@staticmethod
-	def connect_title_changed(browser, callback):
-		def callback_wrapper(*args): callback(browser.get_title())
-		browser.connect('title', callback_wrapper)
-
-	@staticmethod
-	def open_uri(browser, uri):
-		browser.load_url(uri)
-
-if weblib == "webkit":
-	implementation = WebkitMethods
-else:
-	implementation = MozkitMethods 
+def open_uri(browser, uri):
+	browser.open(uri)
 
 def async_gtk_message(func):
 	def worker((function, args, kwargs)):
@@ -117,7 +74,7 @@ class browserWindow:
 		self.echo = echo
 		self.registry = registry
 		self.window = gtk.Window()
-		self.browser = implementation.create_browser()
+		self.browser = create_browser()
 
 		box = gtk.VBox(homogeneous = False, spacing = 0)
 		self.window.add(box)
@@ -142,12 +99,12 @@ class browserWindow:
 			else: 
 				if self.echo: print "recieved null"
 
-		implementation.connect_title_changed(self.browser, title_changed)
-		implementation.open_uri(self.browser, uri)
+		connect_title_changed(self.browser, title_changed)
+		open_uri(self.browser, uri)
 
 	def send(self, msg):
 		if self.echo: print "[T>>>", msg
-		async_gtk_message(implementation.inject_javascript)(self.browser, msg)
+		async_gtk_message(inject_javascript)(self.browser, msg)
 
 	def setTitle(self, newtitle):
 		self.window.set_title(newtitle)

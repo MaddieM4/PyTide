@@ -99,6 +99,9 @@
 
 			#mainlist li.status {
 				text-align:center;
+				background-color: #FFA;
+				border-top-color: #777;
+				border-bottom-color: #999;
 			}
 
 			ul.dots {
@@ -150,9 +153,9 @@
 			</div>
 			<div class="toolbar noselect">
 				<ul class="invisible select">
-					<li class="eye-open"><div>Read</div></li>
+					<li class="eye-open"><div>Open</div></li>
 					<li class="pencil"><div>Mark Read</div></li>
-					<li class="trash"><div>Shove</div></li>
+					<li class="trash"><div>Leave</div></li>
 					<li class="folder"><div>Folderize</div></li>
 					<li class="more">...</li>
 				</ul>
@@ -166,7 +169,7 @@
 				</ul>
 				<ul class="contactselect invisible">
 					<li class="arrow"><div>New Wave</div></li>
-					<li class="inbox"><div>Shared Waves</div></li>
+					<li class="inbox gotoSharedWaves"><div>Shared Waves</div></li>
 					<li class="search gotoContactSearch"><div>Search</div></li>
 					<li class="more">...</li>
 				</ul>
@@ -329,6 +332,23 @@
 			}
 		}
 
+		function openSharedWaves() {
+			querybuild = "";
+			$('#mainlist li.selected .contact').each(function(){
+				querybuild+="with:"+$(this).data().address+" ";
+			});
+			query_nav(querybuild);
+		}
+
+		errors = {
+			'connection':'<p>You\'ve been disconnected.</p><p>Check your internet connection to see you don\'t have anything unplugged, or your wifi is still working.</p>'
+		}
+		function setError(id) {
+			$('#mainlist').prepend($("<li class='status'>"+errors[id]+"</li>"));
+		}
+
+		function clearList() {$('#mainlist li').remove()}
+
 		// switch toolbar depending on selection state
 		$('#mainlist > li:not(.longend):not(.status)').live('mousedown',function(){
 			$(this).toggleClass('selected');
@@ -337,7 +357,7 @@
 			checkSelect();
 		});
 
-		function reloadList(newlist) {
+		function reloadList(newlist, useLongEnd) {
 			results = newlist;
 			querytext = results['query'];
 			searchbox.val(querytext);
@@ -354,21 +374,24 @@
 					break;
 			}
 			digests = results['digests'];
-			$('#mainlist li').remove();
+			// $('#mainlist li').remove();
 			for (i in digests) {
 				digest = digests[i];
 				$(renderDigest(digest)).appendTo('#mainlist');
 				}
-			appendLongEnd(
-				function(){},
-				(results['maxpage']>results['page'])?function(){query_nav(querytext, results['page']+1)}:null,
-				(results['page']>0)?function(){query_nav(querytext,results['page']-1)}:null,
-				results['page'],
-				results['maxpage']+1,
-				function (index,isactive) {
-					if (isactive) return function(){};
-					return function() {query_nav(querytext,index)}
+			if (useLongEnd) {
+				appendLongEnd(
+					function(){},
+					(results['maxpage']>results['page'])?function(){query_nav(querytext, results['page']+1)}:null,
+					(results['page']>0)?function(){query_nav(querytext,results['page']-1)}:null,
+					results['page'],
+					results['maxpage']+1,
+					function (index,isactive) {
+						if (isactive) return function(){};
+						return function() {query_nav(querytext,index)
+					}
 				});
+			}
 			reset_scroll($('#mainlist'));
 		}
 
@@ -435,15 +458,17 @@
 			return item;
 		}
 
-		function contactsList(contacts,page, maxpage) {
-			//alert(JSON.stringify(contacts));
+		function contactsList(contacts, useLongEnd) {
+			// alert(JSON.stringify(contacts));
 			$('.toolbar li').removeClass('active');
 			$('.toolbar .gotoContacts').addClass('active');
-			$('#mainlist li').remove();
+			// $('#mainlist li').remove();
 			for (i in contacts) {				
 				$('<li></li>').append(renderContact(contacts[i])).appendTo('#mainlist');
 			}
-			appendLongEnd(function(){});
+			if (useLongEnd) {
+				appendLongEnd(function(){});
+			}
 			reset_scroll($('#mainlist'));
 		}
 
@@ -483,6 +508,7 @@
 			$(prefix+'li.gotoContacts').click(function () {query_nav("::contacts")});
 			$(prefix+'li.gotoOptions').click(function () {openOptions()});
 			$(prefix+'li.gotoContactSearch').click(function () {ContactSearch()});
+			$(prefix+'li.gotoSharedWaves').click(function () {openSharedWaves()});
 			$('.menu .tools li').click(function (){$('.toolbar .more').removeClass('active');});
 		}
 

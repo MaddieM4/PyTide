@@ -73,6 +73,26 @@
 				border: 1px solid #AAA;
 			}
 
+			li.root .title {
+				font-weight:bold;
+			}
+
+			li p {
+				margin-bottom:0px;
+			}
+
+			#mainlist.document li:not(.root), 
+			#mainlist.document li.root .title,
+			#mainlist.document li.root .creator_avatar,
+			#mainlist.document li.root .creator_name {
+				display:none;
+			}
+
+			#mainlist.document li {
+				border-radius:0px;
+				border-color:#444;
+			}
+
 			#mainlist li.unread > img.creator_avatar {
 				border-width:2px;
 				top:-4px;
@@ -133,9 +153,9 @@
 					<li class="arrow"><div>Next</div></li>
 					<li class="inbox gotoInbox"><div>Inbox</div></li>
 					<li class="storage gotoArchive"><div>Archive</div></li>
-					<li class="trash"><div>Trash</div></li>
+					<li class="trash"><div>Leave</div></li>
 					<li class="arrow"><div>Jump</div></li>
-					<li class="eye-open"><div>Document Mode</div></li>
+					<li class="eye-open gotoDocumentMode"><div>Document Mode</div></li>
 					<li class="more">...</li>
 				</ul>
 				<ul class="edit invisible">
@@ -153,9 +173,10 @@
 			</div>
 		</div>
 		<ul id="mainlist">
-			<li class="unread"><img class="creator_avatar" src="../html/img/something.jpg"/>
+			<li class="unread root"><img class="creator_avatar" src="../html/img/something.jpg"/>
 			    <div class="creator_name">Philip Horger</div>
-				This is a blip
+				<span class="title">This is a blip</span>
+				<p>And this is the text inside it.</p>
 			</li>
 			<ul>
 				<li><img class="creator_avatar" src="https://lh6.googleusercontent.com/_tsWs83xehHE/TFgD2QbwzYI/AAAAAAAAFbg/O-Z1aVTdEvs/s104-c/me_cy_very_small.jpg"/>
@@ -278,12 +299,25 @@
 			}
 		}
 
+		function toggleDocMode() {
+			if ($('#mainlist').hasClass('document')) {
+				// toggle out of doc mode
+				$('#mainlist').removeClass('document');
+				$('.gotoDocumentMode').removeClass('active');
+			} else {
+				// toggle into doc mode
+				$('#mainlist').addClass('document');
+				$('.gotoDocumentMode').addClass('active');
+			}
+		}
+
 		function activateToolbars(menuonly){
 			prefix = (menuonly) ? ".menu ":"";
 			$(prefix+'li.gotoInbox').click(function () {query_nav("in:inbox")});
 			$(prefix+'li.gotoArchive').click(function () {query_nav("in:all")});
 			$(prefix+'li.gotoContacts').click(function () {query_nav("::contacts")});
 			$(prefix+'li.gotoOptions').click(function () {openOptions()});
+			$(prefix+'li.gotoDocumentMode').click(function () {toggleDocMode()});
 			$('.menu .tools li').click(function (){$('.toolbar .more').removeClass('active');});
 		}
 

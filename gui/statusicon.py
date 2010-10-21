@@ -16,6 +16,7 @@
 #           under the License. 
 
 import gtk
+import cairo
 import time
 
 import iconstates
@@ -43,12 +44,10 @@ class StatusIcon(gtk.StatusIcon):
 				menuItem.show()
 			elif len(item)==4:
 				menuItem = gtk.ImageMenuItem(item[0])
-				img = gtk.Image()
-				img.set_from_file('gui/html/img/unread.png')
-				menuItem.set_image(img)
+				menuItem.set_image(item[3])
 				menu.append(menuItem)
 				menuItem.connect_object("activate",item[1],item[2])
-				menuItem.show()
+				menuItem.show_all()
 			else:
 				# seperator
 				menuItem = gtk.MenuItem()
@@ -78,7 +77,7 @@ class StatusIcon(gtk.StatusIcon):
 			('Quit',self.quit, None)] )
 
 	def on_left_click(self,icon):
-		if True:#self.registry.Network.is_connected():
+		if self.registry.Network.is_connected():
 			popuplist = [('This is a blip',self.newWaveViewer,None,self.draw_unread_count(1))]
 					#[('No updates',self.blank,None)]
 		else:
@@ -111,7 +110,16 @@ class StatusIcon(gtk.StatusIcon):
 		# Copy unread base indicator to new pixmap
 		pixmap, mask = self.unreadBase.render_pixmap_and_mask()
 		# Drawing steps
-		print pixmap.get_size()
+		cr = pixmap.cairo_create()
+		cr.set_source_rgb(1,1,1)
+		cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+		x_bearing, y_bearing, width, height = cr.text_extents(str(count))[:4] # use these to fake right-justify
+		# The drawing position (specified by move_to) defines the left end of the baseline.
+		# x_bearing and y_bearing define the position of the upper-left corner of the bounding box
+		# relative to the baseline point (drawing position)
+		cr.move_to(21-width,11)
+		print (x_bearing, y_bearing, width, height)
+		cr.show_text(str(count))
 		# Convert to Image
 		final = gtk.image_new_from_pixmap(pixmap, mask)
 		final.show()
