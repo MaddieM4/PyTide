@@ -15,20 +15,25 @@
 #           specific language governing permissions and limitations
 #           under the License. 
 
-from os import makedirs
-import os.path
+import threading
+import json
+import persistance
 
-default_subfolders = ['cache', 
-		'cache/outbound',
-		'cache/contacts',
-		'cache/documents',
-		'attachments']
+class Cache:
+	''' Base class for all caching mechanisms. '''
+	pass
 
-def init_dir(path="~/.pytide/"):
-	expanded = os.path.expanduser(path)
-	if not os.path.isdir(expanded):
-		os.makedirs(expanded)
-	for folder in default_subfolders:
-		if not os.path.isdir(os.path.join(expanded,folder)):
-			os.makedirs(os.path.join(expanded,folder))
-	return expanded
+class DocumentCache(Cache):
+	''' Cache for storing wave documents. '''
+	pass
+
+class UserCache(Cache):
+	''' Cache for participant profiles, such as (but not limited to) your contacts.'''
+	pass
+
+class OutboundCache(Cache):
+	''' A class for storing locally-generated operations until it's verified that
+	the server has recieved them. In the event of a crash or internet outage,
+	your data will be saved. In fact, you can even work with your waves offline,
+	and your changes will simply be synced next time you get online.'''
+	pass
