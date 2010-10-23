@@ -63,6 +63,18 @@ class CacheItem:
 		self.index = {}
 		self.lock = threading.Lock()
 
+	def load(self):
+		self.lock.acquire()
+		with open(os.path.join(self.dir,'index')) as f:
+			self.index = json.loads(f.read())
+		self.lock.release()
+
+	def get(self):
+		self.lock.acquire()
+		data = self.index
+		self.lock.release()
+		return data
+
 	def merge(self, data):
 		self.lock.acquire()
 		try:
@@ -115,6 +127,14 @@ class Cache:
 	def __init__(self, subfolder = ""):
 		self.dir = os.path.join(persistance.init_dir(), "/cache/", subfolder)
 		self.items = {}
+
+	def merge(name, index = {}):
+		''' Add data to the index of an item.'''
+		if not name in self.items:
+		self.items[name].merge(index)
+
+	def load(name):
+		self.items[name] = CacheItem(os.path.join(self.dir,name))
 
 class DocumentCache(Cache):
 	''' Cache for storing wave documents. '''
