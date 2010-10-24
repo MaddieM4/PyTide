@@ -30,8 +30,8 @@ def validate_dir(path="~/.pytide/"):
 		os.makedirs(expanded)
 	return expanded
 
-def init_dir(path="~/.pytide/", subfolder = default_subfolders):
+def init_dir(path="~/.pytide/", subfolders = default_subfolders):
 	expanded = validate_dir(path)
 	for folder in subfolders:
-		validate_dir(os.path.join(expanded,folder)):
+		validate_dir(os.path.join(expanded,folder))
 	return expanded

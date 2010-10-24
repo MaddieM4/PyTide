@@ -45,7 +45,7 @@ class CacheItem:
 	has a minimum delay between save events (mintime). Mintime
 	is optional (set to -1), config-style autosave is not.
 	'''
-	def __init__(self, foldername, autosavetime, mintime=5):
+	def __init__(self, foldername, autosavetime=2, mintime=15):
 		''' Autosavetime and mintime are both in seconds.
 
 		Foldername is the root folder plus the name of the item.
@@ -54,6 +54,7 @@ class CacheItem:
 		the rest.
 		'''
 		self.dir = foldername
+		print "CacheItem at ", self.dir
 		persistance.validate_dir(self.dir)
 		self.saveDelay = autosavetime
 		self.lastSave = None
@@ -62,12 +63,10 @@ class CacheItem:
 		self.resources = []
 		self.index = {}
 		self.lock = threading.Lock()
-
-	def load(self):
-		self.lock.acquire()
-		with open(os.path.join(self.dir,'index')) as f:
-			self.index = json.loads(f.read())
-		self.lock.release()
+		try:
+			self.load()
+		except:
+			self.save()
 
 	def get(self):
 		self.lock.acquire()
@@ -85,21 +84,33 @@ class CacheItem:
 
 	def _merge(self, data):
 		''' Internal function, do not use '''
-		if type(data).__name__ != "dict"
+		if type(data).__name__ != "dict":
 			raise TypeError("Expected dict, got %s instead" % type(data).__name__)
 		else:
 			for i in data: self.index[i] = data[i]
 
+	def load(self):
+		self.lock.acquire()
+		with open(os.path.join(self.dir,'index')) as f:
+			try:
+				self.index = json.loads(f.read())['index']
+				print "Loaded CacheItem:",self.index
+			finally:
+				self.lock.release()
+
 	def save(self):
 		''' Does not support resources yet. '''
 		# save to disk
+		print "Trying to get into save"
 		threads_enter()
 		self.lock.acquire()
 		try:
+			print "Trying to save"
 			self.lastSave = datetime.datetime.now()
 			index = open(os.path.join(self.dir, 'index'), 'w')
 			index.truncate()
-			index.write(json.dumps(self.index))
+			index.write(json.dumps({'index':self.index,'resources':{}}))
+			print "saved"
 		finally:
 			index.close()
 			self.lock.release()
@@ -114,8 +125,11 @@ class CacheItem:
 			if soonest < now:
 				delay = 0
 			else:
-				delay = (soonest-now).total_seconds()
+				delay = (soonest-now).seconds
+		print "Total save delay:", self.saveDelay+delay
+		if self.autosave != None: self.autosave.cancel()
 		self.autosave = threading.Timer(self.saveDelay+delay, self.save)
+		self.autosave.start()
 
 	def cleanup(self):
 		''' Delete all resource files that are not referenced by the index '''
@@ -125,16 +139,23 @@ class Cache:
 	''' Base class for all caching mechanisms. '''
 
 	def __init__(self, subfolder = ""):
-		self.dir = os.path.join(persistance.init_dir(), "/cache/", subfolder)
+		self.dir = os.path.join(persistance.init_dir(), "cache/", subfolder)
+		print "Cache at ",self.dir
 		self.items = {}
 
-	def merge(name, index = {}):
+	def merge(self, name, index = {}):
 		''' Add data to the index of an item.'''
-		if not name in self.items:
-		self.items[name].merge(index)
+		self.get(name).merge(index)
 
-	def load(name):
+	def load(self, name):
+		''' Load data from the hard drive. '''
 		self.items[name] = CacheItem(os.path.join(self.dir,name))
+
+	def get(self, name):
+		''' Return the item with that name, load if necessary. '''
+		if not name in self.items:
+			self.load(name)
+		return self.items[name]
 
 class DocumentCache(Cache):
 	''' Cache for storing wave documents. '''

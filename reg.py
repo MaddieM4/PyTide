@@ -19,6 +19,8 @@ from gui import wavelist, waveviewer, browserwindow, loginwindow, iconstates
 from NetworkTools import network
 from persistance.config import Config
 
+from persistance.cache import CacheItem, Cache
+
 class Registry:
 	"""reg is the registry, which allows windows to communicate 
 	with each other.
@@ -45,6 +47,8 @@ class Registry:
 		self.config['wavelist'] = Config(namespace="wavelist", onload=self.pushglobalconf_WaveList)
 		for i in self.config:
 			self.config[i].setAutoTimer(4)
+		self.cache = Cache()
+		self.cache.merge("Freddy", {'killme':False})
 
 	def newId(self):
 		self.idPos += 1
