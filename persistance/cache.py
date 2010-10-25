@@ -66,7 +66,7 @@ class CacheItem:
 		try:
 			self.load()
 		except:
-			self.save()
+			self.save(threaded=False)
 
 	def get(self):
 		self.lock.acquire()
@@ -90,20 +90,25 @@ class CacheItem:
 			for i in data: self.index[i] = data[i]
 
 	def load(self):
+		print "acquiring load lock"
 		self.lock.acquire()
-		with open(os.path.join(self.dir,'index')) as f:
-			try:
+		try:
+			with open(os.path.join(self.dir,'index')) as f:
+				print "trying to process file"
 				self.index = json.loads(f.read())['index']
 				print "Loaded CacheItem:",self.index
-			finally:
-				self.lock.release()
+		finally:
+			print "releasing load lock"
+			self.lock.release()
 
-	def save(self):
+	def save(self, threaded = True):
 		''' Does not support resources yet. '''
 		# save to disk
 		print "Trying to get into save"
-		threads_enter()
+		if threaded: threads_enter()
+		print "threads_enter success"
 		self.lock.acquire()
+		print "lock acquired"
 		try:
 			print "Trying to save"
 			self.lastSave = datetime.datetime.now()
@@ -114,7 +119,7 @@ class CacheItem:
 		finally:
 			index.close()
 			self.lock.release()
-			threads_leave()
+			if threaded: threads_leave()
 
 	def startTimer(self):
 		now = datetime.datetime.now()
@@ -168,6 +173,13 @@ class UserCache(Cache):
 
 	def __init__(self):
 		super(DocumentCache, self).__init__("documents")
+
+class QueryCache(Cache):
+	''' Uses a hash for the name since queries are liable to contain
+	funky characters. Expire very quickly.'''
+
+	def __init__(self):
+		super(DocumentCache, self).__init__("queries")
 
 class OutboundCache(Cache):
 	''' A class for storing locally-generated operations until it's verified that

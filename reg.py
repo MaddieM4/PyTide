@@ -47,8 +47,6 @@ class Registry:
 		self.config['wavelist'] = Config(namespace="wavelist", onload=self.pushglobalconf_WaveList)
 		for i in self.config:
 			self.config[i].setAutoTimer(4)
-		self.cache = Cache()
-		self.cache.merge("Freddy", {'killme':False})
 
 	def newId(self):
 		self.idPos += 1

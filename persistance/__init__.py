@@ -22,6 +22,7 @@ default_subfolders = ['cache',
 		'cache/outbound',
 		'cache/contacts',
 		'cache/documents',
+		'cache/queries',
 		'attachments']
 
 def validate_dir(path="~/.pytide/"):
