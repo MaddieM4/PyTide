@@ -44,14 +44,17 @@ class Resource:
 	def __init__(self, address, filename, 
 				lifetime=datetime.timedelta(hours=1), 
 				expires = None,
-				cached = False):
+				cached = False,
+				callback = None):
 		self.uri = address
 		if cached:
-			self.magic = address
+			# file is already downloaded
+			self.magic = filename
 		else:
-			self.magic = uri
+			self.magic = address
 		self.filename = filename
 		self.lifetime = lifetime
+		self.done = callback
 		self.lock = threading.Lock()
 		if expires == None:
 			self.load()
@@ -67,7 +70,7 @@ class Resource:
 		return addr
 
 	def load(self):
-		self.downloader = threading.Thread(self.download)
+		self.downloader = threading.Thread(None, self.download)
 		self.downloader.start()
 
 	def download(self):
@@ -81,11 +84,14 @@ class Resource:
 			outfile = open(self.filename,'wb')
 			outfile.truncate()
 			outfile.write(infile.read())
-			self.expires = datetime.datetime.now()+lifetime
+			self.expires = datetime.datetime.now()+self.lifetime
 
 			self.lock.acquire()
 			self.magic = self.filename
 			self.lock.release()
+
+			if self.done != None:
+				self.done()
 		finally:
 			threads_leave()
 
@@ -98,9 +104,13 @@ class Resource:
 	@classmethod
 	def fromJSON(jsonstring):
 		props = json.loads(jsonstring)
+		return Resource.fromDict(props)
+
+	@classmethod
+	def fromDict(props):
 		return Resource(props['uri'], props['cacheaddress'],
 			expires = datetime.datetime(props['expires']),
-			cached = )
+			cached = props['cached'])
 
 class CacheItem:
 	''' Container class for things you want to stick in a cache.
@@ -138,7 +148,7 @@ class CacheItem:
 		self.lastSave = None
 		self.mintime = mintime
 		self.autosave = None
-		self.resources = []
+		self.resources = {}
 		self.index = {}
 		self.lock = threading.Lock()
 		try:
@@ -149,6 +159,8 @@ class CacheItem:
 	def get(self):
 		self.lock.acquire()
 		data = self.index
+		for i in self.resources:
+			data[i] = self.resources[i].location
 		self.lock.release()
 		return data
 
@@ -173,15 +185,19 @@ class CacheItem:
 		try:
 			with open(os.path.join(self.dir,'index')) as f:
 				print "trying to process file"
-				self.index = json.loads(f.read())['index']
+				total = json.loads(f.read())
+				self.index = total['index']
+				res = total['resources']
+				self.resources = {}
+				for i in res:
+					self.resources[i] = Resource.fromJSON(res[i])
 				print "Loaded CacheItem:",self.index
 		finally:
 			print "releasing load lock"
 			self.lock.release()
 
 	def save(self, threaded = True):
-		''' Does not support resources yet. '''
-		# save to disk
+		''' Save a cacheitem to disk '''
 		print "Trying to get into save"
 		if threaded: threads_enter()
 		print "threads_enter success"
@@ -192,7 +208,12 @@ class CacheItem:
 			self.lastSave = datetime.datetime.now()
 			index = open(os.path.join(self.dir, 'index'), 'w')
 			index.truncate()
-			index.write(json.dumps({'index':self.index,'resources':{}}))
+			res = {}
+			for resource in self.resources:
+				res[resource] = self.resources[resource].toJSON()
+			index.write(json.dumps({'index':self.index,
+				'resources':res
+			}))
 			print "saved"
 		finally:
 			index.close()
@@ -213,6 +234,12 @@ class CacheItem:
 		if self.autosave != None: self.autosave.cancel()
 		self.autosave = threading.Timer(self.saveDelay+delay, self.save)
 		self.autosave.start()
+
+	def setResource(self, name, uri):
+		self.resources[name] = Resource(uri, 
+			os.path.join(self.dir,name),
+			callback = self.startTimer)
+		self.startTimer()
 
 	def cleanup(self):
 		''' Delete all resource files that are not referenced by the index '''
