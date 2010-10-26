@@ -21,8 +21,86 @@ import threading
 import json
 import datetime
 import persistance
+import urllib2
 
 from gtk.gdk import threads_enter, threads_leave
+
+class Resource:
+	''' This class works by pointer-y magic. A resource has
+	an actual URI (set in init), a cache URI, and a magic
+	address. The magic address is initialized to the actual
+	URI immediately, so that there is immediately a valid
+	address. Once the file has been downloaded in the background,
+	the magic address is set to the cache URI.
+
+	If you're using this class in something, remember that
+	the magic address is myres.location, just like a regular
+	old property. Also remember that the address is liable to
+	change at any time, but in light of concurrency, it's
+	build so that it's not changed while you're trying to read
+	it.
+	'''
+
+	def __init__(self, address, filename, 
+				lifetime=datetime.timedelta(hours=1), 
+				expires = None,
+				cached = False):
+		self.uri = address
+		if cached:
+			self.magic = address
+		else:
+			self.magic = uri
+		self.filename = filename
+		self.lifetime = lifetime
+		self.lock = threading.Lock()
+		if expires == None:
+			self.load()
+			self.expires = datetime.datetime.now()+lifetime
+		else:
+			self.expires = expires
+
+	@property
+	def location(self):
+		self.lock.acquire()
+		addr = self.magic
+		self.lock.release()
+		return addr
+
+	def load(self):
+		self.downloader = threading.Thread(self.download)
+		self.downloader.start()
+
+	def download(self):
+		threads_enter()
+		try:
+			self.lock.acquire()
+			self.magic = self.uri
+			self.lock.release()
+
+			infile = urllib2.urlopen(self.uri)
+			outfile = open(self.filename,'wb')
+			outfile.truncate()
+			outfile.write(infile.read())
+			self.expires = datetime.datetime.now()+lifetime
+
+			self.lock.acquire()
+			self.magic = self.filename
+			self.lock.release()
+		finally:
+			threads_leave()
+
+	def toJSON(self):
+		return json.dumps({'uri':self.uri, 
+			'cacheaddress':self.filename,
+			'cached':self.magic==self.filename,
+			'expires':str(self.expires)})
+
+	@classmethod
+	def fromJSON(jsonstring):
+		props = json.loads(jsonstring)
+		return Resource(props['uri'], props['cacheaddress'],
+			expires = datetime.datetime(props['expires']),
+			cached = )
 
 class CacheItem:
 	''' Container class for things you want to stick in a cache.
