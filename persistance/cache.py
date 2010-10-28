@@ -22,6 +22,7 @@ import json
 import datetime
 import persistance
 import urllib2
+import hashlib
 
 from gtk.gdk import threads_enter, threads_leave
 
@@ -68,6 +69,13 @@ class Resource:
 		addr = self.magic
 		self.lock.release()
 		return addr
+
+	@property
+	def isexpired(self):
+		self.lock.acquire()
+		val = datetime.datetime.now > self.expires
+		self.lock.release()
+		return val
 
 	def load(self):
 		self.downloader = threading.Thread(None, self.download)
@@ -258,7 +266,9 @@ class Cache:
 		self.get(name).merge(index)
 
 	def load(self, name):
-		''' Load data from the hard drive. '''
+		''' Load data from the hard drive. Creates the item
+		if it does not exist. To test whether a cacheitem
+		exists, use check()'''
 		self.items[name] = CacheItem(os.path.join(self.dir,name))
 
 	def get(self, name):
@@ -267,24 +277,25 @@ class Cache:
 			self.load(name)
 		return self.items[name]
 
+	def check(self, name):
+		''' Like get, but returns False if the name does not
+		exist in the cache.'''
+		if os.path.isdir(os.path.join(self.dir, name)):
+			return self.get(name)
+		else:
+			return False
+
 class DocumentCache(Cache):
 	''' Cache for storing wave documents. '''
 
 	def __init__(self):
-		super(DocumentCache, self).__init__("documents")
+		super(type(self), self).__init__("documents")
 
 class UserCache(Cache):
 	''' Cache for participant profiles, such as (but not limited to) your contacts.'''
 
 	def __init__(self):
-		super(DocumentCache, self).__init__("documents")
-
-class QueryCache(Cache):
-	''' Uses a hash for the name since queries are liable to contain
-	funky characters. Expire very quickly.'''
-
-	def __init__(self):
-		super(DocumentCache, self).__init__("queries")
+		super(type(self), self).__init__("contacts")
 
 class OutboundCache(Cache):
 	''' A class for storing locally-generated operations until it's verified that
@@ -293,4 +304,4 @@ class OutboundCache(Cache):
 	and your changes will simply be synced next time you get online.'''
 
 	def __init__(self):
-		super(DocumentCache, self).__init__("documents")
+		super(type(self), self).__init__("documents")

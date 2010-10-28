@@ -18,11 +18,33 @@
 import json
 import models.threads
 import models.user
+import models.digest
 import os
 import urllib
 import NetworkTools
 
 from waveapi import waveservice
+
+class modelConverter:
+	@classmethod
+	def SearchResults(self,wsresults, page, maxpage):
+		''' Turns a Data API search results list to a 
+		models.SearchResults object '''
+		digests = []
+		for i in wsresults.digests:
+			digests.append(modelConverter.Digest(i))
+		return models.digest.SearchResults(wsresults.query,
+							page,
+							digests,
+							maxpage)
+
+	@classmethod
+	def Digest(self,wsdigest):
+		return models.digest.Digest(wsdigest.title,
+					wsdigest.participants,
+					wsdigest.unread_count,
+					wsdigest.blip_count,
+					wsdigest.last_modified)
 
 class GoogleWaveConnection(models.threads.Plugin):
 	def __init__(self, username, password, network):
@@ -50,12 +72,11 @@ class GoogleWaveConnection(models.threads.Plugin):
 		except:
 			raise NetworkTools.ConnectionFailure("Connection to Google Wave failed")
 			return
-		results.page = startpage
 		if results.num_results < 21:
-			results.maxpage = startpage
+			maxpage = startpage
 		else:
-			results.maxpage = startpage+1 # more pages exist, we will just assume one more
-		return results
+			maxpage = startpage+1 # more pages exist, we will just assume one more
+		return modelConverter.SearchResults(results, startpage, maxpage)
 
 	def new_wavelet(self):
 		pass

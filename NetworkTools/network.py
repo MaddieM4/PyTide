@@ -42,9 +42,6 @@ class Network(threads.LoopingThread):
 		self.savedlogins = Config(namespace="savedlogins")
 		self.savedlogins.setAutoTimer(3)
 		self.loginWindow = self.registry.newLoginWindow(self.connect, self.savedlogins)
-		self.genericCache = persistance.cache.Cache()
-		self.genericCache.get("Freddy").setResource("avatar","http://a0.twimg.com/profile_images/30339872/squareheadshot_normal.jpg")
-		print self.genericCache.get("Freddy")
 		self.start()
 
 	def process(self):
@@ -53,6 +50,7 @@ class Network(threads.LoopingThread):
 			self.connection.submit()
 
 	def query(self, query, startpage=0):
+		''' Expects a models.SearchResults from the plugin '''
 		try:
 			results = self.connection.query(query, startpage=startpage)
 			self.registry.setIcon('active')
