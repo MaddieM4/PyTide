@@ -134,14 +134,21 @@ class Annotation(object):
 
 
 class Annotations(object):
-    """ """
-    def __init__(self):
-        """Creates a set() to contain the annotations.
+    """A collection of Annotations.
 
-        A set is used so that identical annotations are removed automatically.
-        It is hoped that this will be extendible to allow the set's comparison
-        to also merge annotations.
+    Annotation objects are stored inside of a set, and the Annotations class
+    is simply a proxy to that set. There are 2 clear benefits of producing a
+    set.
+        1)  Identical Annotations are automatically removed.
+            * Annotations are deemed identical if all their attributes are the
+              same (start, end, name, value)
+        2)  The Annotations are unordered. This is a benefit because any order
+            would have to be constantly updated and changed for efficiency.
+
+    There are 
         """
+    def __init__(self):
+        """Creates a set to contain the annotations."""
         self._data = set()
 
 
