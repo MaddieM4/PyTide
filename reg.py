@@ -19,6 +19,8 @@ from gui import wavelist, waveviewer, browserwindow, loginwindow, iconstates
 from NetworkTools import network
 from persistance.config import Config
 
+from persistance.cache import CacheItem, Cache
+
 class Registry:
 	"""reg is the registry, which allows windows to communicate 
 	with each other.

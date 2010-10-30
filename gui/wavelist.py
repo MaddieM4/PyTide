@@ -113,7 +113,7 @@ class WaveList(webgui.browserWindow):
 				'participants':participants,
 				'unread':digest.unread_count,
 				'total':digest.blip_count,
-				'date':digest.last_modified,
+				'date':digest.date,
 				})
 		self.send("reloadList(%s, true)" % json.dumps(jres))
 

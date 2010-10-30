@@ -24,11 +24,14 @@ default_subfolders = ['cache',
 		'cache/documents',
 		'attachments']
 
-def init_dir(path="~/.pytide/"):
+def validate_dir(path="~/.pytide/"):
 	expanded = os.path.expanduser(path)
 	if not os.path.isdir(expanded):
 		os.makedirs(expanded)
-	for folder in default_subfolders:
-		if not os.path.isdir(os.path.join(expanded,folder)):
-			os.makedirs(os.path.join(expanded,folder))
+	return expanded
+
+def init_dir(path="~/.pytide/", subfolders = default_subfolders):
+	expanded = validate_dir(path)
+	for folder in subfolders:
+		validate_dir(os.path.join(expanded,folder))
 	return expanded

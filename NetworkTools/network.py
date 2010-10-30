@@ -17,6 +17,7 @@
 
 import NetworkTools
 from persistance.config import Config
+import persistance.cache
 
 import threading
 from models import threads, operation
@@ -49,6 +50,7 @@ class Network(threads.LoopingThread):
 			self.connection.submit()
 
 	def query(self, query, startpage=0):
+		''' Expects a models.SearchResults from the plugin '''
 		try:
 			results = self.connection.query(query, startpage=startpage)
 			self.registry.setIcon('active')
