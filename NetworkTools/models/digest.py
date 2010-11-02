@@ -1,5 +1,6 @@
 class Digest:
-	def __init__(self, title, participants, unread, total, date):
+	def __init__(self, waveid, title, participants, unread, total, date):
+		self.waveid = waveid
 		self.title = title
 		self.participants = participants
 		self.unread_count = unread

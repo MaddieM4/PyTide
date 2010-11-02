@@ -18,6 +18,7 @@
 import webgui
 import json
 import re
+import webbrowser
 
 from gui import rel_to_abs
 
@@ -36,6 +37,7 @@ class WaveList(webgui.browserWindow):
 	def process(self, data):
 		''' Recieve UI input data from window '''
 		if data != None:
+			print data
 			if data['type'] == 'query':
 				if 'page' in data:
 					self.query(data['value'], page=data['page'])
@@ -49,7 +51,8 @@ class WaveList(webgui.browserWindow):
 			elif data['type'] == 'setOption':
 				# pass on data to other windows and save to config
 				self.setConfig(data['key'],data['value'])
-			print data
+			elif data['type'] == 'Open':
+				self.openWaves(data['addresses'])
 			self.ready = True
 		else:
 			return None
@@ -108,12 +111,14 @@ class WaveList(webgui.browserWindow):
 		for digest in results.digests:
 			plist = digest.participants.serialize()
 			participants = [self.registry.Network.participantMeta(x) for x in plist]
+			print digest.waveid
 			jres['digests'].append({
 				'title':self.escape(digest.title),
 				'participants':participants,
 				'unread':digest.unread_count,
 				'total':digest.blip_count,
 				'date':digest.date,
+				'location':digest.waveid
 				})
 		self.send("reloadList(%s, true)" % json.dumps(jres))
 
@@ -126,3 +131,20 @@ class WaveList(webgui.browserWindow):
 		if value != None:
 			self.options[key]=value
 		self.registry.setWaveListConfig(key, self.options[key])
+
+	def openWaves(self, idlist):
+		''' Open a list of waves. In current implementation,
+		opens up to two waves in Google Wave interface, with
+		waves 3-n minimized.'''
+		url = 'https://wave.google.com/wave/?nouacheck#'
+		if len(idlist) > 1:
+			url+="minimized:search,"
+		for i, id in enumerate(idlist):
+			if i > 0:
+				url += ","
+			if i < 2:
+				url += "restored:wave:"
+			else:			
+				url += "minimized:wave:"
+			url += id
+		webbrowser.open(url)

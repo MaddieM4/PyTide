@@ -153,7 +153,7 @@
 			</div>
 			<div class="toolbar noselect">
 				<ul class="invisible select">
-					<li class="eye-open"><div>Open</div></li>
+					<li class="eye-open openWaves"><div>Open</div></li>
 					<li class="pencil"><div>Mark Read</div></li>
 					<li class="trash"><div>Leave</div></li>
 					<li class="folder"><div>Folderize</div></li>
@@ -454,7 +454,7 @@
 			} else {
 				item+='<div class="msgs"><div class="unread">'+digest['unread']+"</div> of "+digest['total']+"</div></td></tr></table></li>";
 			}
-			// alert(item)
+			item = $(item).data('location',digest.location);
 			return item;
 		}
 
@@ -470,6 +470,17 @@
 				appendLongEnd(function(){});
 			}
 			reset_scroll($('#mainlist'));
+		}
+
+		function openSelectedWaves() {
+			console.log("osw")
+			addresses = new Array();
+			$('#mainlist li.selected').each(function(){
+				addresses.push( $(this).data('location') )
+			})
+			sendObject({'type':'Open',
+				'addresses':addresses
+			});
 		}
 
 		function query(page) {
@@ -509,6 +520,7 @@
 			$(prefix+'li.gotoOptions').click(function () {openOptions()});
 			$(prefix+'li.gotoContactSearch').click(function () {ContactSearch()});
 			$(prefix+'li.gotoSharedWaves').click(function () {openSharedWaves()});
+			$(prefix+'li.openWaves').click(function () {openSelectedWaves()});
 			$('.menu .tools li').click(function (){$('.toolbar .more').removeClass('active');});
 		}
 

@@ -40,7 +40,8 @@ class modelConverter:
 
 	@classmethod
 	def Digest(self,wsdigest):
-		return models.digest.Digest(wsdigest.title,
+		return models.digest.Digest(wsdigest.wave_id,
+					wsdigest.title,
 					wsdigest.participants,
 					wsdigest.unread_count,
 					wsdigest.blip_count,
