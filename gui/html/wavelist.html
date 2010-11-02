@@ -127,6 +127,19 @@
 				list-style-type:square;
 				cursor: pointer;
 			}
+
+			#nav.loading .search .right{
+				background-image: url(../html/img/searchgreen.png);
+			}
+			#nav.loading .search.highlighted .right{
+				background-image: url(../html/img/searchgreenH.png);
+			}
+			#nav.error .search .right{
+				background-image: url(../html/img/searchred.png);
+			}
+			#nav.error .search.highlighted .right{
+				background-image: url(../html/img/searchredH.png);
+			}
 		</style>
 		<script type="text/javascript" src="jslib/jquery-1.4.2.min.js"></script>
 		<script type="text/javascript" src="jslib/comm.js"></script>
@@ -344,6 +357,7 @@
 			'connection':'<p>You\'ve been disconnected.</p><p>Check your internet connection to see you don\'t have anything unplugged, or your wifi is still working.</p>'
 		}
 		function setError(id) {
+			$('#nav').removeClass('loading').addClass('error');
 			$('#mainlist').prepend($("<li class='status'>"+errors[id]+"</li>"));
 		}
 
@@ -358,6 +372,7 @@
 		});
 
 		function reloadList(newlist, useLongEnd) {
+			$('#nav').removeClass('loading error');
 			results = newlist;
 			querytext = results['query'];
 			searchbox.val(querytext);
@@ -459,6 +474,7 @@
 		}
 
 		function contactsList(contacts, useLongEnd) {
+			$('#nav').removeClass('loading error');
 			// alert(JSON.stringify(contacts));
 			$('.toolbar li').removeClass('active');
 			$('.toolbar .gotoContacts').addClass('active');
@@ -485,9 +501,13 @@
 
 		function query(page) {
 			// prepare visually
+			$('#nav').addClass('loading');
 			$('#mainlist li').removeClass('selected').removeClass('open');
 			checkSelect();
-			// Future: turn magnifying glass red or green or something?
+			setTimeout("_query("+page+")",5);
+		}
+
+		function _query(page) {
 			// Build payload
 			payload = {
 				'type':'query',
