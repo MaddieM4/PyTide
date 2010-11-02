@@ -490,7 +490,6 @@
 			for (i in contacts) {				
 				$('<li></li>').append(renderContact(contacts[i])).appendTo('#mainlist');
 			}
-			if (contacts.length == 0) setError('empty');
 			if (useLongEnd) {
 				appendLongEnd(function(){});
 			}
@@ -510,7 +509,7 @@
 
 		function query(page) {
 			// prepare visually
-			$('#nav').addClass('loading');
+			$('#nav').addClass('loading').removeClass('error');
 			$('#mainlist li').removeClass('selected').removeClass('open');
 			checkSelect();
 			setTimeout("_query("+page+")",5);
