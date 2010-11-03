@@ -456,7 +456,7 @@
 				return shortmonths[d.getMonth()]+" " +d.getDate();
 			} else {
 				// less than a day, show time
-				return ""+d.getHours()+":"+d.getMinutes();
+				return ""+d.getHours()+ ((10>d.getMinutes()) ?":0":":") + d.getMinutes();
 			}
 		}
 
