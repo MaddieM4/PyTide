@@ -88,13 +88,31 @@ class WaveList(webgui.browserWindow):
 		if query == "": 
 			query="in:inbox"
 		if "::contacts" in query:
-			self.registry.Network.getContacts(self.showContacts)
+			def callback(contactList):
+				self.send("clearList()")
+				self.showContacts(contactList, True)
+				self.send("checkSelect()")
+			self.registry.Network.getContacts(callback)
 			return
-		self.registry.Network.query(self, query, startpage=page)
+
+		# check for WITH keywords and make a microquery for them
+		addresses = getContactsFromQuery(query)
+		if addresses != []:
+			def callback(contactList):
+				self.send("clearList()")
+				self.showContacts(contactList, False)
+				self.registry.Network.query(self, query, startpage=page)
+				self.send("checkSelect()")
+			self.registry.Network.getContacts(callback)
+		else:
+			def callback(contactList):
+				self.send("clearList()")
+				self.registry.Network.query(self, query, startpage=page)
+				self.send("checkSelect()")
+			self.registry.Network.getContacts(callback)
 
 	def recv_query(self, results):
 		'''Receive a loaded query from the Network'''
-		self.send("clearList()")
 		if results.page!=0:
 			pagetext = ", Page "+str(results.page+1)
 		else: pagetext = ""
@@ -102,13 +120,6 @@ class WaveList(webgui.browserWindow):
 		if results == None:
 			self.send("setError('connection')")
 			return
-		else:
-			# check for WITH keywords and make a microquery for them
-			addresses = getContactsFromQuery(results.query)
-			contacts = []
-			for address in addresses:
-				contacts += [{'name':c.name or c.nick,'address':c.addr,'avatar':c.pict} for c in self.registry.Network.getContacts()]
-			self.send("contactsList(%s, false)" % json.dumps(contacts))
 		print results.page, "/", results.maxpage, "\t",results.num_results
 		jres = {'query':self.escape(results.query),'digests':[],'page':results.page,'maxpage':results.maxpage}
 		for digest in results.digests:
@@ -123,13 +134,11 @@ class WaveList(webgui.browserWindow):
 				'date':digest.date,
 				'location':digest.waveid
 				})
-		self.send("reloadList(%s, true); checkSelect();" % json.dumps(jres))
+		self.send("reloadList(%s, true)" % json.dumps(jres))
 
-	def showContacts(self, contactlist):
+	def showContacts(self, contactlist, useLongEnd):
 		contacts = [{'name':c.name or c.nick,'address':c.addr,'avatar':c.pict} for c in contactlist]
-		self.send("clearList()")
-		self.send("contactsList(%s,true)" % json.dumps(contacts))
-		self.send("checkSelect()")
+		self.send("contactsList(%s,%s)" % (json.dumps(contacts),str(useLongEnd).lower()))
 
 	def getConfig(self,key):
 		self.options[key] = self.registry.getWaveListConfig(key)
