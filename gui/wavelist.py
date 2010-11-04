@@ -101,15 +101,15 @@ class WaveList(webgui.browserWindow):
 			def callback(contactList):
 				self.send("clearList()")
 				self.showContacts(contactList, False)
-				self.registry.Network.query(self, query, startpage=page)
+				self.registry.Network.query(self.recv_query, query, startpage=page)
 				self.send("checkSelect()")
 			self.registry.Network.getContacts(callback)
 		else:
-			def callback(contactList):
+			def callback(items):
 				self.send("clearList()")
-				self.registry.Network.query(self, query, startpage=page)
+				self.recv_query(items)
 				self.send("checkSelect()")
-			self.registry.Network.getContacts(callback)
+			self.registry.Network.query(callback, query, startpage=0)
 
 	def recv_query(self, results):
 		'''Receive a loaded query from the Network'''
