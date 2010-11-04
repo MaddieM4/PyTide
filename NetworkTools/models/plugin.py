@@ -25,7 +25,7 @@ from threads import LoopingThread
 class Responder(LoopingThread):
 	''' A class used by the Plugin core to process the outqueue '''
 	def __init__(self, plugin):
-		super(Responder,self).__init__()
+		super(Responder,self).__init__(speed=.1)
 		self.plugin = plugin
 
 	def process(self):
@@ -52,7 +52,7 @@ class Plugin(Process):
 		''' Repeatedly process items in queue '''
 		while 1:
 			try:
-				self.process(self.inqueue.get(timeout=2))
+				self.process(self.inqueue.get_nowait())
 			except Empty:
 				pass
 
@@ -64,31 +64,28 @@ class Plugin(Process):
 		"me" is a request for the users own information.
 		The callback takes a models.user.User
 		'''
-		print "Models.plugin processing",data
 		if type(data).__name__ != 'dict':
 			return False
 		t = data['type']
 		if t == 'query':
-			print "using query action"
-			self.outqueue.put((data['callback'],self._query(data['query'],data['page'])))
+			self.output(data, self._query(data['query'],data['page']))
 		elif t == 'contacts':
-			self.popcallback(data)(self._contacts())
+			self.output(data, self._contacts())
 		elif t == 'me':
-			self.popcallback(data)(self._me())
+			self.output(data, self._me())
+
+	def output(self, data, result):
+		self.outqueue.put((data['callback'], result))
 
 	def pushcallback(self, c):
-		print "pushcallback"
 		self.cblock.acquire()
 		self.callbacks[self.maxcallback]=c
 		self.maxcallback += 1
 		self.cblock.release()
-		print self.callbacks
 		return self.maxcallback-1
 
 	def popcallback(self, data):
-		print "popcallback"
 		self.cblock.acquire()
-		print self.callbacks
 		c = self.callbacks[data[0]]
 		del self.callbacks[data[0]]
 		self.cblock.release()
@@ -100,7 +97,6 @@ class Plugin(Process):
 				'query':query,
 				'page':startpage,
 				'callback':self.pushcallback(callback)})
-		print "after query:", self.callbacks
 
 	def get_contacts(self, callback):
 		''' Callback function takes a list of models.user.User '''

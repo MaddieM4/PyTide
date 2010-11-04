@@ -118,9 +118,9 @@ class Network(threads.LoopingThread):
 	def saveLogin(self, uname, pword):
 		self.savedlogins.set({uname:pword})
 
-	def getContacts(self):
+	def getContacts(self, callback):
 		'''Return a list of all your personal contacts.'''
-		return self.connection.get_contacts()
+		return self.connection.get_contacts(callback)
 
 	def subscribe(doclocation):
 		d = self.connection.subscribe(doclocation)

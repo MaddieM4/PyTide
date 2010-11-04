@@ -90,7 +90,7 @@ class GoogleWaveConnection(models.plugin.Plugin):
 		return modelConverter.User(self.service.fetch_profile()['participantProfile'])
 
 	def _contacts(self):
-		return modelConverter.User(self.service.fetch_profile()['participantProfile'])
+		return [modelConverter.User(self.service.fetch_profile()['participantProfile'])]
 
 	def submit(self):
 		pass

@@ -87,6 +87,9 @@ class WaveList(webgui.browserWindow):
 		pass it on to the window.'''
 		if query == "": 
 			query="in:inbox"
+		if "::contacts" in query:
+			self.registry.Network.getContacts(self.showContacts)
+			return
 		self.registry.Network.query(self, query, startpage=page)
 
 	def recv_query(self, results):
@@ -98,10 +101,6 @@ class WaveList(webgui.browserWindow):
 		self.setTitle(self.getTitleFromQuery(results.query)+pagetext)
 		if results == None:
 			self.send("setError('connection')")
-			return
-		if "::contacts" in results.query:
-			contacts = [{'name':c.name or c.nick,'address':c.addr,'avatar':c.pict} for c in self.registry.Network.getContacts()]
-			self.send("contactsList(%s,true)" % json.dumps(contacts))
 			return
 		else:
 			# check for WITH keywords and make a microquery for them
@@ -124,7 +123,13 @@ class WaveList(webgui.browserWindow):
 				'date':digest.date,
 				'location':digest.waveid
 				})
-		self.send("reloadList(%s, true)" % json.dumps(jres))
+		self.send("reloadList(%s, true); checkSelect();" % json.dumps(jres))
+
+	def showContacts(self, contactlist):
+		contacts = [{'name':c.name or c.nick,'address':c.addr,'avatar':c.pict} for c in contactlist]
+		self.send("clearList()")
+		self.send("contactsList(%s,true)" % json.dumps(contacts))
+		self.send("checkSelect()")
 
 	def getConfig(self,key):
 		self.options[key] = self.registry.getWaveListConfig(key)
