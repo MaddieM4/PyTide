@@ -91,7 +91,6 @@ class WaveList(webgui.browserWindow):
 
 	def recv_query(self, results):
 		'''Receive a loaded query from the Network'''
-		#results = self.registry.Network.query(query,startpage=page)
 		self.send("clearList()")
 		if results.page!=0:
 			pagetext = ", Page "+str(results.page+1)

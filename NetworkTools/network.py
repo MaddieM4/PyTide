@@ -33,7 +33,7 @@ class Network(threads.LoopingThread):
 	when stuff happens, and the management of connection plugins. '''
 
 	def __init__(self, reg):
-		super(Network, self).__init__(name="PyTideNetwork")
+		super(Network, self).__init__(name="PyTideNetwork", speed=.1)
 		self.registry = reg
 		self.connection = None
 		self._status = "No connection"
@@ -43,30 +43,30 @@ class Network(threads.LoopingThread):
 		self.savedlogins = Config(namespace="savedlogins")
 		self.savedlogins.setAutoTimer(3)
 		self.loginWindow = self.registry.newLoginWindow(self.connect, self.savedlogins)
-		self.queries = Queue.Queue()
 		self.start()
 
 	def process(self):
 		if self.is_connected():
 			self.connection.getUpdates()
 			self.connection.submit()
-			if not self.queries.empty():
-				(wavelist, query, startpage) = self.queries.get()
-				self._query(wavelist, query, startpage)
-				self.queries.task_done()
+			#if not self.queries.empty():
+			#	(wavelist, query, startpage) = self.queries.get()
+			#	self._query(wavelist, query, startpage)
+			#	self.queries.task_done()
 
 	def query(self, wavelist, query, startpage=0):
-		self.queries.put((wavelist, query, startpage))
-
-	def _query(self, wavelist, query, startpage):
-		''' Expects a models.SearchResults from the plugin '''
+		def callback(results):
+			self._query(results, wavelist)
 		try:
-			results = self.connection.query(query, startpage=startpage)
-			self.registry.setIcon('active')
-			wavelist.recv_query(results)
+			self.connection.query(query, startpage, callback)
 		except NetworkTools.ConnectionFailure:
 			self.registry.setIcon('error')
 			wavelist.recv_query(None)
+
+	def _query(self, results, wavelist):
+		''' Expects a models.SearchResults from the plugin '''
+		self.registry.setIcon('active')
+		wavelist.recv_query(results)
 
 	def connect(self, username, password):
 		print "Network connecting to %s" % username
