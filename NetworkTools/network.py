@@ -20,6 +20,7 @@ from persistance.config import Config
 import persistance.cache
 
 import threading
+import Queue
 from models import threads, operation
 import json
 
@@ -42,14 +43,22 @@ class Network(threads.LoopingThread):
 		self.savedlogins = Config(namespace="savedlogins")
 		self.savedlogins.setAutoTimer(3)
 		self.loginWindow = self.registry.newLoginWindow(self.connect, self.savedlogins)
+		self.queries = Queue.Queue()
 		self.start()
 
 	def process(self):
 		if self.is_connected():
 			self.connection.getUpdates()
 			self.connection.submit()
+			if not self.queries.empty():
+				(wavelist, query, startpage) = self.queries.get()
+				self._query(wavelist, query, startpage)
+				self.queries.task_done()
 
 	def query(self, wavelist, query, startpage=0):
+		self.queries.put((wavelist, query, startpage))
+
+	def _query(self, wavelist, query, startpage):
 		''' Expects a models.SearchResults from the plugin '''
 		try:
 			results = self.connection.query(query, startpage=startpage)
