@@ -49,15 +49,15 @@ class Network(threads.LoopingThread):
 			self.connection.getUpdates()
 			self.connection.submit()
 
-	def query(self, query, startpage=0):
+	def query(self, wavelist, query, startpage=0):
 		''' Expects a models.SearchResults from the plugin '''
 		try:
 			results = self.connection.query(query, startpage=startpage)
 			self.registry.setIcon('active')
-			return results
+			wavelist.recv_query(results)
 		except NetworkTools.ConnectionFailure:
 			self.registry.setIcon('error')
-			return None
+			wavelist.recv_query(None)
 
 	def connect(self, username, password):
 		print "Network connecting to %s" % username

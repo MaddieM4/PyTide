@@ -83,31 +83,36 @@ class WaveList(webgui.browserWindow):
 		else: return 'Search "%s"' % querytext
 
 	def query(self, query, page=0):
-		'''Send a query to the Network, get a list of results back, and pass it on to the window.'''
+		'''Send a query to the Network, get a list of results back, and 
+		pass it on to the window.'''
 		if query == "": 
 			query="in:inbox"
-		results = self.registry.Network.query(query,startpage=page)
+		self.registry.Network.query(self, query, startpage=page)
+
+	def recv_query(self, results):
+		'''Receive a loaded query from the Network'''
+		#results = self.registry.Network.query(query,startpage=page)
 		self.send("clearList()")
-		if page!=0:
-			pagetext = ", Page "+str(page+1)
+		if results.page!=0:
+			pagetext = ", Page "+str(results.page+1)
 		else: pagetext = ""
-		self.setTitle(self.getTitleFromQuery(query)+pagetext)
+		self.setTitle(self.getTitleFromQuery(results.query)+pagetext)
 		if results == None:
 			self.send("setError('connection')")
 			return
-		if "::contacts" in query:
+		if "::contacts" in results.query:
 			contacts = [{'name':c.name or c.nick,'address':c.addr,'avatar':c.pict} for c in self.registry.Network.getContacts()]
 			self.send("contactsList(%s,true)" % json.dumps(contacts))
 			return
 		else:
 			# check for WITH keywords and make a microquery for them
-			addresses = getContactsFromQuery(query)
+			addresses = getContactsFromQuery(results.query)
 			contacts = []
 			for address in addresses:
 				contacts += [{'name':c.name or c.nick,'address':c.addr,'avatar':c.pict} for c in self.registry.Network.getContacts()]
 			self.send("contactsList(%s, false)" % json.dumps(contacts))
 		print results.page, "/", results.maxpage, "\t",results.num_results
-		jres = {'query':self.escape(query),'digests':[],'page':results.page,'maxpage':results.maxpage}
+		jres = {'query':self.escape(results.query),'digests':[],'page':results.page,'maxpage':results.maxpage}
 		for digest in results.digests:
 			plist = digest.participants.serialize()
 			participants = [self.registry.Network.participantMeta(x) for x in plist]
