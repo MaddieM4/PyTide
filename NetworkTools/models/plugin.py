@@ -20,22 +20,39 @@
 from multiprocessing import Process, Queue
 from Queue import Empty, Full
 from threading import Lock
+from threads import LoopingThread
+
+class Responder(LoopingThread):
+	''' A class used by the Plugin core to process the outqueue '''
+	def __init__(self, plugin):
+		super(Responder,self).__init__()
+		self.plugin = plugin
+
+	def process(self):
+		try:
+			res = self.plugin.outqueue.get_nowait()
+			self.plugin.popcallback(res)(res[1])
+		except Empty:
+			pass
 
 class Plugin(Process):
 	''' Contains a process that handles messages and pushes some back. '''
 	def __init__(self):
 		super(Plugin, self).__init__()
 		self.daemon = True
-		self.queue = Queue()
+		self.inqueue = Queue()
+		self.outqueue = Queue()
 		self.callbacks = {}
 		self.maxcallback = 0
 		self.cblock = Lock()
+		self.responder = Responder(self)
+		self.responder.start()
 
 	def run(self):
 		''' Repeatedly process items in queue '''
 		while 1:
 			try:
-				self.process(self.queue.get(timeout=2))
+				self.process(self.inqueue.get(timeout=2))
 			except Empty:
 				pass
 
@@ -53,7 +70,7 @@ class Plugin(Process):
 		t = data['type']
 		if t == 'query':
 			print "using query action"
-			self.popcallback(data)(self._query(data['query'],data['page']))
+			self.outqueue.put((data['callback'],self._query(data['query'],data['page'])))
 		elif t == 'contacts':
 			self.popcallback(data)(self._contacts())
 		elif t == 'me':
@@ -72,14 +89,14 @@ class Plugin(Process):
 		print "popcallback"
 		self.cblock.acquire()
 		print self.callbacks
-		c = self.callbacks[data['callback']]
-		del self.callbacks[data['callback']]
+		c = self.callbacks[data[0]]
+		del self.callbacks[data[0]]
 		self.cblock.release()
 		return c
 
 	def query(self, query, startpage, callback):
 		''' Callback function takes a models.digest.SearchResults '''
-		self.queue.put({'type':'query',
+		self.inqueue.put({'type':'query',
 				'query':query,
 				'page':startpage,
 				'callback':self.pushcallback(callback)})
@@ -87,12 +104,12 @@ class Plugin(Process):
 
 	def get_contacts(self, callback):
 		''' Callback function takes a list of models.user.User '''
-		self.queue.put({'type':'contacts',
+		self.inqueue.put({'type':'contacts',
 				'callback':self.pushcallback(callback)})
 
 	def get_me(self, callback):
 		''' Callback function takes a models.user.User '''
-		self.queue.put({'type':'me',
+		self.inqueue.put({'type':'me',
 				'callback':self.pushcallback(callback)})
 
 	def _query(self, query, startpage):
