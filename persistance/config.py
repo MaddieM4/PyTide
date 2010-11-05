@@ -156,18 +156,15 @@ class Config:
 		self.lock.acquire()
 		reader = ConfigRW(self.namespace,whendone,self)
 
-	def save(self, namespace=None, context=None):
+	def save(self, namespace=None):
 		'''Save config data to the disk. It's non-destructive, meaning
 		that you can save an incomplete config and it will automagically
 		merge with the existing config behind the scenes. However, it's
 		also impossible to clear a namespace, resetting it to a default
 		state (The system is designed to robustly assume a default value
 		when no config data is present, which should result in the eventual
-		repopulation of a complete conf file over time).
+		repopulation of a complete conf file over time). '''
 
-		Erasing to default is a planned feature that will be included in
-		the Config class as the "bleach()" function. The functionality
-		already exists in ConfigRW.'''
 		ns = self.namespace or namespace
 		print "saving",self.data, "to namespace", ns
 		if ns == None:
@@ -180,6 +177,19 @@ class Config:
 			return data
 		print "acquiring lock for save"
 		self.lock.acquire()
+		reader = ConfigRW(ns, whendone,self)
+
+	def bleach(self, namespace=None):
+		''' Erase a namespace to a barebones {} state and save '''
+		ns = self.namespace or namespace
+		if ns == None:
+			return False
+		def whendone(self, data):
+			return {}
+		print "acquiring lock for save"
+		self.lock.acquire()
+		self.data = {}
+		self.lock.release()
 		reader = ConfigRW(ns, whendone,self)
 
 	def setAutoTimer(self,time):

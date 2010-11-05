@@ -18,6 +18,7 @@
 import webgui
 import json
 import re
+import webbrowser
 
 from gui import rel_to_abs
 
@@ -36,6 +37,7 @@ class WaveList(webgui.browserWindow):
 	def process(self, data):
 		''' Recieve UI input data from window '''
 		if data != None:
+			print data
 			if data['type'] == 'query':
 				if 'page' in data:
 					self.query(data['value'], page=data['page'])
@@ -49,7 +51,8 @@ class WaveList(webgui.browserWindow):
 			elif data['type'] == 'setOption':
 				# pass on data to other windows and save to config
 				self.setConfig(data['key'],data['value'])
-			print data
+			elif data['type'] == 'Open':
+				self.openWaves(data['addresses'])
 			self.ready = True
 		else:
 			return None
@@ -80,42 +83,62 @@ class WaveList(webgui.browserWindow):
 		else: return 'Search "%s"' % querytext
 
 	def query(self, query, page=0):
-		'''Send a query to the Network, get a list of results back, and pass it on to the window.'''
+		'''Send a query to the Network, get a list of results back, and 
+		pass it on to the window.'''
 		if query == "": 
 			query="in:inbox"
-		results = self.registry.Network.query(query,startpage=page)
-		self.send("clearList()")
-		if page!=0:
-			pagetext = ", Page "+str(page+1)
+		if "::contacts" in query:
+			def callback(contactList):
+				self.send("clearList()")
+				self.showContacts(contactList, True)
+				self.send("checkSelect()")
+			self.registry.Network.getContacts(callback)
+			return
+
+		# check for WITH keywords and make a microquery for them
+		addresses = getContactsFromQuery(query)
+		if addresses != []:
+			def callback(contactList):
+				self.send("clearList()")
+				self.showContacts(contactList, False)
+				self.registry.Network.query(self.recv_query, query, startpage=page)
+				self.send("checkSelect()")
+			self.registry.Network.getContacts(callback)
+		else:
+			def callback(items):
+				self.send("clearList()")
+				self.recv_query(items)
+				self.send("checkSelect()")
+			self.registry.Network.query(callback, query, startpage=0)
+
+	def recv_query(self, results):
+		'''Receive a loaded query from the Network'''
+		if results.page!=0:
+			pagetext = ", Page "+str(results.page+1)
 		else: pagetext = ""
-		self.setTitle(self.getTitleFromQuery(query)+pagetext)
+		self.setTitle(self.getTitleFromQuery(results.query)+pagetext)
 		if results == None:
 			self.send("setError('connection')")
 			return
-		if "::contacts" in query:
-			contacts = [{'name':c.name or c.nick,'address':c.addr,'avatar':c.pict} for c in self.registry.Network.getContacts()]
-			self.send("contactsList(%s,true)" % json.dumps(contacts))
-			return
-		else:
-			# check for WITH keywords and make a microquery for them
-			addresses = getContactsFromQuery(query)
-			contacts = []
-			for address in addresses:
-				contacts += [{'name':c.name or c.nick,'address':c.addr,'avatar':c.pict} for c in self.registry.Network.getContacts()]
-			self.send("contactsList(%s, false)" % json.dumps(contacts))
 		print results.page, "/", results.maxpage, "\t",results.num_results
-		jres = {'query':self.escape(query),'digests':[],'page':results.page,'maxpage':results.maxpage}
+		jres = {'query':self.escape(results.query),'digests':[],'page':results.page,'maxpage':results.maxpage}
 		for digest in results.digests:
 			plist = digest.participants.serialize()
 			participants = [self.registry.Network.participantMeta(x) for x in plist]
+			print digest.waveid
 			jres['digests'].append({
 				'title':self.escape(digest.title),
 				'participants':participants,
 				'unread':digest.unread_count,
 				'total':digest.blip_count,
 				'date':digest.date,
+				'location':digest.waveid
 				})
 		self.send("reloadList(%s, true)" % json.dumps(jres))
+
+	def showContacts(self, contactlist, useLongEnd):
+		contacts = [{'name':c.name or c.nick,'address':c.addr,'avatar':c.pict} for c in contactlist]
+		self.send("contactsList(%s,%s)" % (json.dumps(contacts),str(useLongEnd).lower()))
 
 	def getConfig(self,key):
 		self.options[key] = self.registry.getWaveListConfig(key)
@@ -126,3 +149,20 @@ class WaveList(webgui.browserWindow):
 		if value != None:
 			self.options[key]=value
 		self.registry.setWaveListConfig(key, self.options[key])
+
+	def openWaves(self, idlist):
+		''' Open a list of waves. In current implementation,
+		opens up to two waves in Google Wave interface, with
+		waves 3-n minimized.'''
+		url = 'https://wave.google.com/wave/?nouacheck#'
+		if len(idlist) > 1:
+			url+="minimized:search,"
+		for i, id in enumerate(idlist):
+			if i > 0:
+				url += ","
+			if i < 2:
+				url += "restored:wave:"
+			else:			
+				url += "minimized:wave:"
+			url += id
+		webbrowser.open(url)

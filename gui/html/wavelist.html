@@ -127,6 +127,25 @@
 				list-style-type:square;
 				cursor: pointer;
 			}
+
+			#nav.loading .search .right{
+				background-image: url(../html/img/searchgreen.png);
+			}
+			#nav.loading .search.highlighted .right{
+				background-image: url(../html/img/searchgreenH.png);
+			}
+			#nav.error .search .right{
+				background-image: url(../html/img/searchred.png);
+			}
+			#nav.error .search.highlighted .right{
+				background-image: url(../html/img/searchredH.png);
+			}
+			#nav.error .search.highlighted .center{
+				background-image: url(../html/img/searchmiddlered.png);
+			}
+			#nav.error .search.highlighted .left{
+				background-image: url(../html/img/searchleftR.png);
+			}
 		</style>
 		<script type="text/javascript" src="jslib/jquery-1.4.2.min.js"></script>
 		<script type="text/javascript" src="jslib/comm.js"></script>
@@ -153,7 +172,7 @@
 			</div>
 			<div class="toolbar noselect">
 				<ul class="invisible select">
-					<li class="eye-open"><div>Open</div></li>
+					<li class="eye-open openWaves"><div>Open</div></li>
 					<li class="pencil"><div>Mark Read</div></li>
 					<li class="trash"><div>Leave</div></li>
 					<li class="folder"><div>Folderize</div></li>
@@ -341,9 +360,11 @@
 		}
 
 		errors = {
-			'connection':'<p>You\'ve been disconnected.</p><p>Check your internet connection to see you don\'t have anything unplugged, or your wifi is still working.</p>'
+			'connection':'<p>You\'ve been disconnected.</p><p>Check your internet connection to see you don\'t have anything unplugged, or your wifi is still working.</p>',
+			'empty':'<p>This query/folder/thingy is empty.</p>'
 		}
 		function setError(id) {
+			$('#nav').removeClass('loading').addClass('error');
 			$('#mainlist').prepend($("<li class='status'>"+errors[id]+"</li>"));
 		}
 
@@ -358,6 +379,7 @@
 		});
 
 		function reloadList(newlist, useLongEnd) {
+			$('#nav').removeClass('loading error');
 			results = newlist;
 			querytext = results['query'];
 			searchbox.val(querytext);
@@ -379,6 +401,7 @@
 				digest = digests[i];
 				$(renderDigest(digest)).appendTo('#mainlist');
 				}
+			if (digests.length == 0) setError('empty');
 			if (useLongEnd) {
 				appendLongEnd(
 					function(){},
@@ -433,7 +456,7 @@
 				return shortmonths[d.getMonth()]+" " +d.getDate();
 			} else {
 				// less than a day, show time
-				return ""+d.getHours()+":"+d.getMinutes();
+				return ""+d.getHours()+ ((10>d.getMinutes()) ?":0":":") + d.getMinutes();
 			}
 		}
 
@@ -454,11 +477,12 @@
 			} else {
 				item+='<div class="msgs"><div class="unread">'+digest['unread']+"</div> of "+digest['total']+"</div></td></tr></table></li>";
 			}
-			// alert(item)
+			item = $(item).data('location',digest.location);
 			return item;
 		}
 
 		function contactsList(contacts, useLongEnd) {
+			$('#nav').removeClass('loading error');
 			// alert(JSON.stringify(contacts));
 			$('.toolbar li').removeClass('active');
 			$('.toolbar .gotoContacts').addClass('active');
@@ -472,11 +496,26 @@
 			reset_scroll($('#mainlist'));
 		}
 
+		function openSelectedWaves() {
+			console.log("osw")
+			addresses = new Array();
+			$('#mainlist li.selected').each(function(){
+				addresses.push( $(this).data('location') )
+			})
+			sendObject({'type':'Open',
+				'addresses':addresses
+			});
+		}
+
 		function query(page) {
 			// prepare visually
+			$('#nav').addClass('loading').removeClass('error');
 			$('#mainlist li').removeClass('selected').removeClass('open');
 			checkSelect();
-			// Future: turn magnifying glass red or green or something?
+			setTimeout("_query("+page+")",5);
+		}
+
+		function _query(page) {
 			// Build payload
 			payload = {
 				'type':'query',
@@ -509,6 +548,7 @@
 			$(prefix+'li.gotoOptions').click(function () {openOptions()});
 			$(prefix+'li.gotoContactSearch').click(function () {ContactSearch()});
 			$(prefix+'li.gotoSharedWaves').click(function () {openSharedWaves()});
+			$(prefix+'li.openWaves').click(function () {openSelectedWaves()});
 			$('.menu .tools li').click(function (){$('.toolbar .more').removeClass('active');});
 		}
 

@@ -20,6 +20,7 @@ from persistance.config import Config
 import persistance.cache
 
 import threading
+import Queue
 from models import threads, operation
 import json
 
@@ -32,7 +33,7 @@ class Network(threads.LoopingThread):
 	when stuff happens, and the management of connection plugins. '''
 
 	def __init__(self, reg):
-		super(Network, self).__init__(name="PyTideNetwork")
+		super(Network, self).__init__(name="PyTideNetwork", speed=.1)
 		self.registry = reg
 		self.connection = None
 		self._status = "No connection"
@@ -46,18 +47,22 @@ class Network(threads.LoopingThread):
 
 	def process(self):
 		if self.is_connected():
-			self.connection.getUpdates()
-			self.connection.submit()
+			pass
+			#self.connection.sync()
 
-	def query(self, query, startpage=0):
-		''' Expects a models.SearchResults from the plugin '''
+	def query(self, wlcallback, query, startpage=0):
+		def callback(results):
+			self._query(results, wlcallback)
 		try:
-			results = self.connection.query(query, startpage=startpage)
-			self.registry.setIcon('active')
-			return results
+			self.connection.query(query, startpage, callback)
 		except NetworkTools.ConnectionFailure:
 			self.registry.setIcon('error')
-			return None
+			wavelist.recv_query(None)
+
+	def _query(self, results, wlcallback):
+		''' Expects a models.SearchResults from the plugin '''
+		self.registry.setIcon('active')
+		wlcallback(results)
 
 	def connect(self, username, password):
 		print "Network connecting to %s" % username
@@ -109,9 +114,9 @@ class Network(threads.LoopingThread):
 	def saveLogin(self, uname, pword):
 		self.savedlogins.set({uname:pword})
 
-	def getContacts(self):
+	def getContacts(self, callback):
 		'''Return a list of all your personal contacts.'''
-		return self.connection.get_contacts()
+		return self.connection.get_contacts(callback)
 
 	def subscribe(doclocation):
 		d = self.connection.subscribe(doclocation)

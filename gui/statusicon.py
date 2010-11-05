@@ -30,7 +30,9 @@ class StatusIcon(gtk.StatusIcon):
 		self.connect('popup-menu', self.on_right_click)
 		self.connect('activate', self.on_left_click)
 		self.unreadBase = gtk.gdk.pixbuf_new_from_file("gui/html/img/unread.png")
+		gtk.gdk.threads_enter()
 		gtk.main()
+		gtk.gdk.threads_leave()
 
 	def popupMenu(self, event_button, event_time, itemList=None):
 		# Create and show the popup menu
