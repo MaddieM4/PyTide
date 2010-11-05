@@ -74,7 +74,6 @@ class GoogleWaveConnection(models.plugin.Plugin):
 			raise NetworkTools.ConnectionFailure("Could not communicate with PyTide Server",e[1])
 
 	def _query(self, query, startpage):
-		print "GWAVE QUERY"
 		try:
 			results=self.service.search(query, index=startpage*20,num_results=21)
 		except:
@@ -91,16 +90,3 @@ class GoogleWaveConnection(models.plugin.Plugin):
 
 	def _contacts(self):
 		return [modelConverter.User(self.service.fetch_profile()['participantProfile'])]
-
-	def submit(self):
-		pass
-
-	def getUpdates(self):
-		pass
-
-	def subscribe(waveid):
-		# fetch the wavelet, convert it to a models.py Document, and return it to the network.
-		pass
-
-	def unsubscribe(waveid):
-		pass

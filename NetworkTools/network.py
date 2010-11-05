@@ -47,12 +47,8 @@ class Network(threads.LoopingThread):
 
 	def process(self):
 		if self.is_connected():
-			self.connection.getUpdates()
-			self.connection.submit()
-			#if not self.queries.empty():
-			#	(wavelist, query, startpage) = self.queries.get()
-			#	self._query(wavelist, query, startpage)
-			#	self.queries.task_done()
+			pass
+			#self.connection.sync()
 
 	def query(self, wlcallback, query, startpage=0):
 		def callback(results):
