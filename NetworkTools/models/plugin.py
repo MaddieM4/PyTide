@@ -38,6 +38,10 @@ class Responder(LoopingThread):
 class Plugin(Process):
 	''' Contains a process that handles messages and pushes some back. '''
 	def __init__(self):
+		''' All these variables (except the queues) will be unavailable
+		to the process, and therefore unavailable to the process function.
+		That's why we have a responder to handle callbacks.
+		'''
 		super(Plugin, self).__init__()
 		self.daemon = True
 		self.inqueue = Queue()
@@ -67,12 +71,15 @@ class Plugin(Process):
 		if type(data).__name__ != 'dict':
 			return False
 		t = data['type']
-		if t == 'query':
-			self.output(data, self._query(data['query'],data['page']))
-		elif t == 'contacts':
-			self.output(data, self._contacts())
-		elif t == 'me':
-			self.output(data, self._me())
+		try:
+			if t == 'query':
+				self.output(data, self._query(data['query'],data['page']))
+			elif t == 'contacts':
+				self.output(data, self._contacts())
+			elif t == 'me':
+				self.output(data, self._me())
+		except Exception as e:
+			self.error(data, e)
 
 	def output(self, data, result):
 		self.outqueue.put((data['callback'], result))
@@ -91,21 +98,25 @@ class Plugin(Process):
 		self.cblock.release()
 		return c
 
-	def query(self, query, startpage, callback):
+	def query(self, query, startpage, callback, errorcallback):
 		''' Callback function takes a models.digest.SearchResults '''
 		self.inqueue.put({'type':'query',
 				'query':query,
 				'page':startpage,
-				'callback':self.pushcallback(callback)})
+				'callback':self.pushcallback(callback),
+				'ecallback':self.pushcallback(errorcallback),
+				})
 
-	def get_contacts(self, callback):
+	def get_contacts(self, callback, errorcallback):
 		''' Callback function takes a list of models.user.User '''
 		self.inqueue.put({'type':'contacts',
+				'ecallback':self.pushcallback(errorcallback),
 				'callback':self.pushcallback(callback)})
 
-	def get_me(self, callback):
+	def get_me(self, callback, errorcallback):
 		''' Callback function takes a models.user.User '''
 		self.inqueue.put({'type':'me',
+				'ecallback':self.pushcallback(errorcallback),
 				'callback':self.pushcallback(callback)})
 
 	def _query(self, query, startpage):
@@ -119,3 +130,6 @@ class Plugin(Process):
 	def _me(self):
 		''' Override me! Return a models.user.User '''
 		pass
+
+	def error(self, data, e):
+		self.outqueue.put((data['ecallback'], e))

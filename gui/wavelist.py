@@ -23,9 +23,18 @@ import webbrowser
 from gui import rel_to_abs
 
 withcontact = re.compile("with[ :](\S*)")
+pageregex = re.compile(" ?::(\d+)")
 
 def getContactsFromQuery(query):
 	return withcontact.findall(query)
+
+def getPageFromQuery(query, page):
+	''' returns (query, page) '''
+	pgs = pageregex.search(query)
+	if pgs != None:
+		page = int(pgs.group(1))-1
+		query = pageregex.sub("",query)
+	return (query, page)
 
 class WaveList(webgui.browserWindow):
 	def __init__(self,registry):
@@ -85,14 +94,16 @@ class WaveList(webgui.browserWindow):
 	def query(self, query, page=0):
 		'''Send a query to the Network, get a list of results back, and 
 		pass it on to the window.'''
+
 		if query == "": 
 			query="in:inbox"
+		query, page = getPageFromQuery(query, page)
 		if "::contacts" in query:
 			def callback(contactList):
 				self.send("clearList()")
 				self.showContacts(contactList, True)
 				self.send("checkSelect()")
-			self.registry.Network.getContacts(callback)
+			self.registry.Network.getContacts(callback, self.loaderror)
 			return
 
 		# check for WITH keywords and make a microquery for them
@@ -103,13 +114,13 @@ class WaveList(webgui.browserWindow):
 				self.showContacts(contactList, False)
 				self.registry.Network.query(self.recv_query, query, startpage=page)
 				self.send("checkSelect()")
-			self.registry.Network.getContacts(callback)
+			self.registry.Network.getContacts(callback, self.loaderror)
 		else:
 			def callback(items):
 				self.send("clearList()")
 				self.recv_query(items)
 				self.send("checkSelect()")
-			self.registry.Network.query(callback, query, startpage=0)
+			self.registry.Network.query(callback, query, startpage=page, errcallback=self.loaderror)
 
 	def recv_query(self, results):
 		'''Receive a loaded query from the Network'''
@@ -135,6 +146,9 @@ class WaveList(webgui.browserWindow):
 				'location':digest.waveid
 				})
 		self.send("reloadList(%s, true)" % json.dumps(jres))
+
+	def loaderror(self, e):
+		self.send("clearList(); setError('connection'); checkSelect()")
 
 	def showContacts(self, contactlist, useLongEnd):
 		contacts = [{'name':c.name or c.nick,'address':c.addr,'avatar':c.pict} for c in contactlist]
