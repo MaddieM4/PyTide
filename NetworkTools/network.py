@@ -50,14 +50,13 @@ class Network(threads.LoopingThread):
 			pass
 			#self.connection.sync()
 
-	def query(self, wlcallback, query, startpage=0):
+	def query(self, wlcallback, query, startpage=0, errcallback=None):
+		''' External function - send a query to the plugin '''
 		def callback(results):
 			self._query(results, wlcallback)
-		try:
-			self.connection.query(query, startpage, callback)
-		except NetworkTools.ConnectionFailure:
-			self.registry.setIcon('error')
-			wavelist.recv_query(None)
+		def err(e):
+			self.plugin_error(e, errcallback)
+		self.connection.query(query, startpage, callback, err)
 
 	def _query(self, results, wlcallback):
 		''' Expects a models.SearchResults from the plugin '''
@@ -71,7 +70,7 @@ class Network(threads.LoopingThread):
 			try:
 				self.status("Connecting to Google Wave")
 				import gwave
-				self.connection = gwave.GoogleWaveConnection(username, password, self)
+				self.connection = gwave.GoogleWaveConnection(username, password)
 				self.status("Connected")
 				self.loginWindow.hide()
 				self.registry.newWaveList()
@@ -114,9 +113,11 @@ class Network(threads.LoopingThread):
 	def saveLogin(self, uname, pword):
 		self.savedlogins.set({uname:pword})
 
-	def getContacts(self, callback):
+	def getContacts(self, callback, errcallback=None):
 		'''Return a list of all your personal contacts.'''
-		return self.connection.get_contacts(callback)
+		def err(e):
+			self.plugin_error(e, errcallback)
+		return self.connection.get_contacts(callback, err)
 
 	def subscribe(doclocation):
 		d = self.connection.subscribe(doclocation)
@@ -130,3 +131,9 @@ class Network(threads.LoopingThread):
 				q.addOp(ops.CLOSE())
 				return True
 		return False
+
+	def plugin_error(self, error, errcallback=None):
+		print type(error)
+		self.registry.setIcon('error')
+		if errcallback != None:
+			errcallback(error)

@@ -57,7 +57,7 @@ class modelConverter:
 		
 
 class GoogleWaveConnection(models.plugin.Plugin):
-	def __init__(self, username, password, network):
+	def __init__(self, username, password):
 		super(GoogleWaveConnection, self).__init__()
 		self.username = username
 		self.password = password
