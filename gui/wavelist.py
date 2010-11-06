@@ -23,9 +23,18 @@ import webbrowser
 from gui import rel_to_abs
 
 withcontact = re.compile("with[ :](\S*)")
+pageregex = re.compile(" ?::(\d+)")
 
 def getContactsFromQuery(query):
 	return withcontact.findall(query)
+
+def getPageFromQuery(query, page):
+	''' returns (query, page) '''
+	pgs = pageregex.search(query)
+	if pgs != None:
+		page = int(pgs.group(1))-1
+		query = pageregex.sub("",query)
+	return (query, page)
 
 class WaveList(webgui.browserWindow):
 	def __init__(self,registry):
@@ -88,6 +97,7 @@ class WaveList(webgui.browserWindow):
 
 		if query == "": 
 			query="in:inbox"
+		query, page = getPageFromQuery(query, page)
 		if "::contacts" in query:
 			def callback(contactList):
 				self.send("clearList()")
