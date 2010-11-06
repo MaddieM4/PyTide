@@ -20,14 +20,32 @@ __all__ = []
 domain_mapping = {}
 
 with open("./NetworkTools/plugins/domain_mapping.txt", "r") as f:
-    for i in f.readlines():
-        pair = i.split()
-        domain_mapping[pair[0]] = pair[1]
 
-__all__.extend(set(domain_mapping.values()))
+    for i in f.readlines():
+
+        pair = i.split()
+        domain_mapping[pair[0]] = (pair[1], pair[2])
+        if pair[1] not in __all__:
+            __all__.append(pair[1])
+            
+print __all__
 
 def get_domain_connection(domain):
     if domain in domain_mapping:
-        return __import__(domain_mapping[domain])
+        plugin_tuple = domain_mapping[domain]
+        plugin_module = __import__("NetworkTools.plugins.%s" % plugin_tuple[0],
+                                   fromlist = plugin_tuple[1])
+        try:
+            print plugin_module
+            print plugin_tuple
+            print dir(plugin_module)
+            plugin = getattr(plugin_module, plugin_tuple[1])
+        except AttributeError, e:
+            print "AttributeError handled!"
+            print "CONNECTION PLUGIN COULD NOT BE IMPORTED"
+            plugin = False
+    
+        return plugin
+    
     else:
         return False

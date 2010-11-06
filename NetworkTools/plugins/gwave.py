@@ -16,14 +16,12 @@
 #           under the License. 
 
 import json
-import models.plugin
-import models.user
-import models.digest
+import NetworkTools
 import os
 import urllib
-import NetworkTools
 
-from waveapi import waveservice
+from ..models import plugin, user, digest
+from ..waveapi import waveservice
 
 class modelConverter:
 	@classmethod
@@ -33,30 +31,29 @@ class modelConverter:
 		digests = []
 		for i in wsresults.digests:
 			digests.append(modelConverter.Digest(i))
-		return models.digest.SearchResults(wsresults.query,
-							page,
-							digests,
-							maxpage)
+		return digest.SearchResults(wsresults.query,
+                                            page,
+                                            digests,
+                                            maxpage)
 
 	@classmethod
 	def Digest(self,wsdigest):
-		return models.digest.Digest(wsdigest.wave_id,
-					wsdigest.title,
-					wsdigest.participants,
-					wsdigest.unread_count,
-					wsdigest.blip_count,
-					wsdigest.last_modified)
+		return digest.Digest(wsdigest.wave_id,
+                                     wsdigest.title,
+                                     wsdigest.participants,
+                                     wsdigest.unread_count,
+                                     wsdigest.blip_count,
+                                     wsdigest.last_modified)
 
 	@classmethod
 	def User(self,profile):
-		return models.user.User(
-			name=profile['name'], 
-			address=profile['address'],
-			avatar=profile['imageUrl'] 
-		)
+		return user.User(name = profile['name'],
+                                 address = profile['address'],
+                                 avatar = profile['imageUrl'])
+
 		
 
-class GoogleWaveConnection(models.plugin.Plugin):
+class GoogleWaveConnection(plugin.Plugin):
 	def __call__(self, username, password):
 		self.username = username
 		self.password = password
