@@ -37,13 +37,10 @@ class Responder(LoopingThread):
 
 class Plugin(Process):
 	''' Contains a process that handles messages and pushes some back. '''
-	def __init__(self):
-		''' All these variables (except the queues) will be unavailable
-		to the process, and therefore unavailable to the process function.
-		That's why we have a responder to handle callbacks.
-		'''
-		super(Plugin, self).__init__()
-		self.daemon = True
+	def __new__(cls):
+                self = super(Plugin, cls).__new__()
+                super(Plugin, self).__init__()
+                self.daemon = True
 		self.inqueue = Queue()
 		self.outqueue = Queue()
 		self.callbacks = {}
@@ -51,6 +48,7 @@ class Plugin(Process):
 		self.cblock = Lock()
 		self.responder = Responder(self)
 		self.responder.start()
+		return self
 
 	def run(self):
 		''' Repeatedly process items in queue '''
