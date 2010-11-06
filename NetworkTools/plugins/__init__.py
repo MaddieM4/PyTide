@@ -13,19 +13,21 @@
 #           "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 #           KIND, either express or implied.  See the License for the
 #           specific language governing permissions and limitations
-#           under the License. 
+#           under the License.
 
-# Model stuff has been moved to models.py
-# Plugin base class will be in models.py as well
-# Network object can be found in network.py
+__all__ = []
 
-__all__ = ["models", "waveapi", "plugins", "network", "pygowave", "websocket",
-           "gwave2"]
+domain_mapping = {}
 
-class ConnectionFailure(IOError):
-	'''An error to be raised when the initialization process of a Network plugin fails.'''
-	def __init__(self, reason="Unspecified Reason", httpcode=None):
-		self.httpcode = httpcode
-		self.reason = reason
-	def __str__(self):
-		return "Connection error: %s - Code %s" % (self.reason, self.httpcode)
+with open("./NetworkTools/plugins/domain_mapping.txt", "r") as f:
+    for i in f.readlines():
+        pair = i.split()
+        domain_mapping[pair[0]] = pair[1]
+
+__all__.extend(set(domain_mapping.values()))
+
+def get_domain_connection(domain):
+    if domain in domain_mapping:
+        return __import__(domain_mapping[domain])
+    else:
+        return False

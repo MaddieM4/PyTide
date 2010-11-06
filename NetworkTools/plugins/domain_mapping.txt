@@ -1,0 +1,3 @@
+googlewave.com gwave.GoogleWaveConnection
+gmail.com gwave.GoogleWaveConnection
+googlemail.com gwave.GoogleWaveConnection

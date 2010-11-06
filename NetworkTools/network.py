@@ -24,6 +24,8 @@ import Queue
 from models import threads, operation
 import json
 
+import plugins
+
 class Network(threads.LoopingThread):
 	'''The Network object is a thread, and it communicates between the connection plugin
 	(also a thread) and the rest of the program. It holds the "official" version of every
@@ -66,11 +68,11 @@ class Network(threads.LoopingThread):
 	def connect(self, username, password):
 		print "Network connecting to %s" % username
 		domain = username.split('@')[1]
-		if domain == "googlewave.com" or domain == "gmail.com":
-			try:
+		connection = plugins.get_domain_connection('domain')
+		if connection:
+                        try:
 				self.status("Connecting to Google Wave")
-				import gwave
-				self.connection = gwave.GoogleWaveConnection(username, password)
+				self.connection = connection(username, password)
 				self.status("Connected")
 				self.loginWindow.hide()
 				self.registry.newWaveList()
@@ -80,7 +82,7 @@ class Network(threads.LoopingThread):
 				self.status("Connection Failed - Your internet may be down or your login data incorrect")
 				return False
 		else:
-			self.status("Domain name not recognized")
+			self.status("No plugin found")
 
 	def openURL(self, address, destroyCallback=None):
 		print "Network.openURL(%s)" % address
