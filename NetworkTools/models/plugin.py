@@ -37,7 +37,7 @@ class Responder(LoopingThread):
 
 class Plugin(Process):
 	''' Contains a process that handles messages and pushes some back. '''
-	def __new__(cls):
+	def __new__(cls, *args, **kwargs):
                 self = super(Plugin, cls).__new__()
                 super(Plugin, self).__init__()
                 self.daemon = True

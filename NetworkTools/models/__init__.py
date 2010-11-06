@@ -16,4 +16,4 @@
 #    limitations under the License.
 #
 
-__all__ = ['wave', 'blip', 'operation', 'threads', 'user']
+__all__ = ['wave', 'blip', 'operation', 'threads', 'user', 'digest', 'plugin',]
