@@ -37,8 +37,20 @@ class Responder(LoopingThread):
 
 class Plugin(Process):
 	''' Contains a process that handles messages and pushes some back. '''
-	def __new__(cls, *args, **kwargs):
-                self = super(Plugin, cls).__new__()
+##	def __new__(cls, *args, **kwargs):
+##                self = super(Plugin, cls).__new__(*args, **kwargs)
+##                super(Plugin, self).__init__()
+##                self.daemon = True
+##		self.inqueue = Queue()
+##		self.outqueue = Queue()
+##		self.callbacks = {}
+##		self.maxcallback = 0
+##		self.cblock = Lock()
+##		self.responder = Responder(self)
+##		self.responder.start()
+##		return self
+        def __init__(self, *args, **kwargs):
+                """ """
                 super(Plugin, self).__init__()
                 self.daemon = True
 		self.inqueue = Queue()
@@ -48,8 +60,11 @@ class Plugin(Process):
 		self.cblock = Lock()
 		self.responder = Responder(self)
 		self.responder.start()
-		return self
-
+		if self.__call__:
+                        self(*args, **kwargs)
+                else:
+                        raise Exception("plugin did not define __call__")
+		
 	def run(self):
 		''' Repeatedly process items in queue '''
 		while 1:
