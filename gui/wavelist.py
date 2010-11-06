@@ -110,7 +110,7 @@ class WaveList(webgui.browserWindow):
 				self.send("clearList()")
 				self.recv_query(items)
 				self.send("checkSelect()")
-			self.registry.Network.query(callback, query, startpage=0, errcallback=self.loaderror)
+			self.registry.Network.query(callback, query, startpage=page, errcallback=self.loaderror)
 
 	def recv_query(self, results):
 		'''Receive a loaded query from the Network'''

@@ -132,5 +132,4 @@ class Plugin(Process):
 		pass
 
 	def error(self, data, e):
-		print "plugin.error", (data['ecallback'], e.reason)
 		self.outqueue.put((data['ecallback'], e))
