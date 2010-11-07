@@ -23,126 +23,130 @@ from threading import Lock
 from threads import LoopingThread
 
 class Responder(LoopingThread):
-	''' A class used by the Plugin core to process the outqueue '''
-	def __init__(self, plugin):
-		super(Responder,self).__init__(speed=.1)
-		self.plugin = plugin
+    ''' A class used by the Plugin core to process the outqueue '''
+    def __init__(self, plugin):
+        super(Responder,self).__init__(speed=.1)
+        self.plugin = plugin
 
-	def process(self):
-		try:
-			res = self.plugin.outqueue.get_nowait()
-			self.plugin.popcallback(res)(res[1])
-		except Empty:
-			pass
+    def process(self):
+        try:
+            res = self.plugin.outqueue.get_nowait()
+            self.plugin.popcallback(res)(res[1])
+        except Empty:
+            pass
 
 class Plugin(Process):
-	''' Contains a process that handles messages and pushes some back. '''
-##	def __new__(cls, *args, **kwargs):
-##                self = super(Plugin, cls).__new__(*args, **kwargs)
-##                super(Plugin, self).__init__()
-##                self.daemon = True
-##		self.inqueue = Queue()
-##		self.outqueue = Queue()
-##		self.callbacks = {}
-##		self.maxcallback = 0
-##		self.cblock = Lock()
-##		self.responder = Responder(self)
-##		self.responder.start()
-##		return self
-        def __init__(self, *args, **kwargs):
-                """ """
-                super(Plugin, self).__init__()
-                self.daemon = True
-		self.inqueue = Queue()
-		self.outqueue = Queue()
-		self.callbacks = {}
-		self.maxcallback = 0
-		self.cblock = Lock()
-		self.responder = Responder(self)
-		self.responder.start()
-		if self.__call__:
-                        self(*args, **kwargs)
-                else:
-                        raise Exception("plugin did not define __call__")
-		
-	def run(self):
-		''' Repeatedly process items in queue '''
-		while 1:
-			try:
-				self.process(self.inqueue.get_nowait())
-			except Empty:
-				pass
+    ''' Contains a process that handles messages and pushes some back. '''
+# ----------------------- __new__ plugin system -------------------------------
+##    def __new__(cls, *args, **kwargs):
+##        self = super(Plugin, cls).__new__()
+##        super(Plugin, self).__init__()
+##        self.daemon = True
+##        self.inqueue = Queue()
+##        self.outqueue = Queue()
+##        self.callbacks = {}
+##        self.maxcallback = 0
+##        self.cblock = Lock()
+##        self.responder = Responder(self)
+##        self.responder.start()
+##        return self
+##    def __init__(self, *args, **kwargs):
+##        """__init__ should be overridden, but to prevent misplaced super( )
+##        calls, a placeholder __init__ has been put in place."""
+##        pass
+# ----------------------- __call__ plugin system ------------------------------
+    def __call__(self, *args, **kwargs):
+        raise Exception("__call__ is required to be overridden")
+    def __init__(self, *args, **kwargs):
+        super(Plugin, self).__init__()
+        self.daemon = True
+        self.inqueue = Queue()
+        self.outqueue = Queue()
+        self.callbacks = {}
+        self.maxcallback = 0
+        self.cblock = Lock()
+        self.responder = Responder(self)
+        self.responder.start()
+        self(*args, **kwargs)
+        
+    def run(self):
+        ''' Repeatedly process items in queue '''
+        while 1:
+            try:
+                self.process(self.inqueue.get_nowait())
+            except Empty:
+                pass
 
-	def process(self, data):
-		''' Process a piece of data. All data is in dict form.
+    def process(self, data):
+        ''' Process a piece of data. All data is in dict form.
 
-		"contacts" is a request for the full list of the user's contacts.
+        "contacts" is a request for the full list of the user's contacts.
 
-		"me" is a request for the users own information.
-		The callback takes a models.user.User
-		'''
-		if type(data).__name__ != 'dict':
-			return False
-		t = data['type']
-		try:
-			if t == 'query':
-				self.output(data, self._query(data['query'],data['page']))
-			elif t == 'contacts':
-				self.output(data, self._contacts())
-			elif t == 'me':
-				self.output(data, self._me())
-		except Exception as e:
-			self.error(data, e)
+        "me" is a request for the users own information.
+        The callback takes a models.user.User
+        '''
+        if type(data).__name__ != 'dict':
+            return False
+        t = data['type']
+        try:
+            if t == 'query':
+                self.output(data, self._query(data['query'],data['page']))
+            elif t == 'contacts':
+                self.output(data, self._contacts())
+            elif t == 'me':
+                self.output(data, self._me())
+        except Exception as e:
+            self.error(data, e)
 
-	def output(self, data, result):
-		self.outqueue.put((data['callback'], result))
+    def output(self, data, result):
+        self.outqueue.put((data['callback'], result))
 
-	def pushcallback(self, c):
-		self.cblock.acquire()
-		self.callbacks[self.maxcallback]=c
-		self.maxcallback += 1
-		self.cblock.release()
-		return self.maxcallback-1
+    def pushcallback(self, c):
+        self.cblock.acquire()
+        self.callbacks[self.maxcallback]=c
+        self.maxcallback += 1
+        self.cblock.release()
+        return self.maxcallback-1
 
-	def popcallback(self, data):
-		self.cblock.acquire()
-		c = self.callbacks[data[0]]
-		del self.callbacks[data[0]]
-		self.cblock.release()
-		return c
+    def popcallback(self, data):
+        self.cblock.acquire()
+        c = self.callbacks[data[0]]
+        del self.callbacks[data[0]]
+        self.cblock.release()
+        return c
 
-	def query(self, query, startpage, callback, errorcallback):
-		''' Callback function takes a models.digest.SearchResults '''
-		self.inqueue.put({'type':'query',
-				'query':query,
-				'page':startpage,
-				'callback':self.pushcallback(callback),
-				'ecallback':self.pushcallback(errorcallback),
-				})
+    def query(self, query, startpage, callback, errorcallback):
+        ''' Callback function takes a models.digest.SearchResults '''
+        self.inqueue.put({'type':'query',
+                'query':query,
+                'page':startpage,
+                'callback':self.pushcallback(callback),
+                'ecallback':self.pushcallback(errorcallback),
+                })
 
-	def get_contacts(self, callback, errorcallback):
-		''' Callback function takes a list of models.user.User '''
-		self.inqueue.put({'type':'contacts',
-				'ecallback':self.pushcallback(errorcallback),
-				'callback':self.pushcallback(callback)})
+    def get_contacts(self, callback, errorcallback):
+        ''' Callback function takes a list of models.user.User '''
+        self.inqueue.put({'type':'contacts',
+                'ecallback':self.pushcallback(errorcallback),
+                'callback':self.pushcallback(callback)})
 
-	def get_me(self, callback, errorcallback):
-		''' Callback function takes a models.user.User '''
-		self.inqueue.put({'type':'me',
-				'ecallback':self.pushcallback(errorcallback),
-				'callback':self.pushcallback(callback)})
+    def get_me(self, callback, errorcallback):
+        ''' Callback function takes a models.user.User '''
+        self.inqueue.put({'type':'me',
+                'ecallback':self.pushcallback(errorcallback),
+                'callback':self.pushcallback(callback)})
 
-	def _query(self, query, startpage):
-		''' Override me! Return a models.digest.SearchResults '''
-		pass
+    def _query(self, query, startpage):
+        ''' Override me! Return a models.digest.SearchResults '''
+        pass
 
-	def _contacts(self):
-		''' Override me! Return a list of models.user.User '''
-		pass
+    def _contacts(self):
+        ''' Override me! Return a list of models.user.User '''
+        pass
 
-	def _me(self):
-		''' Override me! Return a models.user.User '''
-		pass
+    def _me(self):
+        ''' Override me! Return a models.user.User '''
+        pass
 
-	def error(self, data, e):
-		self.outqueue.put((data['ecallback'], e))
+    def error(self, data, e):
+        self.outqueue.put((data['ecallback'], e))
