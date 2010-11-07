@@ -37,6 +37,31 @@ function setAllScrollbars() {
 	});
 }
 
+function resolveScrollbar(scrollbar) {
+	if (scrollbar==null) {
+		return $('.scrollbar');
+	} else {
+		return $(scrollbar);
+	}
+}
+
+function getScroll(scrollbar) {
+	// returns percentage scrolled
+	return parseFloat(resolveScrollbar(scrollbar).css("top"))
+}
+
+function setScroll(scrollbar, percent) {
+	// sets percentage scrolled
+	scrollbar = resolveScrollbar(scrollbar);
+	starget = $(scrollbar.data('target'))
+
+	scrollbar.css('top',""+percent+"%");
+	if (starget != null) {
+		maxscroll = getMaxScroll(starget)
+		starget.scrollTop(maxscroll*percent/100)
+	}
+}
+
 $(window).resize(setAllScrollbars);
 
 function reset_scroll(scrollable){
@@ -49,12 +74,7 @@ function scroll(e) {
 	if (scrollDriver != null) {
 		// find the percentage at the mouse position
 		percent = Math.max(Math.min((e.pageY-124)/scrollDriver.parent().height()*100,100),0)
-		scrollDriver.css('top',""+percent+"%");
-		if (scrollTarget != null) {
-			scrollTarget = $(scrollTarget)
-			maxscroll = getMaxScroll(scrollTarget)
-			scrollTarget.scrollTop(maxscroll*percent/100)
-		}
+		setScroll(scrollDriver, percent);
 	}
 }
 

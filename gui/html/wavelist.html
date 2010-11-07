@@ -151,6 +151,9 @@
 		<script type="text/javascript" src="jslib/comm.js"></script>
 		<script type="text/javascript">
 			options = {}
+			refreshtimer = null
+			savedscroll = 0
+			savescroll = false
 		</script>
 	</head>
 
@@ -220,8 +223,6 @@
 	<script type="text/javascript" src="jslib/menu.js"></script>
 	<script type="text/javascript" src="jslib/scroll.js"></script>
 	<script type="text/javascript">
-		options = {}
-
 		bindScrollbar($('.scrollbar'),$('#mainlist'))
 
 		function checkSelect() {
@@ -368,7 +369,10 @@
 			$('#mainlist').prepend($("<li class='status'>"+errors[id]+"</li>"));
 		}
 
-		function clearList() {$('#mainlist li').remove()}
+		function clearList() {
+			if (savescroll==true) savedscroll=getScroll()
+			$('#mainlist li').remove()
+		}
 
 		// switch toolbar depending on selection state
 		$('#mainlist > li:not(.longend):not(.status)').live('mousedown',function(){
@@ -415,7 +419,7 @@
 					}
 				});
 			}
-			reset_scroll($('#mainlist'));
+			(savescroll==true)?setScroll(null,savedscroll):reset_scroll($('#mainlist'));
 		}
 
 		function appendLongEnd(newfunc, forwardfunc, backfunc, dot, dotmax,dotfunction) {
@@ -493,11 +497,10 @@
 			if (useLongEnd) {
 				appendLongEnd(function(){});
 			}
-			reset_scroll($('#mainlist'));
+			(savescroll==true)?setScroll(null,savedscroll):reset_scroll($('#mainlist'));
 		}
 
 		function openSelectedWaves() {
-			console.log("osw")
 			addresses = new Array();
 			$('#mainlist li.selected').each(function(){
 				addresses.push( $(this).data('location') )
@@ -507,12 +510,18 @@
 			});
 		}
 
-		function query(page) {
+		function query(page, savepos) {
 			// prepare visually
 			$('#nav').addClass('loading').removeClass('error');
 			$('#mainlist li').removeClass('selected').removeClass('open');
 			checkSelect();
+			savescroll = (savepos==true);
 			setTimeout("_query("+page+")",5);
+			if (refreshtimer != null) clearTimeout(refreshtimer);
+			refreshtimer = setTimeout(
+				"query_nav('"+searchbox.val()+"',"+page+",true)",
+				1000 * 10
+			);
 		}
 
 		function _query(page) {
@@ -535,9 +544,9 @@
 
 		query();
 
-		function query_nav(str,page) {
+		function query_nav(str,page,savepos) {
 			searchbox.val(str);
-			query(page);
+			query(page, savepos);
 		}
 
 		function activateToolbars(menuonly){
