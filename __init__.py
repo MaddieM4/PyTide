@@ -15,17 +15,4 @@
 #           specific language governing permissions and limitations
 #           under the License. 
 
-# Model stuff has been moved to /models/ dir
-# Plugin base class will be in /models/plugin.py
-# Network object can be found in network.py
-
-__all__ = ["models", "waveapi", "plugins", "network", "pygowave", "websocket",
-           "gwave2"]
-
-class ConnectionFailure(IOError):
-	'''An error to be raised when the initialization process of a Network plugin fails.'''
-	def __init__(self, reason="Unspecified Reason", httpcode=None):
-		self.httpcode = httpcode
-		self.reason = reason
-	def __str__(self):
-		return "Connection error: %s - Code %s" % (self.reason, self.httpcode)
+__all__ = ['app', 'reg', 'gui', 'NetworkTools', 'persistance']
