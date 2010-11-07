@@ -38,26 +38,8 @@ class Responder(LoopingThread):
 class Plugin(Process):
     ''' Contains a process that handles messages and pushes some back. '''
 # ----------------------- __new__ plugin system -------------------------------
-##    def __new__(cls, *args, **kwargs):
-##        self = super(Plugin, cls).__new__()
-##        super(Plugin, self).__init__()
-##        self.daemon = True
-##        self.inqueue = Queue()
-##        self.outqueue = Queue()
-##        self.callbacks = {}
-##        self.maxcallback = 0
-##        self.cblock = Lock()
-##        self.responder = Responder(self)
-##        self.responder.start()
-##        return self
-##    def __init__(self, *args, **kwargs):
-##        """__init__ should be overridden, but to prevent misplaced super( )
-##        calls, a placeholder __init__ has been put in place."""
-##        pass
-# ----------------------- __call__ plugin system ------------------------------
-    def __call__(self, *args, **kwargs):
-        raise Exception("__call__ is required to be overridden")
-    def __init__(self, *args, **kwargs):
+    def __new__(cls, *args, **kwargs):
+        self = super(Plugin, cls).__new__(cls)
         super(Plugin, self).__init__()
         self.daemon = True
         self.inqueue = Queue()
@@ -67,7 +49,25 @@ class Plugin(Process):
         self.cblock = Lock()
         self.responder = Responder(self)
         self.responder.start()
-        self(*args, **kwargs)
+        return self
+    def __init__(self, *args, **kwargs):
+        """__init__ should be overridden, but to prevent misplaced super( )
+        calls, a placeholder __init__ has been put in place."""
+        pass
+# ----------------------- __call__ plugin system ------------------------------
+##    def __call__(self, *args, **kwargs):
+##        raise Exception("__call__ is required to be overridden")
+##    def __init__(self, *args, **kwargs):
+##        super(Plugin, self).__init__()
+##        self.daemon = True
+##        self.inqueue = Queue()
+##        self.outqueue = Queue()
+##        self.callbacks = {}
+##        self.maxcallback = 0
+##        self.cblock = Lock()
+##        self.responder = Responder(self)
+##        self.responder.start()
+##        self(*args, **kwargs)
         
     def run(self):
         ''' Repeatedly process items in queue '''

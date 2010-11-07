@@ -1,4 +1,4 @@
-class Digest:
+class Digest(object):
 	def __init__(self, waveid, title, participants, unread, total, date):
 		self.waveid = waveid
 		self.title = title
@@ -13,7 +13,7 @@ class Digest:
 	def addresses(self):
 		return [i.addr for i in self.participants]
 
-class SearchResults:
+class SearchResults(object):
 	def __init__(self, query, page, digests=[], maxpage = None):
 		self.query=query
 		self.page=page
