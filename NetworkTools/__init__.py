@@ -15,8 +15,8 @@
 #           specific language governing permissions and limitations
 #           under the License. 
 
-# Model stuff has been moved to models.py
-# Plugin base class will be in models.py as well
+# Model stuff has been moved to /models/ dir
+# Plugin base class will be in /models/plugin.py
 # Network object can be found in network.py
 
 __all__ = ["models", "waveapi", "plugins", "network", "pygowave", "websocket",
