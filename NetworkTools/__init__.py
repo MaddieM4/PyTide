@@ -19,7 +19,8 @@
 # Plugin base class will be in /models/plugin.py
 # Network object can be found in network.py
 
-__all__ = ["models", "waveapi", "plugins", "network", "websocket",]
+__all__ = ["models", "waveapi", "plugins", "network", "websocket", "DNS",
+"ConnectionFailure"]
 
 class ConnectionFailure(IOError):
 	'''An error to be raised when the initialization process of a Network plugin fails.'''

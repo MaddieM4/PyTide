@@ -69,10 +69,10 @@ class Network(threads.LoopingThread):
 		print "Network connecting to %s" % username
 		domain = username.split('@')[1]
 		print 'About to get connection from plugins.'
-		connection = plugins.get_domain_connection(domain)
+		connection = plugins.get_plugin(domain)
 		print 'Got connection from plugins.'
 		if connection:
-                        try:
+			try:
 				self.status("Connecting to Google Wave")
 				self.connection = connection(username, password)
 				self.status("Connected")
