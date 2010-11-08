@@ -1,0 +1,26 @@
+I'd like to not repeat myself everywhere, so if you're having
+issues running PyTide out of the box, please go to the wiki:
+
+http://wiki.github.com/campadrenalin/PyTide/
+
+Be aware of how much this project is a work in progress. Stuff
+is broken. Stuff doesn't exist. There are doorways that lead
+to brick walls or the terrible vacuum of outer space. One of 
+the "nifty" things about PyTide is that it's updated frequently
+even now, while it barely exists, so while we try to keep
+the updates mostly stable, anything can happen. Some updates
+will be more stable and useful than others, and we'll make
+those ones available for Windows testing via Freeze.
+
+If I could ask for anything in particular as something that 
+would help the cause - help expand the WaveImages.txt file
+by adding the base64 URLs for any images in Wave you can find.
+That would be a huge timesaver for me in the GUI department.
+
+Feel free to start making plugins for the Network. I'm trying
+to focus on getting stuff working in a read-only capacity
+before anything else, stuff can change without warning, etc.
+But it should be safe enough for plugin developers to try to
+keep pace with the GWave plugin in terms of features, as they'll
+be integrated into the main program at roughly the same rate
+as they're coded.
