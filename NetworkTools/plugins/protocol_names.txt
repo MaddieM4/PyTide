@@ -1,2 +1,3 @@
 wave_data = Google Wave Data API
-
+wiab_live = Wave in a Box Client/Server Protocol
+wiab_data = Wave in a Box Data API
