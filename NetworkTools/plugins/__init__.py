@@ -14,38 +14,79 @@
 #           KIND, either express or implied.  See the License for the
 #           specific language governing permissions and limitations
 #           under the License.
-
+from ..DNS.lazy import mxlookup
+from NetworkTools import ConnectionFailure
 __all__ = []
 
 domain_mapping = {}
-
+protocol_mapping = {}
 with open("./NetworkTools/plugins/domain_mapping.txt", "r") as f:
-
     for i in f.readlines():
+        entry = i.split()
+        domain_mapping[entry[0]] = entry[1]
 
-        pair = i.split()
-        domain_mapping[pair[0]] = (pair[1], pair[2])
-        if pair[1] not in __all__:
-            __all__.append(pair[1])
-            
-print __all__
+with open("./NetworkTools/plugins/protocol_mapping.txt", "r") as f:
+	for i in f.readlines():
+		entry = i.split()
+		if entry[0] in protocol_mapping:
+			protocol_mapping[entry[0]].append(([entry[1], entry[2]]))
+		else:
+			protocol_mapping[entry[0]] = [(entry[1], entry[2])]
+		if entry[1] not in __all__:
+			__all__.append(entry[1])
 
-def get_domain_connection(domain):
-    if domain in domain_mapping:
-        plugin_tuple = domain_mapping[domain]
-        plugin_module = __import__("NetworkTools.plugins.%s" % plugin_tuple[0],
-                                   fromlist = plugin_tuple[1])
-        try:
-            print plugin_module
-            print plugin_tuple
-            print dir(plugin_module)
-            plugin = getattr(plugin_module, plugin_tuple[1])
-        except AttributeError, e:
-            print "AttributeError handled!"
-            print "CONNECTION PLUGIN COULD NOT BE IMPORTED"
-            plugin = False
-    
-        return plugin
-    
-    else:
-        return False
+def get_protocol(domain):
+	"""Attempt to identify the protocol used by domain"""
+	# check if the domain has been used before (and if so return protocol used)
+	if domain in domain_mapping:
+		return domain_mapping[domain]
+	# test for Google Wave Data API
+	# runs an mx lookup, to check if the domain is an apps domain.
+	for i in "nat":
+		try:
+			mx = mxlookup(domain)
+		except DNSError, e:
+			pass
+		else:
+			break
+		if (i == 't') and (not mx):
+			mx = []
+	for pri, loc in mx:
+		if loc.endswith("google.com"):
+			protocol = "google_data"
+			with open("./NetworkTools/plugins/domain_mapping.txt", "a") as f:
+				f.write(' '.join((domain, protocol)))
+			return protocol
+	# no other tests known
+	return False
+	
+def get_plugin(domain):
+	protocol = get_protocol(domain)
+	if not protocol:
+		raise ConnectionFailure("Could not identify protocol")
+	if protocol in protocol_mapping:
+		for mod, cls in protocol_mapping[protocol]:
+			try:
+				plugin_module = __import__("NetworkTools.plugins.%s" % mod,
+				fromlist = cls)
+				plugin = getattr(plugin_module, cls)
+			except (AttributeError, ImportError):
+				pass
+			else:
+				return plugin
+	# If no protocols could be found or imported:
+	raise ConnectionFailure("No plugin available: protocol %s" % protocol)
+##    if domain in domain_mapping:
+##        plugin_tuple = domain_mapping[domain]
+##        plugin_module = __import__("NetworkTools.plugins.%s" % plugin_tuple[0],
+##                                   fromlist = plugin_tuple[1])
+##        try:
+##            print plugin_module
+##            print plugin_tuple
+##            print dir(plugin_module)
+##            plugin = getattr(plugin_module, plugin_tuple[1])
+##        except AttributeError, e:
+##            print "AttributeError handled!"
+##            print "CONNECTION PLUGIN COULD NOT BE IMPORTED"
+##            plugin = False
+##        return plugin
