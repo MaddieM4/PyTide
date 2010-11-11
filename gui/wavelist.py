@@ -42,6 +42,7 @@ class WaveList(webgui.browserWindow):
 		self.options = {}
 		self.ready = False
 		self.getConfig('tbshorten')
+		self.getConfig('autorefresh_rate')
 
 	def process(self, data):
 		''' Recieve UI input data from window '''

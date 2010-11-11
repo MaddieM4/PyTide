@@ -263,6 +263,21 @@
 						<label for="autoshorten">Shorten to icons when needed</label><br/> \
 					</form> \
 				', 'tbshorten',function () {return $('input[name=tbdisplay]:checked').val()}));
+				list.append(OptionsItem("Refresh Frequency",'How frequently do you want the WaveList to automatically update? \
+					<form> \
+						<input type="radio" name="autorefresh_rate" id="no-refresh" value="no-refresh"/> \
+						<label for="no-refresh">Don\'t refresh automatically</label><br/> \
+						<input type="radio" name="autorefresh_rate" id="10000" value="10000"/> \
+						<label for="10000">10 Seconds</label><br/> \
+						<input type="radio" name="autorefresh_rate" id="60000" value="60000"/> \
+						<label for="60000">1 Minute</label><br/> \
+						<input type="radio" name="autorefresh_rate" id="300000" value="300000"/> \
+						<label for="300000">5 Minutes</label><br/> \
+						<input type="radio" name="autorefresh_rate" id="600000" value="600000"/> \
+						<label for="600000">10 Minutes</label><br/> \
+					</form> \
+				', 'autorefresh_rate',function () {
+					return $('input[name=autorefresh_rate]:checked').val()}));
 				html.append(list);
 				openMenu(html.children(),-2, function() {
 					menuItem.removeClass('active');
@@ -272,9 +287,15 @@
 		}
 
 		function pullOption(name) {
+			console.log("pullOption")
 			switch (name) {
 				case "tbshorten":
 					selected = (options['tbshorten'])?options['tbshorten']:"default";
+					$('form #'+selected).attr("checked","checked");
+					break;
+				case "autorefresh_rate":
+					selected = (options['autorefresh_rate'])?options['autorefresh_rate']:10000;
+					console.log(selected)
 					$('form #'+selected).attr("checked","checked");
 					break;
 			}
@@ -290,6 +311,9 @@
 					if (value != "default" && value != "autoshorten") t.addClass(value);
 					adj_toolbar();
 					break;
+				case "autorefresh_rate":
+					// do nothing, but don't get caught by default
+					break;
 			}
 			if (oldvalue != value) sendObject({'type':'setOption','key':name,'value':value});
 		}
@@ -301,8 +325,8 @@
 		}
 
 		function OptionsItem(name, contents, optionname, valuefunc) {
-			exitcallback = function(){pushOption(optionname,valuefunc()); openOptions()}
-			callback = function () {OptionsSubmenu(name, contents, exitcallback); pullOption(optionname)}
+			var exitcallback = function(){pushOption(optionname,valuefunc()); openOptions()}
+			var callback = function () {OptionsSubmenu(name, contents, exitcallback); pullOption(optionname)}
 			return $('<li>'+name+'</li>').click(callback);
 		}
 
@@ -511,16 +535,19 @@
 		}
 
 		function query(page, savepos) {
-			// prepare visually
-			$('#nav').addClass('loading').removeClass('error');
-			$('#mainlist li').removeClass('selected').removeClass('open');
-			checkSelect();
-			savescroll = (savepos==true);
-			setTimeout("_query("+page+")",5);
+			if (!savepos || parseInt(options['autorefresh_rate'])) {
+				// prepare visually
+				$('#nav').addClass('loading').removeClass('error');
+				$('#mainlist li').removeClass('selected').removeClass('open');
+				checkSelect();
+				savescroll = (savepos==true);
+				setTimeout("_query("+page+")",5);
+			}
 			if (refreshtimer != null) clearTimeout(refreshtimer);
+			console.log(options['autorefresh_rate'])
 			refreshtimer = setTimeout(
 				"query_nav('"+searchbox.val()+"',"+page+",true)",
-				1000 * 10
+				(parseInt(options['autorefresh_rate']))?options['autorefresh_rate']:10000
 			);
 		}
 

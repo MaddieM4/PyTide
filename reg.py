@@ -44,7 +44,9 @@ class Registry:
 		self.icon = None
 		self.idPos = 0
 		self.config = {}
-		self.config['wavelist'] = Config(namespace="wavelist", onload=self.pushglobalconf_WaveList)
+		self.config['wavelist'] = Config(namespace="wavelist",
+			data={'tbshorten':'default', 'autorefresh_timer':10000},
+			onload=self.pushglobalconf_WaveList)
 		for i in self.config:
 			self.config[i].setAutoTimer(4)
 
