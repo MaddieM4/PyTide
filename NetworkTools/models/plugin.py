@@ -73,7 +73,7 @@ class Plugin(Process):
         ''' Repeatedly process items in queue '''
         while 1:
             try:
-                self.process(self.inqueue.get_nowait())
+                self.process(self.inqueue.get(True, 0.01))
             except Empty:
                 pass
 
