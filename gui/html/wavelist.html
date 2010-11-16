@@ -155,6 +155,7 @@
 			refreshtimer = null
 			savedscroll = 0
 			savescroll = false
+			selected_waves = []
 		</script>
 	</head>
 
@@ -242,6 +243,13 @@
 				$("#nav .toolbar .nonselect").removeClass("invisible")
 			}
 			adj_toolbar();
+		}
+
+		function pullSelection() {
+			for (var i in selected_waves) {
+				sendWaveSelection(null, true, selected_waves[i]);
+			}
+			selected_waves = []
 		}
 
 		function openOptions() {
@@ -402,20 +410,28 @@
 
 		// switch toolbar depending on selection state
 		$('#mainlist > li:not(.longend):not(.status)').live('mousedown',function(){
-			// $(this).toggleClass('selected');
-			sendObject({"type":"waveSelected",
-				"value":(! $(this).hasClass('selected')),
-				"id":$(this).data('location')});
-			// checkSelect();
+			sendWaveSelection(this,(! $(this).hasClass('selected')))
 		});
+
+		function sendWaveSelection(li, value, id) {
+			sendObject({"type":"waveSelected",
+				"value": value,
+				"id":(li!=null) ? $(li).data('location'):id});
+		}
 
 		function setWaveSelected(id, value) {
 			$('#mainlist li').each(function(){
 				if ($(this).data('location')==id) {
-					value ? $(this).addClass('selected'):$(this).removeClass('selected');
+					(value) ? $(this).addClass('selected'):$(this).removeClass('selected');
 				}
 			});
 			checkSelect();
+		}
+
+		function deselectAllWaves() {
+			$('#mainlist li.selected').each(function() {
+				sendWaveSelection(this, false);
+			});
 		}
 
 		function reloadList(newlist, useLongEnd) {
@@ -460,8 +476,7 @@
 
 		function appendLongEnd(newfunc, forwardfunc, backfunc, dot, dotmax,dotfunction) {
 			tail = $('<li class="longend"></li>').click(function(){
-				$('#mainlist li').removeClass('selected');
-				checkSelect();
+				deselectAllWaves();
 			}).append($('<table><tr></tr></table>')).appendTo('#mainlist');
 			tail= tail.find('tr')
 			if (backfunc) tail.append($('<td class="page_prev">').click(backfunc));
@@ -550,9 +565,13 @@
 			if (!savepos || parseInt(options['autorefresh_rate'])) {
 				// prepare visually
 				$('#nav').addClass('loading').removeClass('error');
-				$('#mainlist li').removeClass('selected').removeClass('open');
 				checkSelect();
 				savescroll = (savepos==true);
+				$('#mainlist li.selected').each(function() {
+					console.log($(this).data('location'))
+					selected_waves.push($(this).data('location'))
+					sendWaveSelection(this, false);
+				});
 				setTimeout("_query("+page+")",5);
 			}
 			if (refreshtimer != null) clearTimeout(refreshtimer);
@@ -570,6 +589,7 @@
 				'value':searchbox.val()
 			};
 			if (page!=null) payload['page']=page
+			console.log(selected_waves)
 			// send payload
 			sendObject(payload);
 		}

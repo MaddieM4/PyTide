@@ -107,7 +107,7 @@ class WaveList(webgui.browserWindow):
 			def callback(contactList):
 				self.send("clearList()")
 				self.showContacts(contactList, True)
-				self.send("checkSelect()")
+				self.send("pullSelection(); checkSelect()")
 			self.registry.Network.getContacts(callback, self.loaderror)
 			return
 
@@ -118,13 +118,13 @@ class WaveList(webgui.browserWindow):
 				self.send("clearList()")
 				self.showContacts(contactList, False)
 				self.registry.Network.query(self.recv_query, query, startpage=page)
-				self.send("checkSelect()")
+				self.send("pullSelection(); checkSelect()")
 			self.registry.Network.getContacts(callback, self.loaderror)
 		else:
 			def callback(items):
 				self.send("clearList()")
 				self.recv_query(items)
-				self.send("checkSelect()")
+				self.send("pullSelection(); checkSelect()")
 			self.registry.Network.query(callback, query, startpage=page, errcallback=self.loaderror)
 
 	def recv_query(self, results):
