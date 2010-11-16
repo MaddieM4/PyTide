@@ -131,3 +131,7 @@ li.search div {
 li.reply div {
 	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAWCAYAAAD0OH0aAAABHUlEQVR42mNgGF6AMSUlRTEtLa0BiAMyMjIU8CoGKmoC4vN79+5V/v//fzAQmwCxKFbF6enpRUDF/y5fvpwJVNQOxFw4jU5OThYCKv5QUlJyAahwKRCL4HU40N1OQA3/GxsbnwIVVxP0KdTt/3Nzc3++f/++CdmpeDWA8IQJE24AbeGEBsJ6oN/0cToJhIEK/ldWVl4HBSsQX8jOzv42a9YsdwxPA8P8M0wTOgY69Qe6JkagYAcuDSCck5PzY8aMGR5wHfX19Uytra3bcGmorq5+9/Hjx4VA/8mjaNq2bVsH0OP3qqqq3iEr/vTp02qg4laMCAUKMAKx9t+/f7NqamoeoinmxBk3INuAIdb47t27VoKK0WwLwZuuBgcAAH/E76MCJtwdAAAAAElFTkSuQmCC);
 }
+li.gear div {
+	background-image: url(../img/gear.png);
+	background-position: -1px 3px;
+}
