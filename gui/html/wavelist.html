@@ -614,7 +614,7 @@
 			prefix = (menuonly) ? ".menu ":"";
 			$(prefix+'li.gotoInbox').click(function () {query_nav("in:inbox")});
 			$(prefix+'li.gotoArchive').click(function () {query_nav("in:all")});
-			$(prefix+'li.gotoContacts').click(function () {query_nav("::contacts")});
+			$(prefix+'li.gotoContacts').click(function () {query_nav("::contacts"); closeMenu();});
 			$(prefix+'li.gotoOptions').click(function () {openOptions()});
 			$(prefix+'li.gotoContactSearch').click(function () {ContactSearch()});
 			$(prefix+'li.gotoSharedWaves').click(function () {openSharedWaves()});
