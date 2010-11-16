@@ -118,7 +118,6 @@ class WaveList(webgui.browserWindow):
 				self.send("clearList()")
 				self.showContacts(contactList, False)
 				self.registry.Network.query(self.recv_query, query, startpage=page)
-				self.send("pullSelection(); checkSelect()")
 			self.registry.Network.getContacts(callback, self.loaderror)
 		else:
 			def callback(items):
@@ -151,6 +150,7 @@ class WaveList(webgui.browserWindow):
 				'location':digest.waveid
 				})
 		self.send("reloadList(%s, true)" % json.dumps(jres))
+		self.send("pullSelection(); checkSelect()")
 
 	def loaderror(self, e):
 		self.send("clearList(); setError('connection'); checkSelect()")

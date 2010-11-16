@@ -362,6 +362,7 @@
 			contents = $('<div><h2>Contact Search</h2><p></p></div>');
 			findbox = FindBox('Search terms');
 			cbfunc = function(){
+				$('#mainlist li.selected').removeClass('selected')
 				query_nav(basicquery+findbox.val());
 				closeMenu();
 				$('.gotoContactSearch').removeClass('active');
@@ -391,6 +392,7 @@
 			$('#mainlist li.selected .contact').each(function(){
 				querybuild+="with:"+$(this).data().address+" ";
 			});
+			$('#mainlist li.selected').removeClass('selected')
 			query_nav(querybuild);
 		}
 
@@ -542,8 +544,8 @@
 			$('.toolbar li').removeClass('active');
 			$('.toolbar .gotoContacts').addClass('active');
 			// $('#mainlist li').remove();
-			for (i in contacts) {				
-				$('<li></li>').append(renderContact(contacts[i])).appendTo('#mainlist');
+			for (i in contacts) {
+				$('<li></li>').append(renderContact(contacts[i])).data('location',contacts[i].address).appendTo('#mainlist');
 			}
 			if (useLongEnd) {
 				appendLongEnd(function(){});
