@@ -11,7 +11,6 @@ function subscribeTooltip(selector, text) {
 	}).live('mouseout', function(){
 		var timer = $(this).data('timer');
 		if (timer) {
-			console.log("clearing timeout:" + timer);
 			clearTimeout(timer);
 		}
 	});
