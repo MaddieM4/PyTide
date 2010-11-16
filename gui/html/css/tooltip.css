@@ -1,24 +1,25 @@
 .tooltip {
+	/*
+		Set top or bottom to the vertical position of the target
+		Use "top" to put tooltip below target
+		Use "bottom" to put tooltip above target
+	*/
+	display: -webkit-box;
+	-webkit-box-orient: horizontal;
+
 	position:absolute;
 	z-index:100;
-	top:57px;
-	left:68px;
-	width:73px;
-	height:24px;
-	background: rgba(255,0,0,0.4);
-	position: absolute;
+	width:100%;
+	margin: 10px 0px;
 }
 
-.tooltip .contents {
+.tooltip > .left, .tooltip > .right {-webkit-box-flex:0.5;}
+
+.tooltip > .content {
 	-moz-border-radius:10px;
 	border-radius: 10px;
 	background: rgba(0,0,0,0.7);
 	color: white;
 	position:absolute;
 	padding: 3px 7px;
-}
-
-.tooltip .target {
-	background: rgba(255,0,0,0.4);
-	position: absolute;
 }

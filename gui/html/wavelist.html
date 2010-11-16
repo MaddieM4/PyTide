@@ -1,12 +1,13 @@
 <html>
 	<head>
 		<title></title>
-		<link rel="stylesheet" type="text/css" href="css/main.css">
 		<link rel="stylesheet" type="text/css" href="css/textbutton.css">
 		<link rel="stylesheet" type="text/css" href="css/searchinput.css">
 		<link rel="stylesheet" type="text/css" href="css/toolbar.css">
+		<link rel="stylesheet" type="text/css" href="css/tooltip.css">
 		<link rel="stylesheet" type="text/css" href="css/menu.css">
 		<link rel="stylesheet" type="text/css" href="css/contact.css">
+		<link rel="stylesheet" type="text/css" href="css/main.css">
 
 		<style type="text/css">
 			#mainlist {
@@ -218,6 +219,7 @@
 
 	<script type="text/javascript" src="jslib/searchinput.js"></script>
 	<script type="text/javascript" src="jslib/toolbar.js"></script>
+	<script type="text/javascript" src="jslib/tooltip.js"></script>
 	<script type="text/javascript" src="jslib/button.js"></script>
 	<script type="text/javascript" src="jslib/contact.js"></script>
 	<script type="text/javascript" src="jslib/menu.js"></script>
@@ -589,6 +591,17 @@
 		}
 
 		activateToolbars(false);
+
+		// Tooltip registry
+		subscribeTooltip('.search','Perform a search');
+		subscribeTooltip('.gotoInbox','Inbox');
+		subscribeTooltip('.gotoArchive','Archive');
+		subscribeTooltip('.gotoContacts','Contacts');
+		subscribeTooltip('.gotoOptions','Options');
+		subscribeTooltip('.gotoContactSearch','Search waves that include this contact')
+		subscribeTooltip('.gotoSharedWaves','Waves that both you and this contact are in')
+		subscribeTooltip('.openWaves','Open this/these wave(s) in a browser')
+
 	</script>
 
 	</body>
