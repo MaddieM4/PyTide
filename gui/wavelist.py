@@ -63,6 +63,8 @@ class WaveList(webgui.browserWindow):
 				self.setConfig(data['key'],data['value'])
 			elif data['type'] == 'Open':
 				self.openWaves(data['addresses'])
+			elif data['type'] == 'waveSelected':
+				self.registry.msgWaveLists(data)
 			self.ready = True
 		else:
 			return None
@@ -72,7 +74,9 @@ class WaveList(webgui.browserWindow):
 		if 'type' in data:
 			if data['type'] == 'setOption':
 				self.options[data['name']] = data['value']
-				self.send("pushOption('%s','%s')" % (data['name'],data['value']))
+				self.send("pushOption('%s',%s)" % (data['name'],data['value'].lower()))
+			elif data['type'] == 'waveSelected':
+				self.send("setWaveSelected('%s',%s)" % (data['id'],str(data['value']).lower()))
 			elif data['type'] == 'kill':
 				self.close()
 				

@@ -402,11 +402,21 @@
 
 		// switch toolbar depending on selection state
 		$('#mainlist > li:not(.longend):not(.status)').live('mousedown',function(){
-			$(this).toggleClass('selected');
+			// $(this).toggleClass('selected');
 			sendObject({"type":"waveSelected",
-				"value":$(this).hasClass('selected')});
-			checkSelect();
+				"value":(! $(this).hasClass('selected')),
+				"id":$(this).data('location')});
+			// checkSelect();
 		});
+
+		function setWaveSelected(id, value) {
+			$('#mainlist li').each(function(){
+				if ($(this).data('location')==id) {
+					value ? $(this).addClass('selected'):$(this).removeClass('selected');
+				}
+			});
+			checkSelect();
+		}
 
 		function reloadList(newlist, useLongEnd) {
 			$('#nav').removeClass('loading error');
