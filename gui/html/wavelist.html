@@ -14,10 +14,10 @@
 				margin:0px;
 				padding:0px;
 				position:absolute;
-				top:81px;
+				top:0px;
 				left:0px;
 				right:0px;
-				bottom:37px;
+				bottom:0px;
 				overflow:hidden;
 			}
 
@@ -199,8 +199,11 @@
 				</ul>
 			</div>
 		</div>
-		<ul id="mainlist">
-		</ul>
+		<div id="mainwindow">
+			<ul id="mainlist">
+			</ul>
+			<div class="scrollregion"><div class="scrollbar"></div><div class="clickable"></div></div>
+		</div>
 		<div id="footer">
 		<div class="footerinner">
 			<div class="searches">
@@ -216,7 +219,6 @@
 			</div>
 		</div>
 	</div>
-	<div class="scrollregion"><div class="scrollbar"></div><div class="clickable"></div></div>
 
 	<script type="text/javascript" src="jslib/searchinput.js"></script>
 	<script type="text/javascript" src="jslib/toolbar.js"></script>
@@ -436,6 +438,22 @@
 			});
 		}
 
+		function getSelectedWaves() {
+			// returns an array of locations
+			var myray = [];
+			$('#mainlist li.selected').each() {
+				myray.push($(this).data('location'))
+			}
+			return myray;
+		}
+
+		function sendSelectedWaves() {
+			var locations = getSelectedWaves();
+			for (i in locations) {
+				sendWaveSelection(null, true, locations[i]);
+			}
+		}
+
 		function reloadList(newlist, useLongEnd) {
 			$('#nav').removeClass('loading error');
 			results = newlist;
@@ -570,7 +588,6 @@
 				checkSelect();
 				savescroll = (savepos==true);
 				$('#mainlist li.selected').each(function() {
-					console.log($(this).data('location'))
 					selected_waves.push($(this).data('location'))
 					sendWaveSelection(this, false);
 				});
@@ -591,7 +608,6 @@
 				'value':searchbox.val()
 			};
 			if (page!=null) payload['page']=page
-			console.log(selected_waves)
 			// send payload
 			sendObject(payload);
 		}

@@ -73,7 +73,7 @@ function scroll(e) {
 	// this is where the magic happens
 	if (scrollDriver != null) {
 		// find the percentage at the mouse position
-		percent = Math.max(Math.min((e.pageY-124)/scrollDriver.parent().height()*100,100),0)
+		percent = Math.max(Math.min((e.pageY-147)/scrollDriver.parent().height()*100,100),0)
 		setScroll(scrollDriver, percent);
 	}
 }

@@ -17,10 +17,10 @@
 				margin:0px;
 				padding:5px 23px 0px 10px;
 				position:absolute;
-				top:81px;
+				top:0px;
 				left:0px;
 				right:0px;
-				bottom:37px;
+				bottom:0px;
 				overflow:hidden;
 			}
 
@@ -149,6 +149,13 @@
 
 	<body class ="noselect">
 		<div id="nav">
+			<div class="tabs">
+				<ul class="waves">
+					<li class="open"><div class="unread">1</div>This is a blip</li>
+					<li>Some other thang</li>
+					<li class="selected">Not open yet</li>
+				</ul>
+			</div>
 			<div class="top">
 				<table class="textbutton noselect"><tr>
 					<td class="left"></td>
@@ -196,6 +203,7 @@
 				</ul>
 			</div>
 		</div>
+		<div id="mainwindow">
 		<ul id="mainlist">
 			<li class="unread root"><img class="creator_avatar" src="../html/img/something.jpg"/>
 			    <div class="creator_name">Philip Horger</div>
@@ -221,6 +229,8 @@
 				</li></ul>another
 			</li>
 		</ul>
+			<div class="scrollregion"><div class="scrollbar"></div><div class="clickable"></div></div>
+		</div>
 		<div id="footer">
 		<div class="footerinner">
 			<div class="tags">
@@ -245,7 +255,6 @@
 			</div>
 		</div>
 	</div>
-	<div class="scrollregion"><div class="scrollbar"></div><div class="clickable"></div></div>
 	<script type="text/javascript" src="jslib/searchinput.js"></script>
 	<script type="text/javascript" src="jslib/toolbar.js"></script>
 	<script type="text/javascript" src="jslib/button.js"></script>
@@ -255,6 +264,7 @@
 	<script type="text/javascript" src="jslib/scroll.js"></script>
 	<script type="text/javascript">
 		bindScrollbar($('.scrollbar'),$('#mainlist'))
+		livehover($('.tabs li'));
 
 		function checkSelect() {
 			if ($('#mainlist li.editing').length >0){
