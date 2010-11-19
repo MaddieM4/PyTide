@@ -30,6 +30,13 @@ def mxlookup(name):
     l.sort()
     return l
 
+def lookup(name):
+    """Look up all records under name"""
+    if Base.defaults['server'] == []: Base.DiscoverNameServers()
+    a = Base.DnsRequest(name, qtype = 'any').req().answers
+    l = map(lambda x:x['data'], a)
+    l.sort()
+    return l
 #
 # $Log: lazy.py,v $
 # Revision 1.5.2.1  2007/05/22 20:23:38  customdesigned
