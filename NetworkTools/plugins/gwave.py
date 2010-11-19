@@ -23,6 +23,10 @@ import urllib
 from ..models import plugin, user, digest
 from ..waveapi import waveservice
 
+# If True, the GoogleWaveConnection will attempt to get a set of playback deltas
+# and print them to the terminal. 
+TEST_PLAYBACK = False 
+
 class modelConverter:
 	@classmethod
 	def SearchResults(self,wsresults, page, maxpage):
@@ -68,6 +72,11 @@ class GoogleWaveConnection(plugin.Plugin):
 			self.start()
 		except IOError, e:
 			raise NetworkTools.ConnectionFailure("Could not communicate with PyTide Server",e[1])
+		if TEST_PLAYBACK:
+                        try:
+                                _test_playback_magic(self.service)
+                        except:
+                                pass
 
 	def _query(self, query, startpage):
 		try:
@@ -86,3 +95,13 @@ class GoogleWaveConnection(plugin.Plugin):
 
 	def _contacts(self):
 		return [modelConverter.User(self.service.fetch_profile()['participantProfile'])]
+
+def _test_playback_magic(service,
+                         wavelet_id = 'wavewatchers.org!conv+root',
+                         wave_id = 'wavewatchers.org!w+Jrzlh04bJ'):
+        wave = service.fetch_wavelet(wave_id=wave_id,
+                                     wavelet_id=wavelet_id,
+                                     raw_deltas_from_version=10)
+        print "\n\n\n\n\n\nTESTING PLAYBACK!!!"
+        print wave.raw_deltas
+        
