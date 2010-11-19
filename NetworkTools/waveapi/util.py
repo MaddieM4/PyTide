@@ -79,7 +79,7 @@ def lower_camel_case(s):
 
 def non_none_dict(d):
   """return a copy of the dictionary without none values."""
-  return dict([a for a in d.items() if not a[1] is None])
+  return dict([a for a in d.items() if a[1] is not None])
 
 def _serialize_attributes(obj):
   """Serializes attributes of an instance.

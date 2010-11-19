@@ -137,7 +137,7 @@ class RobotVerifyTokenHandler(webapp.RequestHandler):
       self.error(404)
       self.response.out.write('No token set')
       return
-    if not st is None:
+    if st is not None:
       if self.request.get('st') != st:
         self.response.out.write('Invalid st value passed')
         return

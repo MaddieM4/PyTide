@@ -220,6 +220,8 @@ class Wavelet(object):
     self._wave_id = json.get('waveId')
     self._wavelet_id = json.get('waveletId')
     self._creator = json.get('creator')
+    self._raw_deltas = json.get('rawDeltas')
+    self._raw_snapshot = json.get('rawSnapshot')
     self._creation_time = json.get('creationTime', 0)
     self._data_documents = DataDocs(json.get('dataDocuments', {}),
                                     self._wave_id,
@@ -299,6 +301,16 @@ class Wavelet(object):
   def tags(self):
     """Returns a list of tags for this wavelet."""
     return self._tags
+
+  @property
+  def raw_deltas(self):
+    """If present, return the raw deltas for this wavelet."""
+    return self._raw_deltas
+  
+  @property
+  def raw_snapshot(self):
+    """If present, return the raw snapshot for this wavelet."""
+    return self._raw_snapshot
 
   def _get_title(self):
     return self._title
