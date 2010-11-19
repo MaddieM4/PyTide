@@ -441,9 +441,9 @@
 		function getSelectedWaves() {
 			// returns an array of locations
 			var myray = [];
-			$('#mainlist li.selected').each() {
+			$('#mainlist li.selected').each(function() {
 				myray.push($(this).data('location'))
-			}
+			});
 			return myray;
 		}
 
