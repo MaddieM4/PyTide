@@ -20,7 +20,7 @@ function menuSlide(dir, fade) {
 }
 
 function newMenu() {
-	return $('<div class="menu"></div>').appendTo($('body'));
+	return $('<div class="menu"></div>').appendTo($('#mainwindow'));
 }
 
 function newMenuLeft(nofade) {

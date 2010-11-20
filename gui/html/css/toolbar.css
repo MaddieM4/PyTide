@@ -5,6 +5,7 @@
 	font-size: 13px;
 	font-family: arial, sans serif;
 	cursor: default;
+	position:relative;
 }
 
 .toolbar ul {
@@ -69,14 +70,14 @@
 	margin-right: 1px;
 	position:absolute;
 	right:0px;
-	top:58px;
+	top:1px;
 	padding-left:9px;
 	padding-right:9px;
 	z-index:85;
 }
 
 .toolbar .more.over {
-	top:57px;
+	top:0px;
 	padding-top:2px;
 	padding-bottom:5px;
 	padding-left:9px;
@@ -88,7 +89,7 @@
 	margin-right:0px;
 	border: 1px solid #555;
 	padding: 2px 9px 5px 9px;
-	top: 57px;
+	top: 0px;
 }
 
 .toolbar li div {

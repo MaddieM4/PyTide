@@ -43,7 +43,7 @@ function adj_toolbar(){
 		tc.removeClass('invisible').removeClass('icononly').each(function(index){
 			t = $(tc[tc.length-index-1]);
 			var wid = last.position().left+last.outerWidth();
-			if (wid > totalwidth || last.position().top > 58) {
+			if (wid > totalwidth || last.position().top > 1) {
 				t.addClass('icononly');
 			}
 		});
@@ -52,7 +52,7 @@ function adj_toolbar(){
 	toolbar.children(':not(.more)').removeClass('invisible').each(function(){
 		t = $(this);
 		runningwidth+=t.outerWidth();
-		if (runningwidth-4 > totalwidth || t.position().top > 58) {
+		if (runningwidth-4 > totalwidth || t.position().top > 1) {
 			hideTool(t);
 			showMore = true;
 		}

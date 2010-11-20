@@ -6,9 +6,12 @@ body {
 	padding: 0px;
 	margin:0px;
 	overflow: hidden;
+	-webkit-box-orient: vertical;
+	display:-webkit-box;
 }
 
 #nav {
+	background-color:#C9E2FC;
 	width:100%;
 	padding:0px;
 	margin:0px;
@@ -16,8 +19,52 @@ body {
 	z-index:1;
 }
 
+#nav .tabs {
+	height:23px;
+	cursor:default;
+}
+
+#nav .tabs ul {
+	padding: 2px;
+	padding-top:0px;
+	list-style-type: none;
+}
+
+#nav .tabs .waves {
+	float:left;
+	margin: 2px;
+}
+
+#nav .tabs li {
+	padding:2px 4px 0px 4px;
+	background-color: rgba(40,70,80,.2);
+	border: 2px solid rgba(40,70,80,.6);
+	border-bottom-left-radius:3px;
+	border-bottom-right-radius:3px;
+	display:inline;
+	cursor:default;
+}
+
+#nav .tabs li.over {
+	background-color: rgba(50,70,180,.3);
+	border-color: rgba(50,70,180,.7);
+}
+#nav .tabs li.down {
+	background-color: rgba(40,70,80,.4);
+	border-color: rgba(40,70,80,.8);
+}
+#nav .tabs li.open {
+	padding-top:0px;
+	padding-bottom:2px;
+}
+
+#nav .tabs li.selected {
+	opacity: 0.6;
+}
+
+#nav .tabs li .unread {margin-right:2px;}
+
 #nav .top {
-	background-color:#C9E2FC;
 	border-left: 1px solid #E4F1FE;
 	border-top: 1px solid #E4F1FE;
 	border-right: 1px solid #A3CBFC;
@@ -34,8 +81,14 @@ table td {
 	padding:0px;
 }
 
+#mainwindow {
+	width:100%;
+	-webkit-box-flex:1;
+	position:relative;
+}
+
 #footer {
-	position:absolute;
+	position:relative;
 	background-color:#C9E2FC;
 	border-top: 1px solid #B8C6D9;
 	width:100%;
@@ -86,8 +139,8 @@ table td {
 	position:absolute;
 	right:2px;
 	width:17px;
-	top:82px;
-	bottom:38px;
+	top:0px;
+	bottom:0px;
 	margin-bottom:79px;
 	margin-top:4px;
 	cursor: pointer;
@@ -153,4 +206,14 @@ input.find {
 
 input.find.inactive {
 	color: #888;
+}
+
+div.unread {
+	color: white;
+	font-weight: bold;
+	background-image:url("../img/unread.png");
+	display: inline-block;
+	width:25px;
+	height:13px;
+	text-align: center;
 }
