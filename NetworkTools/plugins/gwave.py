@@ -25,7 +25,8 @@ from ..waveapi import waveservice
 
 # If True, the GoogleWaveConnection will attempt to get a set of playback deltas
 # and print them to the terminal. 
-TEST_PLAYBACK = False 
+TEST_PLAYBACK = False
+TEST_PROFILES = False
 
 class modelConverter:
 	@classmethod
@@ -76,7 +77,13 @@ class GoogleWaveConnection(plugin.Plugin):
                         try:
                                 _test_playback_magic(self.service)
                         except:
-                                pass
+                                print "AN ERROR OCCURRED"
+                if TEST_PROFILES:
+##                        try:
+##                                _test_profiles_magic(self.service)
+##                        except:
+##                                print "AN ERROR OCCURRED"
+                        _test_profiles_magic(self.service)
 
 	def _query(self, query, startpage):
 		try:
@@ -102,6 +109,12 @@ def _test_playback_magic(service,
         wave = service.fetch_wavelet(wave_id=wave_id,
                                      wavelet_id=wavelet_id,
                                      raw_deltas_from_version=10)
-        print "\n\n\n\n\n\nTESTING PLAYBACK!!!"
+        print "\n\n\n\n\n\n\n\n\n\n\n\n\nTESTING PLAYBACK"
         print wave.raw_deltas
+        print "\n\n\n\n\n\n\n\n\n\n\n\n\n"
+def _test_profiles_magic(service):
+        print "\n\n\n\n\n\n\n\n\n\n\n\n\nTESTING PROFILES"
+        profiles = service.fetch_profiles(['nat.abbotts@wavewatchers.org'])
+        print profiles
+        print "\n\n\n\n\n\n\n\n\n\n\n\n\n"
         
