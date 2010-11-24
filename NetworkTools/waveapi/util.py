@@ -193,3 +193,6 @@ class StringEnum(object):
   def __init__(self, *values):
     for name in values:
       setattr(self, name, name)
+
+def iterable_to_string(iterable):
+  return ', '.join(iterable)

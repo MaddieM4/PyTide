@@ -59,6 +59,11 @@ class modelConverter:
 		
 
 class GoogleWaveConnection(plugin.Plugin):
+        _accept_dict = {'username':'',
+                        'password':'',}
+        @classmethod
+        def _accepts(cls):
+                return cls._accept_dict
 	def __init__(self, username, password):
 		self.username = username
 		self.password = password
@@ -76,14 +81,13 @@ class GoogleWaveConnection(plugin.Plugin):
 		if TEST_PLAYBACK:
                         try:
                                 _test_playback_magic(self.service)
-                        except:
-                                print "AN ERROR OCCURRED"
+                        except Exception, e:
+                                print "AN ERROR OCCURRED:", e
                 if TEST_PROFILES:
-##                        try:
-##                                _test_profiles_magic(self.service)
-##                        except:
-##                                print "AN ERROR OCCURRED"
-                        _test_profiles_magic(self.service)
+                        try:
+                                _test_profiles_magic(self.service)
+                        except Exception, e:
+                                print "AN ERROR OCCURRED:", e
 
 	def _query(self, query, startpage):
 		try:
@@ -98,10 +102,10 @@ class GoogleWaveConnection(plugin.Plugin):
 		return modelConverter.SearchResults(results, startpage, maxpage)
 
 	def _me(self):
-		return modelConverter.User(self.service.fetch_profile()['participantProfile'])
+		return modelConverter.User(self.service.fetch_my_profile()['participantProfile'])
 
 	def _contacts(self):
-		return [modelConverter.User(self.service.fetch_profile()['participantProfile'])]
+		return [modelConverter.User(self.service.fetch_my_profile()['participantProfile'])]
 
 def _test_playback_magic(service,
                          wavelet_id = 'wavewatchers.org!conv+root',

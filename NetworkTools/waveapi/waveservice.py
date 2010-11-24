@@ -463,23 +463,33 @@ class WaveService(object):
     pending.clear()
     return res
 
-  def fetch_profile(self, address=None):
+  def fetch_my_profile(self, address=None):
     """Use the custom robot_fetch_my_profile operation to get a profile.
 
     Highly experimental at this time, I'm not even sure what the return type is!
     """
-    util.check_is_valid_proxy_for_id(address) # This line does nothing! 
+    # A 'proxy_for' id is a string inserted after the username in an address.
+    # E.g. username+proxy_for_id@wave-server.com
+    # As such, no wave address can match this - they all contain disallowed
+    # '@' characters.
+    # RESULT: I have removed the check from this method and the fetch_profiles
+    # method below.
+    
+##    util.check_is_valid_proxy_for_id(address)
+    
     operation_queue = ops.OperationQueue(address)
     operation_queue.robot_fetch_my_profile()
     return self._first_rpc_result(self.make_rpc(operation_queue))
 
   def fetch_profiles(self, addresses=()):
-    """Use the custom robot_fetch_my_profile operation to get a profile.
+    """Use the custom robot_fetch_profiles operation to get a profile.
 
     Highly experimental at this time, I'm not even sure what the return type is!
     """
-    for address in addresses:
-      util.check_is_valid_proxy_for_id(address) # This line does nothing!
+    # see above note.
+##    for address in addresses:
+##      util.check_is_valid_proxy_for_id(address)
+    
     operation_queue = ops.OperationQueue()
-    operation_queue.robot_fetch_profiles()
+    operation_queue.robot_fetch_profiles(addresses)
     return self._first_rpc_result(self.make_rpc(operation_queue))

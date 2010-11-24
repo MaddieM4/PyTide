@@ -483,5 +483,8 @@ class OperationQueue(object):
   def robot_fetch_my_profile(self):
     return self.new_operation(ROBOT_FETCH_MY_PROFILE,None,None)
   
-  def robot_fetch_profiles(self):
-    return self.new_operation(ROBOT_FETCH_PROFILES, None, None)
+  def robot_fetch_profiles(self, users):
+    return self.new_operation(ROBOT_FETCH_PROFILES,
+                              wave_id=None,
+                              wavelet_id=None,
+                              participantIds=util.iterable_to_string(users))

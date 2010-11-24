@@ -15,4 +15,4 @@
 #           specific language governing permissions and limitations
 #           under the License. 
 
-__all__ = ['app', 'reg', 'gui', 'NetworkTools', 'persistance']
+__all__ = ['app', 'reg', 'gui', 'NetworkTools', 'persistance',]

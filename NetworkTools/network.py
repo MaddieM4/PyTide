@@ -26,6 +26,17 @@ import json
 
 import plugins
 
+def connect(plugincls, **kwargs):
+        if hasattr(plugincls, '_accepts'):
+                plugin_args = plugincls._accepts()
+                for kw, arg in kwargs.items():
+                        if kw in plugin_args:
+                                plugin_args[kw] = arg
+                print "fn 'connect' complete: kwargs:", plugin_args
+                return plugincls(**plugin_args)
+        else:
+                raise Exception("Plugins are required to define _accepts")
+
 class Network(threads.LoopingThread):
 	'''The Network object is a thread, and it communicates between the connection plugin
 	(also a thread) and the rest of the program. It holds the "official" version of every
@@ -73,12 +84,15 @@ class Network(threads.LoopingThread):
 		print 'Got connection from plugins.'
 		if connection:
 			try:
-				self.status("Connecting to Google Wave")
-				self.connection = connection(username, password)
+				self.status("Connecting to %s" % domain)
+				self.connection = connect(connection,
+                                                          username=username,
+                                                          password=password,
+                                                          domain=domain)
 				self.status("Connected")
 				self.loginWindow.hide()
 				self.registry.newWaveList()
-				self.saveLogin(username, password)
+				self.saveLogin(username, password,)
 				return True
 			except NetworkTools.ConnectionFailure, e:
 				self.status("Connection Failed - Your internet may be down or your login data incorrect")
