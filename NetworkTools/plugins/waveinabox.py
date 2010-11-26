@@ -43,7 +43,10 @@ class WaveInABoxConnection(plugin.Plugin):
         self.password = password
         self.domain = domain
         try:
+            # This 'opener' includes cookies as you'll need some sort of
+            # ID from inside it. 
             opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
+            # MESSY! Why do some wiab instances use :9898 and others not?
             url = 'http://%s%s/auth/signin' % (self.domain, get_port(domain))
             login_data = urllib.urlencode({'address':self.username,
                                            'password':self.password,
@@ -56,7 +59,7 @@ class WaveInABoxConnection(plugin.Plugin):
         else:
             print self.response_data
         finally:
-            pass
+            pass 
     def _query(self, query, startpage):
         print "QUERY!"
     def _me(self):
@@ -67,7 +70,7 @@ class WaveInABoxConnection(plugin.Plugin):
                     )
     def _contacts(self):
         print "CONTACTS!"
-        return [self._me()]
+        return list(self._me())
     @classmethod
     def _accepts(cls):
         return cls._accept_dict
