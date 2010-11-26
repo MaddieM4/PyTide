@@ -32,7 +32,6 @@ def connect(plugincls, **kwargs):
                 for kw, arg in kwargs.items():
                         if kw in plugin_args:
                                 plugin_args[kw] = arg
-                print "fn 'connect' complete: kwargs:", plugin_args
                 return plugincls(**plugin_args)
         else:
                 raise Exception("Plugins are required to define _accepts")
