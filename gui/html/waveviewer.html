@@ -17,11 +17,12 @@
 				margin:0px;
 				padding:5px 23px 0px 10px;
 				position:absolute;
-				top:81px;
+				top:0px;
 				left:0px;
 				right:0px;
-				bottom:37px;
+				bottom:0px;
 				overflow:hidden;
+				-webkit-user-select:text;
 			}
 
 			#mainlist li {
@@ -120,11 +121,20 @@
 				left:-49px;
 				border-color:#688E25;
 			}
-			#mainlist li.selected > img.creator_avatar {
+			#mainlist li.selected > img.creator_avatar,
+			#mainlist li.editing > img.creator_avatar {
 				border-width:2px;
 				top:-4px;
 				left:-49px;
 				border-color:#44F;
+			}
+
+			#mainlist li.editing, #mainlist li.editing > img.creator_avatar {
+				border-color: #843;
+			}
+
+			#mainlist li.editing.over {
+				border-color: #954;
 			}
 
 			#footer .find  {
@@ -137,6 +147,10 @@
 			#footer .over {width:255px;}
 
 			#nav .top {height:24px;}
+
+			span.editable {
+				outline: 0px solid transparent;
+			}
 		</style>
 		<link rel="stylesheet" type="text/css" href="css/main.css">
 
@@ -149,6 +163,13 @@
 
 	<body class ="noselect">
 		<div id="nav">
+			<div class="tabs">
+				<ul class="waves">
+					<li class="open"><div class="unread">1</div>This is a blip</li>
+					<li>Some other thang</li>
+					<li class="selected">Not open yet</li>
+				</ul>
+			</div>
 			<div class="top">
 				<table class="textbutton noselect"><tr>
 					<td class="left"></td>
@@ -159,7 +180,7 @@
 			<div class="toolbar noselect">
 				<ul class="invisible select">
 					<li class="arrow"><div>Next</div></li>
-					<li class="pencil"><div>Edit</div></li>
+					<li class="pencil gotoEditMode"><div>Edit</div></li>
 					<li class="reply"><div>Reply</div></li>
 					<li class="eye-open"><div>Mark as Unread</div></li>
 					<li class="trash"><div>Delete</div></li>
@@ -196,31 +217,34 @@
 				</ul>
 			</div>
 		</div>
-		<ul id="mainlist">
+		<div id="mainwindow">
+		<ul id="mainlist" onselectstart="return true;">
 			<li class="unread root"><img class="creator_avatar" src="../html/img/something.jpg"/>
 			    <div class="creator_name">Philip Horger</div>
-				<span class="title">This is a blip</span>
-				<p>And this is the text inside it.</p>
+				<span class="editable"><span class="title">This is a blip</span>
+				<p>And this is the text inside it.</p></span>
 				<div class="participants"><img src="../html/img/something.jpg"/>Philip Horger</div>
 			</li>
 			<ul>
 				<li><img class="creator_avatar" src="https://lh6.googleusercontent.com/_tsWs83xehHE/TFgD2QbwzYI/AAAAAAAAFbg/O-Z1aVTdEvs/s104-c/me_cy_very_small.jpg"/>
 				    <div class="creator_name online">Yuri</div>
-					This is another
+					<span class="editable">This is another</span>
 				</li>
 			</ul>
 			<li><img class="creator_avatar" src="https://lh6.googleusercontent.com/_tsWs83xehHE/TFgD2QbwzYI/AAAAAAAAFbg/O-Z1aVTdEvs/s104-c/me_cy_very_small.jpg"/>
 			    <div class="creator_name online">Yuri</div>
-				This is <ul>
+				<span class="editable">This is <ul>
 				<li><img class="creator_avatar" src="https://lh6.googleusercontent.com/_tsWs83xehHE/TFgD2QbwzYI/AAAAAAAAFbg/O-Z1aVTdEvs/s104-c/me_cy_very_small.jpg"/>
 				    <div class="creator_name online">Yuri</div>
-					This is another HAHAHA PHILIP HAS TOTALLY EDITED THIS
+					<span class="editable">This is another HAHAHA PHILIP HAS TOTALLY EDITED THIS</span>
 				    <div class="participants"><img src="https://lh6.googleusercontent.com/_tsWs83xehHE/TFgD2QbwzYI/AAAAAAAAFbg/O-Z1aVTdEvs/s104-c/me_cy_very_small.jpg"/>Yuri,
 					<img src="../html/img/something.jpg"/>Philip Horger
 				    </div>
-				</li></ul>another
+				</li></ul>another</span>
 			</li>
 		</ul>
+			<div class="scrollregion"><div class="scrollbar"></div><div class="clickable"></div></div>
+		</div>
 		<div id="footer">
 		<div class="footerinner">
 			<div class="tags">
@@ -245,7 +269,6 @@
 			</div>
 		</div>
 	</div>
-	<div class="scrollregion"><div class="scrollbar"></div><div class="clickable"></div></div>
 	<script type="text/javascript" src="jslib/searchinput.js"></script>
 	<script type="text/javascript" src="jslib/toolbar.js"></script>
 	<script type="text/javascript" src="jslib/button.js"></script>
@@ -255,6 +278,7 @@
 	<script type="text/javascript" src="jslib/scroll.js"></script>
 	<script type="text/javascript">
 		bindScrollbar($('.scrollbar'),$('#mainlist'))
+		livehover($('.tabs li'));
 
 		function checkSelect() {
 			if ($('#mainlist li.editing').length >0){
@@ -334,12 +358,29 @@
 			}
 		}
 
+		function EditMode() {
+			$('#mainlist li.selected').addClass('editing');
+			eddy = $('#mainlist li.selected span.editable');
+			eddy.attr('contenteditable', true);
+			eddy.focus();
+			checkSelect()
+		}
+
+		function LeaveEditMode() {
+			$('#mainlist li span.editable').attr('contenteditable', false)
+			$('#mainlist li.selected').removeClass('editing selected');
+			checkSelect()
+		}
+
+		$('span.editable').live('focusout', LeaveEditMode)
+
 		function activateToolbars(menuonly){
 			prefix = (menuonly) ? ".menu ":"";
 			$(prefix+'li.gotoInbox').click(function () {query_nav("in:inbox")});
 			$(prefix+'li.gotoArchive').click(function () {query_nav("in:all")});
 			$(prefix+'li.gotoContacts').click(function () {query_nav("::contacts")});
 			$(prefix+'li.gotoOptions').click(function () {openOptions()});
+			$(prefix+'li.gotoEditMode').click(function () {EditMode()});
 			$(prefix+'li.gotoDocumentMode').click(function () {toggleDocMode()});
 			$('.menu .tools li').click(function (){$('.toolbar .more').removeClass('active');});
 		}

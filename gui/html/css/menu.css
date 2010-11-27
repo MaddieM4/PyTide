@@ -2,10 +2,10 @@
 	margin:0px;
 	padding:6px;
 	position:absolute;
-	top:81px;
+	top:0px;
 	left:0px;
 	right:0px;
-	bottom:37px;
+	bottom:0px;
 	overflow:hidden;
 	z-index:5;
 	background-color: rgba(256,256,256,.9);
