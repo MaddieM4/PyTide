@@ -143,7 +143,8 @@ class WaveList(webgui.browserWindow):
 			plist = digest.participants.serialize()
 			participants = [self.registry.Network.participantMeta(x) for x in plist]
 			print digest.waveid
-			totalunread += digest.unread_count
+			if digest.unread_count != 0:
+				totalunread += 1
 			jres['digests'].append({
 				'title':self.escape(digest.title),
 				'participants':participants,
