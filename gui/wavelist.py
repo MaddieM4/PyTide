@@ -131,16 +131,17 @@ class WaveList(webgui.browserWindow):
 		if results.page!=0:
 			pagetext = ", Page "+str(results.page+1)
 		else: pagetext = ""
-		self.setTitle(self.getTitleFromQuery(results.query)+pagetext)
 		if results == None:
 			self.send("setError('connection')")
 			return
+		totalunread = 0
 		print results.page, "/", results.maxpage, "\t",results.num_results
 		jres = {'query':self.escape(results.query),'digests':[],'page':results.page,'maxpage':results.maxpage}
 		for digest in results.digests:
 			plist = digest.participants.serialize()
 			participants = [self.registry.Network.participantMeta(x) for x in plist]
 			print digest.waveid
+			totalunread += digest.unread_count
 			jres['digests'].append({
 				'title':self.escape(digest.title),
 				'participants':participants,
@@ -149,6 +150,9 @@ class WaveList(webgui.browserWindow):
 				'date':digest.date,
 				'location':digest.waveid
 				})
+		if totalunread != 0:
+			pagetext += " (%d)" % totalunread
+		self.setTitle(self.getTitleFromQuery(results.query)+pagetext)
 		self.send("reloadList(%s, true)" % json.dumps(jres))
 		self.send("pullSelection(); checkSelect()")
 
