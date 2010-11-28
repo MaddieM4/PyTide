@@ -15,7 +15,9 @@
 #           specific language governing permissions and limitations
 #           under the License.
 
-import urllib, urllib2
+import urllib
+import urllib2
+from cookielib import CookieJar
 
 import websocket
 
@@ -28,7 +30,9 @@ from NetworkTools import ConnectionFailure
 __all__ = ['WaveInABoxConnection']
 
 # ----------------------- TEMP. MEASURE - AUTODISCOVERY SOON ------------------
-DOMAINS_USING_PORTS = {'acmewave.com':':9898'}
+DOMAINS_USING_PORTS = {'acmewave.com':':9898',
+                       '86.14.183.107':'9898',
+                       'nathanael':'9898'}
 def get_port(domain):
     if domain in DOMAINS_USING_PORTS:
         return DOMAINS_USING_PORTS[domain]
@@ -45,10 +49,12 @@ class WaveInABoxConnection(plugin.Plugin):
         self.username = username.split('@')[0]
         self.password = password
         self.domain = domain
+        self.cookie_jar = CookieJar()
         try:
             # This 'opener' includes cookies as you'll need some sort of
-            # ID from inside it. 
-            opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
+            # ID from inside it.
+            cp = urllib2.HTTPCookieProcessor(self.cookie_jar)
+            opener = urllib2.build_opener(cp)
             # MESSY! Why do some wiab instances use :9898 and others not?
             url = 'http://%s%s/auth/signin' % (self.domain, get_port(domain))
             login_data = urllib.urlencode({'address':self.username,
@@ -56,6 +62,7 @@ class WaveInABoxConnection(plugin.Plugin):
                                            }
                                           )
             self.response = opener.open(url, login_data)
+
         except IOError, e:
             print "An Error occured when connecting to %s:" % (self.domain)
             raise ConnectionFailure("Could not connect to %s:\n" % self.domain)
@@ -116,4 +123,15 @@ class WaveInABoxConnection(plugin.Plugin):
         else:
             self._session_domain = self.session_data['domain']
             return self._session_domain
+    @property
+    def j_session_id(self):
+        if hasattr(self, '_j_session_id'):
+            return self._j_session_id
+        else:
+            for c_dict in self.cookie_jar._cookies.values():
+                if '/' in d:
+                    if 'JSESSIONID' in c_dict['/']:
+                        self._j_session_id = c_dict['/']['JSESSIONID'].value
+                        break
+            return self._j_session_id
             
