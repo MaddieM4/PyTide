@@ -21,7 +21,7 @@ import threading
 from gtk.gdk import threads_enter, threads_leave
 import time
 
-import wave
+import wave # What for?
 
 class LoopingThread(threading.Thread):
     '''This class allows you to make a thready object that calls
@@ -36,7 +36,7 @@ class LoopingThread(threading.Thread):
     	self.stopper = threading.Event()
 
     def run(self):
-	while 1:
+	while True:
             threads_enter()
 #	    logging.debug("LoopingThread")
 	    self.process()
@@ -44,4 +44,4 @@ class LoopingThread(threading.Thread):
 	    time.sleep(self.speed)
 
     def process(self):
-	pass
+	pass # raise Exception("method 'process' not defined by subclass")

@@ -19,6 +19,8 @@
 
 from collections import deque
 
+import document
+
 class Annotation(object):
     """A single Annotation.
 

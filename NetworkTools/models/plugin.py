@@ -53,7 +53,7 @@ class Plugin(Process):
     def __init__(self, *args, **kwargs):
         """__init__ should be overridden, but to prevent misplaced super( )
         calls, a placeholder __init__ has been put in place."""
-        pass
+        print "Erronious super call detected! (harmless)"
 # ----------------------- __call__ plugin system ------------------------------
 ##    def __call__(self, *args, **kwargs):
 ##        raise Exception("__call__ is required to be overridden")

@@ -26,12 +26,15 @@ from ..models.digest import Digest
 from NetworkTools import ConnectionFailure
 
 __all__ = ['WaveInABoxConnection']
-ANNOYING_AND_BADLY_SET_UP_WIAB_INSTANCES = {'acmewave.com':':9898'}
+
+# ----------------------- TEMP. MEASURE - AUTODISCOVERY SOON ------------------
+DOMAINS_USING_PORTS = {'acmewave.com':':9898'}
 def get_port(domain):
-    if domain in ANNOYING_AND_BADLY_SET_UP_WIAB_INSTANCES:
-        return ANNOYING_AND_BADLY_SET_UP_WIAB_INSTANCES[domain]
+    if domain in DOMAINS_USING_PORTS:
+        return DOMAINS_USING_PORTS[domain]
     else:
-        return ''
+        return str()
+# -----------------------------------------------------------------------------
 class WaveInABoxConnection(plugin.Plugin):
     _accept_dict = {'username':'',
                     'password':'',
