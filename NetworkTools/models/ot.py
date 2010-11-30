@@ -10,19 +10,14 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-from multiprocessing import Process, Queue, Pipe
-#import threading
-from gtk.gdk import threads_enter, threads_leave
-from collections import deque
+from multiprocessing import Process, Queue, Manager, freeze_support
+#from gtk.gdk import threads_enter, threads_leave
+
 
 class ServerBuffer(Process):
     def __init__(self):
         super(ServerBuffer, self).__init__()
-        self._private_pipe, self._public_pipe = Pipe()
-    @property
-    def pipe(self):
-        return self._public_pipe
-
+        self.op_queue = Queue()
     @property
     def server_connection(self):
         if hasattr(self, '_serverconnection'):
@@ -35,15 +30,26 @@ class ServerBuffer(Process):
     # ------------------- OVERIDE THESE -------------------
     def something_to_be_overridden(self):
         pass
-    
+
+
 class Composer(Process):
-    def __init__(self):
+    def __init__(self, operation_queue):
         super(Composer, self).__init__()
 
 class Transformer(Process):
     def __init__(self):
         super(Transformer, self).__init__()
+
+class Initialiser:
+    def __call__(self):
+        pass
+    def __init__(self):
+        self.manager = Manager()
         
+if __name__ == "__main__":
+    freeze_support()
+
+    
 
 # ---------------------------- DESIGN INTENTIONS ------------------------------
 #
