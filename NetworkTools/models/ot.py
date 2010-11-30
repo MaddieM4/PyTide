@@ -24,7 +24,8 @@ class ServerBuffer(Process):
         replaced with anything else, the op_queue attribute has been stuck
         through Python name mangling."""
         return self.__op_queue
-    
+    def append_operation(self, op):
+        self.op_queue.put(op)
     # ------------------- OVERIDE THESE -------------------
     def something_to_be_overridden(self):
         pass
