@@ -17,7 +17,14 @@ from multiprocessing import Process, Queue, Manager, freeze_support
 class ServerBuffer(Process):
     def __init__(self):
         super(ServerBuffer, self).__init__()
-        self.op_queue = Queue()
+        self.__op_queue = Queue()
+    @property
+    def op_queue(self):
+        """As it is incredibly important that the Op Queue doesn't get
+        replaced with anything else, the op_queue attribute has been stuck
+        through Python name mangling."""
+        return self.__op_queue
+    def 
     @property
     def server_connection(self):
         if hasattr(self, '_serverconnection'):
