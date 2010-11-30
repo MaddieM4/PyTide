@@ -24,15 +24,7 @@ class ServerBuffer(Process):
         replaced with anything else, the op_queue attribute has been stuck
         through Python name mangling."""
         return self.__op_queue
-    @property
-    def server_connection(self):
-        if hasattr(self, '_serverconnection'):
-            return self._serverconnection
-        else:
-            return None
-    @server_connection.setter
-    def server_connection(self, connection):
-        self._serverconnection = connection
+    
     # ------------------- OVERIDE THESE -------------------
     def something_to_be_overridden(self):
         pass
