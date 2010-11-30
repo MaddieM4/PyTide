@@ -24,7 +24,6 @@ class ServerBuffer(Process):
         replaced with anything else, the op_queue attribute has been stuck
         through Python name mangling."""
         return self.__op_queue
-    def 
     @property
     def server_connection(self):
         if hasattr(self, '_serverconnection'):
