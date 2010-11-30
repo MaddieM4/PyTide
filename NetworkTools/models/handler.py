@@ -10,7 +10,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-class CallbackHandler:
+class CallbackHandler(object):
     def __init__(self, f, *args, **kwargs):
         self.f = f
         self.args = args

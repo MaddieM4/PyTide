@@ -10,22 +10,31 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-from multiprocessing import Process, Queue, Manager, freeze_support
+from multiprocessing import Process, Pipe, Manager, freeze_support
 #from gtk.gdk import threads_enter, threads_leave
-import websocket
+from websocket import WebSocket
+from handler import CallbackHandler
 
 class ServerBuffer(Process):
-    def __init__(self):
+    def __init__(self, url, onopen_callback):
         super(ServerBuffer, self).__init__()
-        self.__op_queue = Queue()
+        self.__op_queue_outgoing, op_queue_incoming = Pipe()
+        onopen_callback = CallbackHandler(onopen_callback,
+                                          self.send_operation)
+        self.connection = WebSocket(url,
+                                    onopen=onopen_callback,
+                                    onmessage=self._onmessage_callback,)
+
     @property
     def op_queue(self):
         """As it is incredibly important that the Op Queue doesn't get
         replaced with anything else, the op_queue attribute has been stuck
         through Python name mangling."""
-        return self.__op_queue
-    def append_operation(self, op):
+        return self.__op_queue_outgoing
+    def send_operation(self, op):
         self.op_queue.put(op)
+    def process_message(self, msg):
+        pass
     # ------------------- OVERIDE THESE -------------------
     def something_to_be_overridden(self):
         pass
