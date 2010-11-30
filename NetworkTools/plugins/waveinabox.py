@@ -19,9 +19,7 @@ import urllib
 import urllib2
 from cookielib import CookieJar
 
-import websocket
-
-from ..models import plugin
+from ..models import plugin, websocket
 from ..models.user import User
 from ..models.digest import Digest
 

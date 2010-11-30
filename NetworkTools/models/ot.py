@@ -12,7 +12,7 @@
 
 from multiprocessing import Process, Queue, Manager, freeze_support
 #from gtk.gdk import threads_enter, threads_leave
-
+import websocket
 
 class ServerBuffer(Process):
     def __init__(self):

@@ -16,7 +16,7 @@
 #           under the License.
 from ..DNS.lazy import mxlookup
 from NetworkTools import ConnectionFailure
-__all__ = ['get_plugin', 'websocket',]
+__all__ = ['get_plugin', ]
 
 domain_mapping = {}
 protocol_mapping = {}
