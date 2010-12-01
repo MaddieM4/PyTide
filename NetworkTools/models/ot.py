@@ -41,7 +41,7 @@ class ServerBuffer(Process):
 
 
 class Composer(Process):
-    def __init__(self, operation_queue):
+    def __init__(self):
         super(Composer, self).__init__()
 
 class Transformer(Process):
