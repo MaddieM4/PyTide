@@ -15,7 +15,7 @@
 #           specific language governing permissions and limitations
 #           under the License.
 
-class Element(object):
+class OpenElement(object):
     def __init__(self, name, **kwargs):
         self._name = name
         self._properties = kwargs
@@ -24,7 +24,17 @@ class Element(object):
     def __repr__(self):
         properties = tuple([(k+'="'+v+'"')
                             for k,v in self._properties.items()])
-        return ' '.join(('<' + self.name,) + properties + ('>',))
+        return '<%s %s>' % (self.name, ' '.join(properties))
     @property
     def name(self):
         return self._name
+
+class CloseElement(object):
+    def __init__(self, el):
+        """1 arg: 'el' - the element you are closing"""
+        self._name = el.name
+    def __repr__(self):
+        return '</%s>' % self.name
+    @property
+    def name(self):
+        return self.name
