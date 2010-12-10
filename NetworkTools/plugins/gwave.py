@@ -79,6 +79,7 @@ class GoogleWaveConnection(plugin.Plugin):
             self.service = waveservice.WaveService()
             self.service.set_access_token(access_data['serial'])
             self.start()
+            # print self._contact(['natabbotts@wavewatchers.org'])
 
     def _query(self, query, startpage):
         try:
@@ -97,5 +98,6 @@ class GoogleWaveConnection(plugin.Plugin):
     def _me(self):
         return modelConverter.User(self.service.fetch_my_profile()['participantProfile'])
 
-    def _contacts(self):
-        return [modelConverter.User(self.service.fetch_my_profile()['participantProfile'])]
+    def _contact(self, userids):
+        results = self.service.fetch_profiles(userids)
+        return [modelConverter.User(u['participantProfile']) for u in results]

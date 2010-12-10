@@ -481,7 +481,7 @@ class WaveService(object):
     operation_queue.robot_fetch_my_profile()
     return self._first_rpc_result(self.make_rpc(operation_queue))
 
-  def fetch_profiles(self, addresses=()):
+  def fetch_profiles(self, addresses=[]):
     """Use the custom robot_fetch_profiles operation to get a profile.
 
     Highly experimental at this time, I'm not even sure what the return type is!
@@ -492,4 +492,6 @@ class WaveService(object):
     
     operation_queue = ops.OperationQueue()
     operation_queue.robot_fetch_profiles(addresses)
-    return self._first_rpc_result(self.make_rpc(operation_queue))
+    rtn = self._first_rpc_result(self.make_rpc(operation_queue))
+    print rtn
+    return rtn

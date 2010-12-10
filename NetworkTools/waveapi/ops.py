@@ -43,7 +43,7 @@ DOCUMENT_INLINE_BLIP_INSERT = 'document.inlineBlip.insert'
 DOCUMENT_MODIFY = 'document.modify'
 ROBOT_CREATE_WAVELET = 'robot.createWavelet'
 ROBOT_FETCH_MY_PROFILE = 'robot.fetchMyProfile'
-ROBOT_FETCH_PROFILES = 'robot.fetchProfiles'
+ROBOT_FETCH_PROFILES = 'robot.fetchProfilesRequest' or 'robot.fetchProfiles' or 'fetchProfilesRequest'
 ROBOT_FETCH_WAVE = 'robot.fetchWave'
 ROBOT_NOTIFY = 'robot.notify'
 ROBOT_SEARCH = 'robot.search'
@@ -487,4 +487,5 @@ class OperationQueue(object):
     return self.new_operation(ROBOT_FETCH_PROFILES,
                               wave_id=None,
                               wavelet_id=None,
-                              participantIds=util.iterable_to_string(users))
+                              participantIds=list(users),
+                              language='en')
