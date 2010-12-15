@@ -1,0 +1,77 @@
+WaveletVersion {
+    required WaveletId id,
+    required ProtocolHashedVersion version,
+}
+
+FetchWaveViewRequest {
+    required WaveId id;
+    repeated WaveletVersion knownWavelet;
+}
+
+FetchWaveViewResponse {
+    required int32 responseCode;
+    repeated {
+        required WaveletId id;
+        optional WaveletSnapshot snapshot; // omitted if "known"
+    }
+}
+
+OpenWaveletChannelRequest {
+    required WaveId waveid;
+    required WaveletId waveletId;
+    required ProtocolHashedVersion beginVersion;
+}
+
+CloseWaveletChannelRequest {
+    required String channelId;
+}
+
+WaveletUpdate {
+    required ProtocolWaveletDelta delta;
+    required ProtocolHashedVersion resultingVersion;
+    required int64 applicationTimpstamp;
+}
+
+// Repeated message
+OpenWaveletChannelStream {
+    // Channel id is provided only in the first message
+    optional String channelId;
+
+    // Second and subsequent messages contain either or both a delta and commitVersion
+    optional WaveletUpdate delta;
+    optional ProtocolHashedVersion commitVersion;
+}
+
+// Terminating message
+OpenWaveletChannelResponse {
+    required int32 responseCode;
+    optional String errorMessage;
+}
+
+CreateWaveletRequest {
+    required WaveId waveId;
+    required WaveletId waveletId;
+}
+
+CreateWaveletResponse {
+    required int32 responseCode;
+    // One of snapshot or errorMessage is set, depending on responseCode.
+    optional WaveletSnapshot snapshot; // Version-zero snapshot
+    optional String errorMessage;
+}
+
+SubmitDeltaRequest {
+    required WaveId waveId;
+    required WaveletId waveletId;
+    required ProtocolWaveletDelta delta;
+    required String channelId;
+}
+
+SubmitDeltaResponse {
+    required int32 operationsApplied;
+    optional ProtocolHashedVersion hashedVersionAfterApplication;
+    optional long timestampAfterApplication;
+
+    required int32 errorCode;
+    optional String errorMessage;
+} 

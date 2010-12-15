@@ -199,7 +199,7 @@ class WaveService(object):
     # We either expect an operationqueue, a single op or a list
     # of ops:
     if (not isinstance(operations, ops.OperationQueue)):
-      if not type(operations) == list:
+      if not isinstance(operations, list):
         operations = [operations]
       queue = ops.OperationQueue()
       queue.copy_operations(operations)
@@ -241,7 +241,7 @@ class WaveService(object):
       raise errors.RpcError(str(error['code'])
           + ': ' + error['message'])
     data = result.get('data')
-    if not data is None:
+    if data is not None:
       return data
     raise errors.Error('RPC Error: No data record.')
 
@@ -367,7 +367,7 @@ class WaveService(object):
                                 root_thread=None,
                                 operation_queue=operation_queue)
       result = self._first_rpc_result(self.submit(temp_wavelet))
-      if type(result) == list:
+      if isinstance(result, list):
         result = result[0]
       if 'blipId' in result:
         blip_data['blipId'] = result['blipId']
@@ -391,7 +391,8 @@ class WaveService(object):
                               operation_queue=operation_queue)
     return new_wavelet
 
-  def fetch_wavelet(self, wave_id, wavelet_id=None, proxy_for_id=None):
+  def fetch_wavelet(self, wave_id, wavelet_id=None, proxy_for_id=None,
+                    raw_deltas_from_version=-1, return_raw_snapshot=False):
     """Use the REST interface to fetch a wave and return it.
 
     The returned wavelet contains a snapshot of the state of the
@@ -403,13 +404,26 @@ class WaveService(object):
     wavelet gets submited to the server, either by calling
     robot.submit() or by calling .submit_with() on the returned
     wavelet.
+
+    Args:
+      wave_id: the wave id
+      wavelet_id: the wavelet_id
+      proxy_for_id: on whose behalf to execute the operation
+      raw_deltas_from_version: If specified, return a raw dump of the
+        delta history of this wavelet, starting at the given version.
+        This may return only part of the history; use additional
+        requests with higher raw_deltas_from_version parameters to
+        get the rest.
+      return_raw_snapshot: if true, return the raw data for this
+        wavelet.
     """
     util.check_is_valid_proxy_for_id(proxy_for_id)
     if not wavelet_id:
       domain, id = wave_id.split('!', 1)
       wavelet_id = domain + '!conv+root'
     operation_queue = ops.OperationQueue(proxy_for_id)
-    operation_queue.robot_fetch_wave(wave_id, wavelet_id)
+    operation_queue.robot_fetch_wave(wave_id, wavelet_id,
+        raw_deltas_from_version, return_raw_snapshot)
     result = self._first_rpc_result(self.make_rpc(operation_queue))
     return self._wavelet_from_json(result, ops.OperationQueue(proxy_for_id))
 
@@ -449,20 +463,33 @@ class WaveService(object):
     pending.clear()
     return res
 
-  def fetch_profile(self, address=None):
+  def fetch_my_profile(self, address=None):
     """Use the custom robot_fetch_my_profile operation to get a profile.
-	Highly experimental at this time, I'm not even sure what the return type is!
+
+    Highly experimental at this time, I'm not even sure what the return type is!
     """
-    util.check_is_valid_proxy_for_id(address)
+    # A 'proxy_for' id is a string inserted after the username in an address.
+    # E.g. username+proxy_for_id@wave-server.com
+    # As such, no wave address can match this - they all contain disallowed
+    # '@' characters.
+    # RESULT: I have removed the check from this method and the fetch_profiles
+    # method below.
+    
+##    util.check_is_valid_proxy_for_id(address)
+    
     operation_queue = ops.OperationQueue(address)
     operation_queue.robot_fetch_my_profile()
     return self._first_rpc_result(self.make_rpc(operation_queue))
 
-  def fetch_profiles(self, address=None):
-    """Use the custom robot_fetch_my_profile operation to get a profile.
-	Highly experimental at this time, I'm not even sure what the return type is!
+  def fetch_profiles(self, addresses=()):
+    """Use the custom robot_fetch_profiles operation to get a profile.
+
+    Highly experimental at this time, I'm not even sure what the return type is!
     """
-    util.check_is_valid_proxy_for_id(address)
-    operation_queue = ops.OperationQueue(address)
-    operation_queue.robot_fetch_profiles()
+    # see above note.
+##    for address in addresses:
+##      util.check_is_valid_proxy_for_id(address)
+    
+    operation_queue = ops.OperationQueue()
+    operation_queue.robot_fetch_profiles(addresses)
     return self._first_rpc_result(self.make_rpc(operation_queue))

@@ -47,6 +47,8 @@ class Annotation(object):
   TEXT_DECORATION = "style/textDecoration"
   #: Reserved annotation for setting vertical alignment.
   VERTICAL_ALIGN = "style/verticalAlign"
+  #: Reserved annotation for setting link.
+  LINK = "link/manual"
 
   def __init__(self, name, value, start, end):
     self._name = name
@@ -383,7 +385,7 @@ class BlipRefs(object):
     blip = self._blip
 
     if modify_how != BlipRefs.DELETE:
-      if type(what) != list:
+      if not isinstance(what, list):
         what = [what]
       next_index = 0
 

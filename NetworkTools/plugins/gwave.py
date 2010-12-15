@@ -23,66 +23,79 @@ import urllib
 from ..models import plugin, user, digest
 from ..waveapi import waveservice
 
+
+PYTIDE_LOGIN_URL = "http://pytidewave.appspot.com/account/remotelogin"
+
 class modelConverter:
-	@classmethod
-	def SearchResults(self,wsresults, page, maxpage):
-		''' Turns a Data API search results list to a 
-		models.SearchResults object '''
-		digests = []
-		for i in wsresults.digests:
-			digests.append(modelConverter.Digest(i))
-		return digest.SearchResults(wsresults.query,
-                                            page,
-                                            digests,
-                                            maxpage)
+    @staticmethod
+    def SearchResults(wsresults, page, maxpage):
+        ''' Turns a Data API search results list to a 
+        models.SearchResults object '''
+        digests = []
+        for i in wsresults.digests:
+            digests.append(modelConverter.Digest(i))
+        return digest.SearchResults(wsresults.query,
+                                    page,
+                                    digests,
+                                    maxpage)
 
-	@classmethod
-	def Digest(self,wsdigest):
-		return digest.Digest(wsdigest.wave_id,
-                                     wsdigest.title,
-                                     wsdigest.participants,
-                                     wsdigest.unread_count,
-                                     wsdigest.blip_count,
-                                     wsdigest.last_modified)
+    @staticmethod
+    def Digest(wsdigest):
+        return digest.Digest(wsdigest.wave_id,
+                             wsdigest.title,
+                             wsdigest.participants,
+                             wsdigest.unread_count,
+                             wsdigest.blip_count,
+                             wsdigest.last_modified)
 
-	@classmethod
-	def User(self,profile):
-		return user.User(name = profile['name'],
-                                 address = profile['address'],
-                                 avatar = profile['imageUrl'])
+    @staticmethod
+    def User(profile):
+        return user.User(name = profile['name'],
+                         address = profile['address'],
+                         avatar = profile['imageUrl'])
 
-		
+        
 
 class GoogleWaveConnection(plugin.Plugin):
-	def __init__(self, username, password):
-		self.username = username
-		self.password = password
+    _accept_dict = {'username':'',
+                    'password':'',}
+    @classmethod
+    def _accepts(cls):
+        return cls._accept_dict
+    
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+        encoded_login = urllib.urlencode(dict(username=username,
+                                              password=password)
+                                         )
+        try:
+            server_response = urllib.urlopen(PYTIDE_LOGIN_URL, encoded_login)            
+        except IOError, e:
+            raise NetworkTools.ConnectionFailure("Could not communicate with PyTide Server",
+                                                 e[1])
+        else:
+            access_data = json.loads(server_response.read())
+            self.service = waveservice.WaveService()
+            self.service.set_access_token(access_data['serial'])
+            self.start()
 
-		try:
-			serverResponse = urllib.urlopen("http://pytidewave.appspot.com/account/remotelogin",
-				urllib.urlencode({'username':username,'password':password}))
+    def _query(self, query, startpage):
+        try:
+            results=self.service.search(query,
+                                        index=startpage*20,
+                                        num_results=21)
+        except:
+            raise NetworkTools.ConnectionFailure("Connection to Google Wave failed")
+            return # Why do we need to return after a raise?
+        if results.num_results < 21:
+            maxpage = startpage
+        else:
+            maxpage = startpage+1 # more pages exist, we will just assume one more
+        return modelConverter.SearchResults(results, startpage, maxpage)
 
-			access_data = json.loads(serverResponse.read())
-			self.service = waveservice.WaveService()
-			self.service.set_access_token(access_data['serial'])
-			self.start()
-		except IOError, e:
-			raise NetworkTools.ConnectionFailure("Could not communicate with PyTide Server",e[1])
+    def _me(self):
+        return modelConverter.User(self.service.fetch_my_profile()['participantProfile'])
 
-	def _query(self, query, startpage):
-		try:
-			results=self.service.search(query, index=startpage*20,num_results=21)
-		except:
-			raise NetworkTools.ConnectionFailure("Connection to Google Wave failed")
-			return
-		if results.num_results < 21:
-			maxpage = startpage
-		else:
-			maxpage = startpage+1 # more pages exist, we will just assume one more
-		return modelConverter.SearchResults(results, startpage, maxpage)
-
-	def _me(self):
-		return modelConverter.User(self.service.fetch_profile()['participantProfile'])
-
-	def _contacts(self):
-		return [modelConverter.User(self.service.fetch_profile()['participantProfile'])]
+    def _contacts(self):
+        return [modelConverter.User(self.service.fetch_my_profile()['participantProfile'])]

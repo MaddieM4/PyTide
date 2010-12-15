@@ -45,9 +45,8 @@ ROBOT_CREATE_WAVELET = 'robot.createWavelet'
 ROBOT_FETCH_MY_PROFILE = 'robot.fetchMyProfile'
 ROBOT_FETCH_PROFILES = 'robot.fetchProfiles'
 ROBOT_FETCH_WAVE = 'robot.fetchWave'
-ROBOT_NOTIFY = 'robot.notifyCapabilitiesHash'
+ROBOT_NOTIFY = 'robot.notify'
 ROBOT_SEARCH = 'robot.search'
-
 
 # Assign always NOTIFY_OP_ID to the notify operation so
 # we can easily filter it out later
@@ -212,9 +211,9 @@ class OperationQueue(object):
     if props is None:
       props = {}
     props.update(kwprops)
-    if not wave_id is None:
+    if wave_id is not None:
       props['waveId'] = wave_id
-    if not wavelet_id is None:
+    if wavelet_id is not None:
       props['waveletId'] = wavelet_id
     if self._proxy_for_id:
       props['proxyingFor'] = self._proxy_for_id
@@ -306,22 +305,35 @@ class OperationQueue(object):
     """
     op = self.new_operation(
         ROBOT_SEARCH, wave_id=None, wavelet_id=None, query=query)
-    if not index is None:
+    if index is not None:
       op.set_param('index', index)
-    if not num_results is None:
+    if num_results is not None:
       op.set_param('numResults', num_results)
     return op
-  
-  def robot_fetch_wave(self, wave_id, wavelet_id):
-    """Requests a snapshot of the specified wave.
+
+  def robot_fetch_wave(self, wave_id, wavelet_id,
+      raw_deltas_from_version=-1, return_raw_snapshot=False):
+    """Requests a snapshot of the specified wavelet.
 
     Args:
       wave_id: The wave id owning that this operation is applied to.
       wavelet_id: The wavelet id that this operation is applied to.
+      raw_deltas_from_version: If specified, return a raw dump of the
+        delta history of this wavelet, starting at the given version.
+        This may return only part of the history; use additional
+        requests with higher raw_deltas_from_version parameters to
+        get the rest.
+      return_raw_snapshot: if true, return the raw data for this
+        wavelet.
     Returns:
       The operation created.
     """
-    return self.new_operation(ROBOT_FETCH_WAVE, wave_id, wavelet_id)
+    op = self.new_operation(ROBOT_FETCH_WAVE, wave_id, wavelet_id)
+    if raw_deltas_from_version != -1:
+      op.set_param('rawDeltasFromVersion', raw_deltas_from_version)
+    if return_raw_snapshot:
+      op.set_param('returnRawSnapshot', return_raw_snapshot)
+    return op
 
   def wavelet_set_title(self, wave_id, wavelet_id, title):
     """Sets the title of a wavelet.
@@ -471,6 +483,8 @@ class OperationQueue(object):
   def robot_fetch_my_profile(self):
     return self.new_operation(ROBOT_FETCH_MY_PROFILE,None,None)
   
-  def robot_fetch_profiles(self):
-    return self.new_operation(ROBOT_FETCH_PROFILES, None, None)
-  
+  def robot_fetch_profiles(self, users):
+    return self.new_operation(ROBOT_FETCH_PROFILES,
+                              wave_id=None,
+                              wavelet_id=None,
+                              participantIds=util.iterable_to_string(users))

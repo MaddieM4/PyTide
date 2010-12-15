@@ -48,6 +48,11 @@ class TestOperation(unittest.TestCase):
     self.assertEqual('proxyid', op.params['proxyingFor'])
     self.assertEqual('wave1', op.params['waveId'])
     self.assertEqual('wavelet1', op.params['waveletId'])
+    op = q.robot_fetch_wave('wave1', 'wavelet1',
+                            raw_deltas_from_version=5, return_raw_snapshot=True)
+    self.assertEqual(5, len(op.params))
+    self.assertEqual(5, op.params['rawDeltasFromVersion'])
+    self.assertEqual(True, op.params['returnRawSnapshot'])
 
 class TestOperationQueue(unittest.TestCase):
   """Test case for OperationQueue class."""
@@ -58,7 +63,7 @@ class TestOperationQueue(unittest.TestCase):
     op = q.wavelet_modify_tag('waveid', 'waveletid', 'tag')
     json = q.serialize()
     self.assertEqual(2, len(json))
-    self.assertEqual('robot.notifyCapabilitiesHash', json[0]['method'])
+    self.assertEqual('robot.notify', json[0]['method'])
     self.assertEqual('hash', json[0]['params']['capabilitiesHash'])
     self.assertEqual(ops.PROTOCOL_VERSION, json[0]['params']['protocolVersion'])
     self.assertEqual('wavelet.modifyTag', json[1]['method'])

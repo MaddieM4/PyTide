@@ -35,15 +35,17 @@ BLIP_JSON = ('{"wdykLROk*13":'
              '}')
 
 WAVELET_JSON = ('{"lastModifiedTime":1242079611003,'
-                '"title":"A title",'
-                '"waveletId":"test.com!conv+root",'
-                '"rootBlipId":"wdykLROk*13",'
-                '"dataDocuments":null,'
-                '"creationTime":1242079608457,'
-                '"waveId":"test.com!wdykLROk*11",'
-                '"participants":["someguy@test.com","monty@appspot.com"],'
-                '"creator":"someguy@test.com",'
-                '"version":5}')
+                 '"title":"A title",'
+                 '"waveletId":"test.com!conv+root",'
+                 '"rootBlipId":"wdykLROk*13",'
+                 '"dataDocuments":null,'
+                 '"creationTime":1242079608457,'
+                 '"waveId":"test.com!wdykLROk*11",'
+                 '"participants":["someguy@test.com","monty@appspot.com"],'
+                 '"creator":"someguy@test.com",'
+                 '"rootThread": '
+                 '{"id":"", "location": "-1", "blipIds": ["wdykLROk*13"]},'
+                 '"version":5}')
 
 EVENTS_JSON = ('[{"timestamp":1242079611003,'
                '"modifiedBy":"someguy@test.com",'

@@ -1,1 +1,2 @@
 google_data gwave GoogleWaveConnection
+wiab_live waveinabox WaveInABoxConnection

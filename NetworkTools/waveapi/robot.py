@@ -92,7 +92,9 @@ class Robot(object):
   def get_waveservice(self):
     """Return the currently installed waveservice if available.
 
-    Throws an exception if no service is installed."""
+    Raises:
+      Error: if no service is installed.
+    """
     if self._waveservice is None:
       raise errors.Error('Oauth has not been setup')
     return self._waveservice
@@ -125,7 +127,7 @@ class Robot(object):
     """
     payload = (handler, event_class, context, filter)
     self._handlers.setdefault(event_class.type, []).append(payload)
-    if type(context) == list:
+    if isinstance(context, list):
       context = ','.join(context)
     self._capability_hash = (self._capability_hash * 13 +
                              hash(ops.PROTOCOL_VERSION) +
@@ -163,12 +165,21 @@ class Robot(object):
       consumer_secret: secret received from the verification process.
 
       server_rpc_base: url of the rpc gateway to use. Specify None for default.
-          For wave preview, http://gmodules.com/api/rpc should be used.
-          For wave sandbox, http://sandbox.gmodules.com/api/rpc should be used.
+          For wave preview, https://www-opensocial.googleusercontent.com/api/rpc
+          should be used.
+          For wave sandbox,
+          https://www-opensocial-sandbox.googleusercontent.com/api/rpc should be used.
     """
-    self._consumer_key = consumer_key
+
+    consumer_key_prefix = ''
+    # NOTE(ljvderijk): Present for backwards capability.
+    if server_rpc_base in [waveservice.WaveService.SANDBOX_RPC_URL,
+                           waveservice.WaveService.RPC_URL]:
+      consumer_key_prefix = 'google.com:'
+
+    self._consumer_key = consumer_key_prefix + consumer_key
     self._waveservice = waveservice.WaveService(
-        consumer_key='google.com:' + consumer_key,
+        consumer_key=consumer_key,
         consumer_secret=consumer_secret,
         server_rpc_base=server_rpc_base,
         http_post=self._http_post)
@@ -191,7 +202,7 @@ class Robot(object):
         handler, event_class, context, filter = payload
         line = '  <w:capability name="%s"' % capability
         if context:
-          if type(context) == list:
+          if isinstance(context, list):
             context = ','.join(context)
           line += ' context="%s"' % context
         if filter:
@@ -278,7 +289,8 @@ class Robot(object):
     return self.get_waveservice().new_wave(
         domain, participants, message, proxy_for_id, submit)
 
-  def fetch_wavelet(self, wave_id, wavelet_id=None, proxy_for_id=None):
+  def fetch_wavelet(self, wave_id, wavelet_id=None, proxy_for_id=None,
+                    raw_deltas_from_version=-1, return_raw_snapshot=False):
     """Use the REST interface to fetch a wave and return it.
 
     The returned wavelet contains a snapshot of the state of the
@@ -292,7 +304,8 @@ class Robot(object):
     wavelet.
     """
     return self.get_waveservice().fetch_wavelet(
-        wave_id, wavelet_id, proxy_for_id)
+        wave_id, wavelet_id, proxy_for_id, raw_deltas_from_version,
+        return_raw_snapshot)
 
   def blind_wavelet(self, json, proxy_for_id=None):
     """Construct a blind wave from a json string.
