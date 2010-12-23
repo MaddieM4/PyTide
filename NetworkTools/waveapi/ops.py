@@ -206,7 +206,11 @@ class OperationQueue(object):
     for op in other_queue:
       self.__pending.append(op)
 
-  def new_operation(self, method, wave_id, wavelet_id, props=None, **kwprops):
+  def new_operation(self, method,
+                    wave_id=None,
+                    wavelet_id=None,
+                    props=None,
+                    **kwprops):
     """Creates and adds a new operation to the operation list."""
     if props is None:
       props = {}
@@ -481,11 +485,9 @@ class OperationQueue(object):
     return inline_blip_data
 
   def robot_fetch_my_profile(self):
-    return self.new_operation(ROBOT_FETCH_MY_PROFILE,None,None)
+    return self.new_operation(ROBOT_FETCH_MY_PROFILE)
   
   def robot_fetch_profiles(self, users):
     return self.new_operation(ROBOT_FETCH_PROFILES,
-                              wave_id=None,
-                              wavelet_id=None,
                               participantIds=list(users),
                               language='en')

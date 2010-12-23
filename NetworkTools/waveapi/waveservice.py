@@ -208,7 +208,7 @@ class WaveService(object):
 
 
     data = simplejson.dumps(queue.serialize(method_prefix='wave'))
-
+    print data
     oauth_request = oauth.OAuthRequest.from_consumer_and_token(self._consumer,
          token=self._access_token, http_method='POST',
          http_url=self._server_rpc_base)
