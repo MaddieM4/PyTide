@@ -47,8 +47,8 @@ class StatusIcon(gtk.StatusIcon):
 			elif len(item)==4:
 				menuItem = gtk.MenuItem()
 				box = gtk.HBox()
-				box.pack_start(gtk.Label(item[0]), True, True, 0)
-				box.pack_end(item[3], False, False, 0)
+				box.pack_start(item[3], False, False, 0)
+				box.pack_end(gtk.Label(item[0]), True, True, 0)
 				menuItem.add(box)
 				menu.append(menuItem)
 				menuItem.connect_object("activate",item[1],item[2])
