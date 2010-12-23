@@ -78,3 +78,49 @@ def get_plugin(domain):
                 return plugin
     # If no protocols could be found or imported:
     raise ConnectionFailure("No plugin available: protocol %s" % protocol)
+
+# -------------------- FOLLOWING CODE DOESN'T WORK YET ------------------------
+class PluginProxy(object):
+    METHODS = ('_accepts',
+               '_query',
+               '_contacts',
+               '_me',) + tuple(dir(plugin.Plugin))
+    def __getattr__(self, attr):
+        try:
+            r = super(PluginProxy, self).__getattr__(attr)
+        except AttributeError:
+            if hasattr(self.__plugin, attr):
+                return getattr(self.__plugin, attr)
+            elif hasattr(self.__plugincls, attr):
+                return getattr(self.__plugincls, attr)
+            raise
+
+    def __init__(self):
+        self.__plugincls = None
+        self.__connected = False
+        self.hasplugincls = False
+        
+    def __call__(self, domain):
+        try:
+            self.__plugincls = plugins.get_plugin(domain)
+            self.hasplugincls = True
+        except Exception:
+            print "Exception while getting plugin for %s" % domain
+            print "Reraising from PluginProxy instance, method __call__"
+            raise
+               
+    def connect(self, **kwargs):
+        if not self.hasplugincls:
+            raise Exception("PluginProxy 'connect' called before plugin established")
+        else:
+            plugincls = self.__plugincls
+        if hasattr(plugincls, '_accepts'):
+            plugin_args = self.__plugincls._accepts()
+            for kw, arg in kwargs.items():
+                if kw in plugin_args:
+                    plugin_args[kw] = arg
+            self.__plugin = plugincls(**plugin_args)
+        else:
+            print "Plugins are required to define _accepts"
+            print "\t%s does not define _accepts" % plugincls
+            raise NotImplementedError
