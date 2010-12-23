@@ -18,6 +18,7 @@
 import NetworkTools
 from persistance.config import Config
 import persistance.cache
+from gui.webgui import AlreadyClosedError
 
 import threading
 import Queue
@@ -72,8 +73,11 @@ class Network(threads.LoopingThread):
 
 	def _query(self, results, wlcallback):
 		''' Expects a models.SearchResults from the plugin '''
-		if wlcallback(results):
+		try:
+			wlcallback(results)
 			self.registry.setIcon('active')
+		except AlreadyClosedError:
+			pass
 
 	def connect(self, username, password):
 		print "Network connecting to %s" % username

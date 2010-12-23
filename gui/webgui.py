@@ -68,6 +68,9 @@ def start_gtk_thread():
 def kill_gtk_thread():
 	async_gtk_message(gtk.main.quit)()
 
+class AlreadyClosedError(Exception):
+	pass
+
 class browserWindow:
 
 	def __init__(self, uri, registry, size=(300,600),minsize=(250,400), echo=True):
@@ -104,13 +107,16 @@ class browserWindow:
 		open_uri(self.browser, uri)
 
 	def send(self, msg):
+		self.dcheck()
 		if self.echo: print "[T>>>", msg
 		async_gtk_message(inject_javascript)(self.browser, msg)
 
 	def setTitle(self, newtitle):
+		self.dcheck()
 		self.window.set_title(newtitle)
 
 	def getTitle(self):
+		self.dcheck()
 		return self.window.get_title()
 
 	def process(self, data):
@@ -120,6 +126,7 @@ class browserWindow:
 		pass
 
 	def focus(self):
+		self.dcheck()
 		self.window.present()
 
 	def destroy(self,widget,event):
@@ -131,3 +138,7 @@ class browserWindow:
 	def close(self):
 		self.destroy(self.window, None)
 		self.window.destroy()
+
+	def dcheck(self):
+		if self.is_destroyed: raise AlreadyClosedError()
+
