@@ -75,6 +75,7 @@ class browserWindow:
 		self.registry = registry
 		self.window = gtk.Window()
 		self.browser = create_browser()
+		self.is_destroyed = False
 
 		box = gtk.VBox(homogeneous = False, spacing = 0)
 		self.window.add(box)
@@ -122,6 +123,7 @@ class browserWindow:
 		self.window.present()
 
 	def destroy(self,widget,event):
+		self.is_destroyed = True
 		print "unregistering self"
 		self.registry.unregister(self)
 		return False

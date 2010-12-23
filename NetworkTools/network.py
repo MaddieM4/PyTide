@@ -72,8 +72,8 @@ class Network(threads.LoopingThread):
 
 	def _query(self, results, wlcallback):
 		''' Expects a models.SearchResults from the plugin '''
-		self.registry.setIcon('active')
-		wlcallback(results)
+		if wlcallback(results):
+			self.registry.setIcon('active')
 
 	def connect(self, username, password):
 		print "Network connecting to %s" % username
