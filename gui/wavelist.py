@@ -71,6 +71,7 @@ class WaveList(webgui.browserWindow):
 
 	def regmsg_receive(self, data):
 		''' Recieve message from registry. '''
+		self.dcheck()
 		if 'type' in data:
 			if data['type'] == 'setOption':
 				self.options[data['name']] = data['value']
@@ -105,6 +106,10 @@ class WaveList(webgui.browserWindow):
 		if query == "": 
 			query="in:inbox"
 		query, page = getPageFromQuery(query, page)
+		if page!=0:
+			pagetext = ", Page "+str(page+1)
+		else: pagetext = ""
+		self.setTitle(self.getTitleFromQuery(query)+pagetext)
 		if "::contacts" in query:
 			def callback(contactList):
 				self.send("clearList()")
@@ -130,9 +135,7 @@ class WaveList(webgui.browserWindow):
 
 	def recv_query(self, results):
 		'''Receive a loaded query from the Network'''
-		if results.page!=0:
-			pagetext = ", Page "+str(results.page+1)
-		else: pagetext = ""
+		self.dcheck()
 		if results == None:
 			self.send("setError('connection')")
 			return
@@ -154,8 +157,7 @@ class WaveList(webgui.browserWindow):
 				'location':digest.waveid
 				})
 		if totalunread != 0:
-			pagetext += " (%d)" % totalunread
-		self.setTitle(self.getTitleFromQuery(results.query)+pagetext)
+			self.setTitle(self.getTitle() + " (%d)" % totalunread)
 		self.send("reloadList(%s, true)" % json.dumps(jres))
 		self.send("pullSelection(); checkSelect()")
 
@@ -163,6 +165,7 @@ class WaveList(webgui.browserWindow):
 		self.send("clearList(); setError('connection'); checkSelect()")
 
 	def showContacts(self, contactlist, useLongEnd):
+		self.dcheck()
 		contacts = [{'name':c.name or c.nick,'address':c.addr,'avatar':c.pict} for c in contactlist]
 		self.send("contactsList(%s,%s)" % (json.dumps(contacts),str(useLongEnd).lower()))
 
