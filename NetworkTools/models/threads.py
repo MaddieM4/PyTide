@@ -21,8 +21,6 @@ import threading
 from gtk.gdk import threads_enter, threads_leave
 import time
 
-import wave # What for?
-
 class LoopingThread(threading.Thread):
     '''This class allows you to make a thready object that calls
     its function on an infinite loop, automatically working with
