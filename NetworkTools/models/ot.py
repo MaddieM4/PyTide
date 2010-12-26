@@ -10,7 +10,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-from multiprocessing import Process, Pipe, Manager, freeze_support
+from multiprocessing import Process, Manager, freeze_support
 #from gtk.gdk import threads_enter, threads_leave
 from websocket import WebSocket
 from handler import CallbackHandler
@@ -48,16 +48,10 @@ class Transformer(Process):
     def __init__(self):
         super(Transformer, self).__init__()
 
-class Initialiser:
-    def __call__(self):
-        pass
-    def __init__(self):
-        self.manager = Manager()
-        
 if __name__ == "__main__":
     freeze_support()
 
-    
+
 
 # ---------------------------- DESIGN INTENTIONS ------------------------------
 #
