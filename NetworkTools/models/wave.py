@@ -26,38 +26,6 @@ import user
 import blip
 
 
-class Document(object):
-    '''A simple class to store and easily pass around wave snapshots. It has
-    no facilities to submit and recieve updates over the network, this is
-    handled by the plugin.'''
-    def __init__(self, identifier = None, json_input = None):
-	# Create a new document
-	self.wavelets = []
-	self.properties = {}
-	if not identifer:
-            identifer = "unspecified"
-	self.id = identifier
-	if not json_input:
-            json_input = []
-        with open('~/.pytide/document','w') as f:
-            f.write(json_input)
-		
-    def to_json(self):
-	pass
-
-class Digest(object):
-    def __init__(title, identifier, participants, blips_total, blips_unread,
-                 date, folder = None, features = None):
-	self.title = title
-	self.id = identifier
-	self.participants = participants
-	self.blips_total = blips_total
-	self.blips_tnread = blips_unread
-	self.date = date
-	self.folder = folder
-	self.features = features
-
-
 class Wave(object):
     """Models a Wave.
 
