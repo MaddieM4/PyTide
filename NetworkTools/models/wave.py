@@ -16,6 +16,13 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 #
+"""
+These models were originally designed from the perspective of a server. 
+To make client models, remove any user-authentication (checking if a user is on 
+a wave). 
+Ensure that all models can be constructed as replicas of server-sent data,
+instead of all being constructed as new models entirely. 
+"""
 
 import random
 from string import ascii_lowercase, digits
@@ -62,7 +69,7 @@ class Digest(object):
 
 >>>>>>> origin
 class Wave(object):
-    """Models a Wave.
+	"""Models a Wave.
 
     This object should not be directly instantiated, instead, the server method
     should be used, which will return a new Wave object.
@@ -86,13 +93,17 @@ class Wave(object):
         def __str__(self):
             return self.sep.join((self._domain, self._id))
         def __repr__(self):
-            return self.__str__()
+            return "WaveID: " + self.__str__()
         @property
         def domain(self):
             return self._domain
         @property
         def id(self):
             return self._id
+        @classmethod
+        def construct(cls, domain, id):
+        	self = cls(domain, ())
+        	self._id = id
 
     def __init__(self, domain, creator):
         """Creates a new wave with a new Wave.ID object, and a root Wavelet.
@@ -184,6 +195,12 @@ class Wave(object):
             return self._root
         else:
             return None
+    @property
+    def root_id(self):
+    	return getattr(self.root_wavelet, 'id', None)
+    @property
+    def root_wavelet(self):
+    	return getattr(self, '_root', None)
     def new_wavelet(self, domain, user):
         """Creates a new wavelet object & associate it with this wave."""
         wavelet = Wavelet(domain = domain, creator = user, wave = self)
@@ -215,16 +232,27 @@ class Wavelet(object):
                 # Considering that the Wavelet object creating this won't have
                 # access to this list through any other method.
         def __str__(self):
-            """Returns string form full identifer. (domain.com!wavelet_id)"""
+            """Returns string form full identifer.
+            domain.com!wavelet_id
+            """
             return self.sep.join((self._domain, self._id))
+        def __repr__(self):
+        	"""Returns representation of the ID object.
+        	WaveletID: domain.com!wavelet_id
+        	"""
+        	return "WaveletID: " + self.__str__()
         @property
         def domain(self):
-            """returns the string form domain"""
+            """returns the domain string"""
             return self._domain
         @property
         def id(self):
-            """returns the string form wavelet id (not including the domain)"""
+            """returns the wavelet id string (not including the domain)"""
             return self._id
+        @classmethod
+        def construct(cls, domain, id):
+        	self = cls(domain, ())
+        	self._id = id
     def __init__(self, domain, creator, wave, digest = None,
                  waveinstantiated = True):
         if waveinstantiated:
