@@ -42,9 +42,33 @@ class Contributors(list):
 
 class Blip(object):
     def __init__(self, creator):
+        self.document = document.BlipDocument()
         self.creator = creator
         self.contributors = Contributors()
         self.contributors.append(creator)
-        self.document = document.BlipDocument()
+        self.version = 0 # should this be an argument?
+        self.id = "" # also this
+        parent = None # basically all of these new things actually
+        children = []
+        wavelet = None
+
+    @property
+    def annotations(self):
+        return self.document.annotations
+
+    def set_parent(self, type="root", blip=None, position=0):
+        ''' Automatically adds self to parent's children, too! '''
+        self.parent = Parent(blip, type, position)
+	if self.parent.blip:
+	        self.parent.blip.children.append(self)
 
     #TODO: Provide annotate() method which will apply an annotation to a range.
+
+class Parent:
+    def __init__(self, type="root", blip=None, position=0):
+        '''Types: root, direct, and inline
+           Position: only applies to inline '''
+        self.blip = blip
+        self.id = self.blip.id
+        self.type = type
+        self.position = position
