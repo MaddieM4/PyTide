@@ -21,24 +21,6 @@ from collections import deque
 
 import document
 
-class Contributors(list):
-    """A list containing users. Users cannot be removed or rearranged."""
-    def __delitem__(self, arg):
-        pass
-    def __delslice__(self, arg1, arg2):
-        pass
-    def __setitem__(self, arg1, arg2):
-        pass
-    def __setslice__(self, arg1, arg2, arg3):
-        pass
-    def pop(self, arg = None):
-        pass
-    def remove(self, arg):
-        pass
-    def sort(self, cmp = None, key = None, reverse = None):
-        pass
-    def reverse(self):
-        pass
 
 class Blip(object):
     def __init__(self, creator):
@@ -64,6 +46,7 @@ class Blip(object):
 
     #TODO: Provide annotate() method which will apply an annotation to a range.
 
+
 class Parent:
     def __init__(self, type="root", blip=None, position=0):
         '''Types: root, direct, and inline
@@ -72,3 +55,24 @@ class Parent:
         self.id = self.blip.id
         self.type = type
         self.position = position
+
+
+class Contributors(list):
+    """A list containing users. Users cannot be removed or rearranged."""
+    def __delitem__(self, arg):
+        pass
+    def __delslice__(self, arg1, arg2):
+        pass
+    def __setitem__(self, arg1, arg2):
+        pass
+    def __setslice__(self, arg1, arg2, arg3):
+        pass
+    def pop(self, arg = None):
+        pass
+    def remove(self, arg):
+        pass
+    def sort(self, cmp = None, key = None, reverse = None):
+        pass
+    def reverse(self):
+        pass
+
