@@ -22,10 +22,9 @@ from collections import deque
     
 class Operation(object):
     """An operation is a sequence of instructions to be performed."""
-    def __init__(self, parent, children = None, instructions=None,):
-        if instructions is None:
-            instructions = []
+    def __init__(self, parent, children = [], instructions=[]):
         self._parent = parent
+        self._children = children
         self._instructions = instructions
     
     @property
@@ -43,3 +42,7 @@ class Operation(object):
     @parent.setter
     def parent(self, new):
         self._parent = new
+
+    def compose(self, other):
+        return Operation(self._parent, self._children, 
+            self._instructions+other._instructions)
