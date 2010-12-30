@@ -19,3 +19,50 @@
 class Instruction(object):
     def __init__(self):
         pass
+
+class Retain(Instruction):
+    def __init__(self, count):
+	self._count = count
+
+    @property
+    def count(self):
+        return self._count
+
+class TextOp(Instruction):
+    def __init__(self, str):
+        self._text = str
+
+    @property
+    def text(self):
+        return self._text
+
+    @property
+    def characters(self):
+        return self._text
+
+class InsertCharacters(TextOp):
+    pass
+
+class DeleteCharacters(TextOp):
+    pass
+
+class OpenElement(TextOp):
+    pass
+
+class DeleteOpenElement(Instruction):
+    pass
+
+class CloseElement(Instruction):
+    pass
+
+class DeleteCloseElement(Instruction):
+    pass
+
+class AnnotationBoundary(Instruction):
+    def __init__(self, starts = [], endkeys = []):
+        self._startkeys = []
+        self._startvalues = []
+        for tup in starts:
+		self._startkeys.append(tup[0])
+		self._startvalues.append(tup[1])
+        self._endkeys = endkeys
