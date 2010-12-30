@@ -20,7 +20,7 @@
 from collections import deque
 
 import document
-
+import identifier
 
 class Blip(object):
     def __init__(self, creator):
@@ -28,8 +28,8 @@ class Blip(object):
         self.creator = creator
         self.contributors = Contributors()
         self.contributors.append(creator)
-        self.id = "" # also this
-        parent = None # basically all of these new things actually
+        self.id = None
+        parent = None 
         children = []
         wavelet = None
 
