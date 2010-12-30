@@ -221,6 +221,7 @@ class Annotations(object):
 
 
     def _resolve_pair(self, annotation_1, annotation_2):
+        ''' Test two annotations for overlap, equality, and such '''
         if annotation_2.end < annotation_1.end:
             # If the annotations are in the wrong order, swap them.
             a1 = annotation_2
@@ -249,6 +250,7 @@ class Annotations(object):
         # and I will update the code to account for the new situation.
         # This is because I cannot see any other possibility.
         raise Exception("Cannot resolve")
+
     def resolve(self):
         """Resolve all stored annotations.
 
@@ -348,10 +350,10 @@ class Annotations(object):
         # and as a tuple is most likely what will be called, it was decided
         # that two clauses are used.
         if isinstance(annotation, tuple) and (len(annotation == 2)):
-            annotate(start, end, *annotation)
+            self.annotate(start, end, *annotation)
             return
         elif (len(annotation) == 2) and ("__iter__" in dir(annotation)):
-            annotate(start, end, *annotation)
+            self.annotate(start, end, *annotation)
 
 
 

@@ -28,7 +28,6 @@ class Blip(object):
         self.creator = creator
         self.contributors = Contributors()
         self.contributors.append(creator)
-        self.version = 0 # should this be an argument?
         self.id = "" # also this
         parent = None # basically all of these new things actually
         children = []
@@ -37,6 +36,11 @@ class Blip(object):
     @property
     def annotations(self):
         return self.document.annotations
+
+    @property
+    def version(self):
+	# TODO: calculate from applied deltas
+	return 0
 
     def set_parent(self, type="root", blip=None, position=0):
         ''' Automatically adds self to parent's children, too! '''
