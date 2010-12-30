@@ -17,5 +17,23 @@
 #
 
 class Instruction(object):
+    def __init__(self, *args, **kwargs):
+        """Pass arguments and keyword arguments as necessary"""
+        self.args = args
+        self.kwargs = kwargs
+    def __repr__(self):
+        return (str(self.__class__) +
+                "(" +
+                ', '.join(self.args) +
+                ', '.join([': '.join((str(k), repr(v)))
+                           for k,v in self.kwargs.items()])
+                )
+    
+    def __str__(self):
+        return repr(self)
+
+class Retain(Instruction):
+    """Move x places forward in the document"""
     def __init__(self):
         pass
+        
