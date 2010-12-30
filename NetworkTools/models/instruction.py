@@ -17,6 +17,9 @@
 #
 
 class Instruction(object):
+    """Should be subclassed.
+    apply() should be defined, but init should not need to be overwritten.
+    """
     def __init__(self, *args, **kwargs):
         """Pass arguments and keyword arguments as necessary"""
         self.args = args
@@ -31,9 +34,13 @@ class Instruction(object):
     
     def __str__(self):
         return repr(self)
+    def apply():
+        """Apply the instruction"""
+        raise NotImplemented("apply() needs to be defined by a subclass")
 
 class Retain(Instruction):
     """Move x places forward in the document"""
-    def __init__(self):
+    def apply():
         pass
+    
         
