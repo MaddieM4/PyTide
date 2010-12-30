@@ -11,6 +11,10 @@
 #    limitations under the License.
 #
 
+import random
+from string import ascii_lowercase, digits
+import re
+
 class Identifier(object):
     """Represents an Identifier
 
