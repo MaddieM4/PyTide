@@ -74,12 +74,3 @@ class Identifier(object):
             identifier = random.sample(ascii_lowercase + digits, 11)
         return cls(domain = domain, identifier = identifier)
 
-#-------------- Subclasses ----------------------------------------------------
-
-class WaveId(Identifier):
-    sep = "+w"
-    rep = "Wave ID: "
-
-class WaveletId(Identifier):
-    sep = "!"
-    rep = "Wavelet ID: "

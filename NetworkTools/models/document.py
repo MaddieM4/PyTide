@@ -456,3 +456,9 @@ class BlipDocument(deque):
         self.fix_rotation()
         return self
 
+    def annotate(self, start, end, name, value):
+        return self.annotations.annotate(start,end,name,value)
+
+    @property
+    def text(self):
+	return str(self.complete())
