@@ -75,23 +75,6 @@ class Annotation(object):
     methods were defined:
         __hash__ - the hash of an annotation is equal to the hash of the name
                     and value of the annotation.
-        __eq__   - compares two Annotations, to determine if they are equal.
-                    Eqality is determined first using the same values as
-                    hashing. If the name and value are not the same, then
-                    __eq__ returns false.
-                    If the name and value are the same, then __eq__ goes on to
-                    check if the range of the annotations overlaps. If there is
-                    no overlap, then False is returned. If the range overlaps,
-                    then __eq__ changes the range of the two annotations so that
-                    they both now have a range that envelops both initial
-                    ranges, then returns True, as they are now identical.
-
-                    NOTE: If you do not want this corrective functionality, then
-                    use a double negative, which will invert the call to __ne__.
-                    Suggested usage here is "not (ann1 != ann2)".
-        __ne__   - Ineqality for an annotation is determined by comparing the
-                    start, end, name and value of the two annotations. If any do
-                    not match, False is returned.
 
     Because Annotations are stored in a set, they are immutable. As such, the
     properties provided are read only properties. It is strongly advised that
@@ -105,6 +88,8 @@ class Annotation(object):
         self._end = end
         self._name = name
         self._value = value
+    def __str__(self):
+        return repr(self)
     def __repr__(self):
         return "Annotation((%s : %s) = \"%s\", \"%s\")" % (self._start,
                                                            self._end,
@@ -139,44 +124,14 @@ class Annotation(object):
     def __eq__(self, y):
         """Determine equality with another Annotation, based on initial values.
 
-        Eqality is determined first using the same values as hashing. If the
-        name and value are not the same, then __eq__ returns false.
-        If the name and value are the same, then __eq__ goes on to check if
-        the range of the annotations overlaps.
-        If there is no overlap, then False is returned. If the range overlaps,
-        then __eq__ changes the range of the two annotations so that they both
-        now have a range that envelops both initial ranges, then returns True,
-        as they are now identical.
-
-        NOTE: If you do not want this corrective functionality, then use a
-        double negative, which will invert the call to __ne__.
-        Suggested usage here is "not (ann1 != ann2)".
+        Annotations are equal if their name, value, start and end are equal.
         """
         if isinstance(y, Annotation):
-            if (self._name == y._name) and (self._value == y._value):
-
-                if self.start <= y.start:
-
-                    if self.end <= y.end:
-                        y._start = self.start
-                        self._end = y.end
-                        return True
-                    elif self.end > y.end:
-                        y._start = self.start
-                        y._end = self.end
-                        return True
-                    
-                elif self.start > y.start:
-                    
-                    if self.end <= y.end:
-                        self._start = y._start
-                        self._end = y.end
-                        return True
-                    elif self.end > y.end:
-                        self._start = y._start
-                        y._end = self.end
-                        return True
-        return False
+            return ((self.name, self.value, self.start, self.end) ==
+                    (y.name, y.value, y.start, y.end))
+        else:
+            return False
+        
     def __ne__(self, y):
         """Determine inequality with another Annotation.
 
@@ -184,13 +139,8 @@ class Annotation(object):
         name and value of the two annotations. If any do not match, False is
         returned.
         """
-        if isinstance(y, Annotation):
-            return ((self._name != y._name) or
-                    (self._value != y._value) or
-                    (self._start != y._start) or
-                    (self._end != y._end))
-        else:
-            return True
+        return not (self == y)
+    
     def __hash__(self):
         """Return the hash of the Annotation.
 
@@ -198,7 +148,7 @@ class Annotation(object):
         eqality is.
         The intial values are the start, end, name and value of the Annotation.
         """
-        return hash((self._start, self._end, self._name, self._value))
+        return hash(tuple(self._name, self._value))
 
 
 class Annotations(object):
