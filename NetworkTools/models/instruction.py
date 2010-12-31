@@ -57,6 +57,10 @@ class Instruction(object):
     def __str__(self):
         return repr(self)
     
+    @property
+    def name(self):
+        return type(self).__name__
+
     def apply(self):
         """Apply the instruction"""
         raise NotImplemented("apply() needs to be defined by a subclass")
@@ -86,7 +90,6 @@ class Retain(Instruction):
 
 
 class TextOp(Instruction):
-    name = "TextOp"
     def __init__(self, document, string):
         self._document = document
         self._text = string
@@ -100,7 +103,6 @@ class TextOp(Instruction):
         return self._text
 
 class InsertCharacters(TextOp):
-    name = "InsertCharacters"
     def __init__(self, document, string):
         super(InsertCharacters, self).__init__(document, string)
 
@@ -108,32 +110,26 @@ class InsertCharacters(TextOp):
         document.insert_characters(self.text)
 
 class DeleteCharacters(TextOp):
-    name = "DeleteCharacters"
     def __init__(self, document, string):
         super(DeleteCharacters, self).__init__(document, string)
 
 class OpenElement(TextOp):
-    name = "OpenElement"
     def __init__(self, document):
         self._document = document
 
 class DeleteOpenElement(Instruction):
-    name = "DeleteOpenElement"
     def __init__(self, document,):
         self._document = document
 
 class CloseElement(Instruction):
-    name = "CloseElement"
     def __init__(self, document):
         self._document = document
 
 class DeleteCloseElement(Instruction):
-    name = "DeleteCloseElement"
     def __init__(self, document):
         self._document = document
 
 class AnnotationBoundary(Instruction):
-    name = "AnnotationBoundary"
     def __init__(self, document, starts = None, endkeys = None):
         if starts is None:
             starts = []
