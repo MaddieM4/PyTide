@@ -21,27 +21,28 @@ class Instruction(object):
     apply() should be defined, but init should not need to be overwritten.
     """
     name = "Instruction"
-    def __init__(self, *args, **kwargs):
+    def __init__(self, document, **kwargs):
         """Pass arguments and keyword arguments as necessary"""
-        self._args = args
+        self._document = document
         self._kwargs = kwargs
-        
-    @property
-    def args(self):
-        if hasattr(self, '_args'):
-            return self._args
-        else:
-            self._args = []
-            return self._args
 
     @property
+    def document(self):
+        """All instructions must pertain to a document, otherwise they require
+        no transformation.
+        """
+        return self._document
+    
+    @property
     def kwargs(self):
-        if hasattr(self, '_kwargs'):
+        if hasattr(self, '_kwargs') and self._kwargs:
             return self._kwargs
         else:
             self._kwargs = {}
             for indice, key in enumerate(self.__dict__):
-                if key in ('_args', '_kwargs'):
+                if key is '_kwargs':
+                    continue
+                if key.startswith("__"):
                     continue
                 if key.startswith("_"):
                     self._kwargs[key[1:]] = self.__dict__[key]
@@ -60,14 +61,25 @@ class Instruction(object):
     
     def __str__(self):
         return repr(self)
-    def apply():
+    
+    def apply(self):
         """Apply the instruction"""
         raise NotImplemented("apply() needs to be defined by a subclass")
+    
+    def unapply(self):
+        """Reverse 'apply'.
 
+        If this instruction affects 'x', then apply(x) followed by unapply(x)
+        returns the original x.
+        """
+        raise NotImplemented("unapply() needs to be defined by a subclass")
+
+        
 class Retain(Instruction):
     """Move x places forward in the document"""
     name = "Retain"
-    def __init__(self, count):
+    def __init__(self, document, count):
+        self._document = document
         self._count = count
 
     @property
@@ -77,10 +89,12 @@ class Retain(Instruction):
     def apply():
         pass
 
+
 class TextOp(Instruction):
     name = "TextOp"
-    def __init__(self, str):
-        self._text = str
+    def __init__(self, document, string):
+        self._document = document
+        self._text = string
 
     @property
     def text(self):
@@ -92,31 +106,43 @@ class TextOp(Instruction):
 
 class InsertCharacters(TextOp):
     name = "InsertCharacters"
-    pass
+    def __init__(self, document, string):
+        super(InsertCharacters, self).__init__(document, string)
 
 class DeleteCharacters(TextOp):
     name = "DeleteCharacters"
-    pass
+    def __init__(self, document, string):
+        super(DeleteCharacters, self).__init__(document, string)
 
 class OpenElement(TextOp):
     name = "OpenElement"
-    pass
+    def __init__(self, document):
+        self._document = document
 
 class DeleteOpenElement(Instruction):
     name = "DeleteOpenElement"
-    pass
+    def __init__(self, document,):
+        self._document = document
 
 class CloseElement(Instruction):
     name = "CloseElement"
-    pass
+    def __init__(self, document):
+        self._document = document
 
 class DeleteCloseElement(Instruction):
     name = "DeleteCloseElement"
-    pass
+    def __init__(self, document):
+        self._document = document
 
 class AnnotationBoundary(Instruction):
     name = "AnnotationBoundary"
-    def __init__(self, starts = [], endkeys = []):
+    def __init__(self, document, starts = None, endkeys = None):
+        if starts is None:
+            starts = []
+        if endkeys is None:
+            endkeys = []
+            
+        self._document = document
         self._startkeys = []
         self._startvalues = []
         for tup in starts:
