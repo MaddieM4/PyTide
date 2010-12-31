@@ -74,8 +74,8 @@ class Retain(Instruction):
     def count(self):
         return self._count
 
-    def apply():
-        pass
+    def apply(self, document):
+        document.retain(self._count)
 
 class TextOp(Instruction):
     name = "TextOp"
@@ -92,7 +92,8 @@ class TextOp(Instruction):
 
 class InsertCharacters(TextOp):
     name = "InsertCharacters"
-    pass
+    def apply(self, document):
+        document.insert_characters(self.text)
 
 class DeleteCharacters(TextOp):
     name = "DeleteCharacters"

@@ -411,14 +411,12 @@ class BlipDocument(deque):
         so that the blip is now in readable form, with the first element first.
         """
         self.rotate(self.rotation)
-        self.annotations.rotate(self.rotation)
         self.rotation = 0
 
     def retain(self, value):
         """A retain operation. Value should be an integer."""
         self.rotation += value
         self.rotate(-value)
-        self.annotations.rotate(-value)
 
     def insert_characters(self, value, annotations = None):
         """An insert operation, to add characters.

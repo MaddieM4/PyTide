@@ -48,8 +48,6 @@ class Blip(object):
 	if self.parent.blip:
 	        self.parent.blip.children.append(self)
 
-    #TODO: Provide annotate() method which will apply an annotation to a range.
-
 
 class Parent:
     def __init__(self, type="root", blip=None, position=0):
