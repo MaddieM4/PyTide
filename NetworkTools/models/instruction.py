@@ -110,7 +110,7 @@ class InsertCharacters(TextOp):
 
     def apply(self, document):
         document.insert_characters(self.text)
-    def
+
 
 class DeleteCharacters(TextOp):
     def __init__(self, document, string):

@@ -15,16 +15,23 @@
 #           specific language governing permissions and limitations
 #           under the License.
 
+from operator import concat as concatenate
+
 class OpenElement(object):
     def __init__(self, name, **kwargs):
         self._name = name
         self._properties = kwargs
         for kw, value in kwargs.items():
             setattr(self, kw, value)
+
+    def __len__(self):
+        return 1
+    
     def __repr__(self):
         properties = tuple([(k+'="'+v+'"')
                             for k,v in self._properties.items()])
         return '<%s %s>' % (self.name, ' '.join(properties))
+    
     @property
     def name(self):
         return self._name
@@ -32,9 +39,15 @@ class OpenElement(object):
 class CloseElement(object):
     def __init__(self, el):
         """1 arg: 'el' - the element you are closing"""
+        self._el = el
         self._name = el.name
+        
+    def __len__(self):
+        return 1
+    
     def __repr__(self):
         return '</%s>' % self._name
+    
     @property
     def name(self):
         return self._name
@@ -386,8 +399,9 @@ class BlipDocument(deque):
         if self.rotation != 0:
             self.rotation += 1
 
-    def delete(self, item):
-        """Delete """
+    def delete(self, *args):
+        """Delete 'item' from the current position."""
+        items = reduce(concatenate, args)
         for i in range(value):
             self.popleft()
         self.annotations.popleft()
