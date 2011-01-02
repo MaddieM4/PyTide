@@ -360,30 +360,21 @@ class BlipDocument(deque):
         """Corrects the rotation that was created by different operations,
         so that the blip is now in readable form, with the first element first.
         """
-        self.rotate(self.rotation)
+        self._rotate(self.rotation)
         self.rotation = 0
 
-    def retain(self, value):
-        """A retain operation. Value should be an integer."""
-        self.rotation += value
-        self.rotate(-value)
-
-    def insert_characters(self, value, annotations = None):
-        """An insert operation, to add characters.
-
-        'value' should be a string or a list/iterable containing a single
-        character at each element.
-
-        'annotations' should be a dictionary of annotation key:value pairs,
-        to be applied to all inserted characters. Alternatively, a list of
-        2 item tuples "(key, value)" can be used.
+    def _rotate(self, value):
+        """Proxy to original deque behavior."""
+        deque.rotate(self, value)
+        
+    def rotate(self, value):
+        """Rotate the queue by 0-value, and set the new rotation.
+        Value should be an integer.
         """
-        self.extend(value)
-        if self.rotation != 0:
-            self.rotation += len(value)
-        self.annotations.extend(len(value), annotations)
+        self.rotation += value
+        self._rotate(-value)
 
-    def insert(self, value, annotations = None):
+    def insert(self, value):
         """Inserts a single element at the current position.
 
         'value' should be a single object  e.g. a gadget or line element.
@@ -395,8 +386,8 @@ class BlipDocument(deque):
         if self.rotation != 0:
             self.rotation += 1
 
-    def delete(self, value):
-        """Delete 'value' items after the current position."""
+    def delete(self, item):
+        """Delete """
         for i in range(value):
             self.popleft()
         self.annotations.popleft()

@@ -76,7 +76,6 @@ class Instruction(object):
         
 class Retain(Instruction):
     """Move x places forward in the document"""
-    name = "Retain"
     def __init__(self, document, count):
         self._document = document
         self._count = count
@@ -85,8 +84,11 @@ class Retain(Instruction):
     def count(self):
         return self._count
 
-    def apply(self, document):
-        document.retain(self._count)
+    def apply(self):
+        self.document.retain(self._count)
+
+    def unapply(self):
+        self.document.retain(0 - self._count) # "0 - x" is clearer than "-x"
 
 
 class TextOp(Instruction):
@@ -108,6 +110,7 @@ class InsertCharacters(TextOp):
 
     def apply(self, document):
         document.insert_characters(self.text)
+    def
 
 class DeleteCharacters(TextOp):
     def __init__(self, document, string):
