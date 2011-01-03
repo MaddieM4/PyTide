@@ -15,8 +15,6 @@
 #           specific language governing permissions and limitations
 #           under the License.
 
-from operator import concat as concatenate
-
 class OpenElement(object):
     def __init__(self, name, **kwargs):
         self._name = name
@@ -399,12 +397,16 @@ class BlipDocument(deque):
         if self.rotation != 0:
             self.rotation += 1
 
-    def delete(self, *args):
-        """Delete 'item' from the current position."""
-        items = reduce(concatenate, args)
-        for i in range(value):
+    def delete(self, item):
+        """Delete 'item' from the current position.
+        For multiple items, multiple calls to delete must be made.
+        """
+        if item in self and item is self[0]:
             self.popleft()
-        self.annotations.popleft()
+            if self.rotation != 0:
+                self.rotation -= 1
+        else:
+            raise Exception("Item is not in front of current position.")
 
     def complete(self): #lol
         """Calls 'fix_rotation()' then returns itself."""
@@ -417,3 +419,5 @@ class BlipDocument(deque):
     @property
     def text(self):
 	return str(self.complete())
+
+        return item
