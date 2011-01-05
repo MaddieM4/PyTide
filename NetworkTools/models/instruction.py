@@ -23,9 +23,7 @@ class Instruction(object):
 
     @property
     def document(self):
-        """All instructions must pertain to a document, otherwise they require
-        no transformation.
-        """
+        """All instructions must pertain to a document."""
         return self._document
     
     @property
@@ -75,7 +73,7 @@ class Instruction(object):
 
         
 class Retain(Instruction):
-    """Move x places forward in the document"""
+    """Move 'count' places forward in the document"""
     def __init__(self, document, count):
         self._document = document
         self._count = count
@@ -108,29 +106,65 @@ class InsertCharacters(TextOp):
     def __init__(self, document, string):
         super(InsertCharacters, self).__init__(document, string)
 
-    def apply(self, document):
-        document.insert_characters(self.text)
+    def apply(self):
+        for i in self.text:
+            self.document.insert(self.text)
+
+    def unapply(self):
+        for i in self.text:
+            self.document.delete(i)
 
 
 class DeleteCharacters(TextOp):
     def __init__(self, document, string):
         super(DeleteCharacters, self).__init__(document, string)
 
-class OpenElement(TextOp):
-    def __init__(self, document):
-        self._document = document
+    def apply(self):
+        for i in self.text:
+            self.document.delete(i)
+            
+    def unapply(self):
+        for i in self.text:
+            self.document.insert(i)
+            
 
-class DeleteOpenElement(Instruction):
-    def __init__(self, document,):
+class OpenElementInstruction(Instruction):
+    def __init__(self, document, element):
         self._document = document
+        self._element = element
 
-class CloseElement(Instruction):
-    def __init__(self, document):
-        self._document = document
+    def insert(self):
+        self.document.insert(self._element)
 
-class DeleteCloseElement(Instruction):
-    def __init__(self, document):
+    def delete(self):
+        self.document.delete(self._element)        
+
+class InsertOpenElement(OpenElementInstruction):
+    apply = super(InsertOpenElement).insert
+    unapply = super(InsertOpenElement).delete
+
+class DeleteOpenElement(OpenElementInstruction):
+    apply = super(DeleteOpenElement).delete
+    unapply = super(DeleteOpenElement).insert
+
+class CloseElementInstruction(Instruction):
+    def __init__(self, document, element):
         self._document = document
+        self._element = element
+
+    def insert(self):
+        self.document.insert(self._element)
+
+    def delete(self):
+        self.document.delete(self._element)
+        
+class InsertCloseElement(CloseElementInstruction):
+    apply = super(InsertCloseElement).insert
+    unapply = super(InsertCloseElement).delete
+
+class DeleteCloseElement(CloseElementInstruction):
+    apply = super(DeleteCloseElement).delete
+    unapply = super(DeleteCloseElement).insert
 
 class AnnotationBoundary(Instruction):
     def __init__(self, document, starts = None, endkeys = None):
