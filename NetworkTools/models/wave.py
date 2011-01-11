@@ -47,7 +47,7 @@ class Document(object):
 
 class Digest(object):
     def __init__(title, identifier, participants, blips_total, blips_unread,
-                 date, folder = None, features = None):
+                 date, folder = None, features = []):
 	self.title = title
 	self.id = identifier
 	self.participants = participants

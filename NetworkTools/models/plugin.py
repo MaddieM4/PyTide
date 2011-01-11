@@ -37,7 +37,6 @@ class Responder(LoopingThread):
 
 class Plugin(Process):
     ''' Contains a process that handles messages and pushes some back. '''
-# ----------------------- __new__ plugin system -------------------------------
     def __new__(cls, *args, **kwargs):
         self = super(Plugin, cls).__new__(cls)
         super(Plugin, self).__init__()
@@ -54,20 +53,6 @@ class Plugin(Process):
         """__init__ should be overridden, but to prevent misplaced super( )
         calls, a placeholder __init__ has been put in place."""
         print "Erronious super call detected! (harmless)"
-# ----------------------- __call__ plugin system ------------------------------
-##    def __call__(self, *args, **kwargs):
-##        raise Exception("__call__ is required to be overridden")
-##    def __init__(self, *args, **kwargs):
-##        super(Plugin, self).__init__()
-##        self.daemon = True
-##        self.inqueue = Queue()
-##        self.outqueue = Queue()
-##        self.callbacks = {}
-##        self.maxcallback = 0
-##        self.cblock = Lock()
-##        self.responder = Responder(self)
-##        self.responder.start()
-##        self(*args, **kwargs)
         
     def run(self):
         ''' Repeatedly process items in queue '''
@@ -95,6 +80,8 @@ class Plugin(Process):
                 self.output(data, self._contacts())
             elif t == 'me':
                 self.output(data, self._me())
+            elif t == 'submit':
+                self.output(data, self._submit_wavelet(data['wavelet']))
         except Exception as e:
             self.error(data, e)
 
@@ -136,6 +123,13 @@ class Plugin(Process):
                 'ecallback':self.pushcallback(errorcallback),
                 'callback':self.pushcallback(callback)})
 
+    def submit_wavelet(self, wavelet, callback, errorcallback):
+	''' Callback function takes a (wave_id, wavelet_id) tuple '''
+	self.inqueue.put({'type':'submit',
+		'wavelet':wavelet,
+                'ecallback':self.pushcallback(errorcallback),
+                'callback':self.pushcallback(callback)})
+
     def _query(self, query, startpage):
         ''' Override me! Return a models.digest.SearchResults '''
         pass
@@ -147,6 +141,10 @@ class Plugin(Process):
     def _me(self):
         ''' Override me! Return a models.user.User '''
         pass
+
+    def _submit_wavelet(self, wavelet):
+	''' Override me! Return a (wave_id, wavelet_id) tuple '''
+	pass
 
     def error(self, data, e):
         self.outqueue.put((data['ecallback'], e))
