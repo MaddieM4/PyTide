@@ -46,7 +46,6 @@ class Instruction(object):
     def __repr__(self):
         return (str(self.name) +
                 "(" +
-                ', '.join(self.args) +
                 ', '.join([': '.join((str(k), repr(v)))
                            for k,v in self.kwargs.items()]) +
                 ")"
