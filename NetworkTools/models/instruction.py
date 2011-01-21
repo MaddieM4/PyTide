@@ -15,7 +15,6 @@ class Instruction(object):
     """Should be subclassed.
     apply() should be defined, but init should not need to be overwritten.
     """
-    name = "Instruction"
     def __init__(self, document, **kwargs):
         """Pass arguments and keyword arguments as necessary"""
         self._document = document
@@ -28,6 +27,7 @@ class Instruction(object):
     
     @property
     def kwargs(self):
+        """This method smells. Why did I write it?"""
         if hasattr(self, '_kwargs') and self._kwargs:
             return self._kwargs
         else:
@@ -70,7 +70,7 @@ class Instruction(object):
         """
         raise NotImplemented("unapply() needs to be defined by a subclass")
 
-        
+
 class Retain(Instruction):
     """Move 'count' places forward in the document"""
     def __init__(self, document, count):
@@ -80,7 +80,7 @@ class Retain(Instruction):
     @property
     def count(self):
         return self._count
-
+    
     def apply(self):
         self.document.retain(self._count)
 
@@ -139,12 +139,12 @@ class OpenElementInstruction(Instruction):
         self.document.delete(self._element)        
 
 class InsertOpenElement(OpenElementInstruction):
-    apply = super(InsertOpenElement).insert
-    unapply = super(InsertOpenElement).delete
+    apply = OpenElementInstruction.insert
+    unapply = OpenElementInstruction.delete
 
 class DeleteOpenElement(OpenElementInstruction):
-    apply = super(DeleteOpenElement).delete
-    unapply = super(DeleteOpenElement).insert
+    apply = OpenElementInstruction.delete
+    unapply = OpenElementInstruction.insert
 
 class CloseElementInstruction(Instruction):
     def __init__(self, document, element):
@@ -158,12 +158,12 @@ class CloseElementInstruction(Instruction):
         self.document.delete(self._element)
         
 class InsertCloseElement(CloseElementInstruction):
-    apply = super(InsertCloseElement).insert
-    unapply = super(InsertCloseElement).delete
+    apply = CloseElementInstruction.insert
+    unapply = CloseElementInstruction.delete
 
 class DeleteCloseElement(CloseElementInstruction):
-    apply = super(DeleteCloseElement).delete
-    unapply = super(DeleteCloseElement).insert
+    apply = CloseElementInstruction.delete
+    unapply = CloseElementInstruction.insert
 
 class AnnotationBoundary(Instruction):
     def __init__(self, document, starts = None, endkeys = None):

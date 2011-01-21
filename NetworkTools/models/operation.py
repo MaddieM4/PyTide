@@ -46,3 +46,10 @@ class Operation(object):
     def compose(self, other):
         return Operation(self._parent, self._children, 
             self._instructions+other._instructions)
+
+class PendingOperation(Operation):
+    """An operation that has been submitted to server, but hasn't yet been
+    acknowledged."""
+    @property
+    def displacement(self):
+        return 1
