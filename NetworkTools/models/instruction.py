@@ -82,10 +82,10 @@ class Retain(Instruction):
         return self._count
     
     def apply(self):
-        self.document.retain(self._count)
+        self.document.rotate(self._count)
 
     def unapply(self):
-        self.document.retain(0 - self._count) # "0 - x" is clearer than "-x"
+        self.document.rotate(0 - self._count) # "0 - x" is clearer than "-x"
 
 
 class TextOp(Instruction):
