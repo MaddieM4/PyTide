@@ -118,7 +118,10 @@ def compose(a, b):
         elif b.name is 'DeleteOpenElement':
             pass
         elif b.name is 'InsertCharacters':
-            pass
+            document = a.document
+            string = a.string + b.string
+            return instruction.InsertCharacters(document=document,
+                                                string=string)
         elif b.name is 'InsertCloseElement':
             pass
         elif b.name is 'InsertOpenElement':
