@@ -166,16 +166,11 @@ class DeleteCloseElement(CloseElementInstruction):
     unapply = CloseElementInstruction.insert
 
 class AnnotationBoundary(Instruction):
-    def __init__(self, document, starts = None, endkeys = None):
-        if starts is None:
-            starts = []
-        if endkeys is None:
-            endkeys = []
-            
+    def __init__(self, document, start = None, end = None):
+        if start is None:
+            start = {}
+        if end is None:
+            end = {}
         self._document = document
-        self._startkeys = []
-        self._startvalues = []
-        for tup in starts:
-            self._startkeys.append(tup[0])
-            self._startvalues.append(tup[1])
-        self._endkeys = endkeys
+        self._start = start
+        self._end = end
