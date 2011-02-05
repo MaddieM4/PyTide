@@ -17,4 +17,4 @@
 #
 
 __all__ = ['wave', 'blip', 'operation', 'threads', 'user', 'digest', 'plugin',
-           'ot', 'document', 'websocket', 'handler']
+           'ot', 'document', 'handler']

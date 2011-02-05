@@ -1,4 +1,4 @@
-"""
+""" 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>
 """
 
-import sys, re, urlparse, socket, asyncore
+import sys, re, urlparse, socket, asyncore, threading
 
 urlparse.uses_netloc.append("ws")
 urlparse.uses_fragment.append("ws")
@@ -31,8 +31,8 @@ class WebSocket(object):
 
         self._dispatcher = _Dispatcher(self)
 
-    def send(self, data):
-        self._dispatcher.write('\x00' + _utf8(data) + '\xff')
+    def send(self, data,sync=False):
+        self._dispatcher.write('\x00' + _utf8(data) + '\xff',sync)
 
     def close(self):
         self._dispatcher.handle_close()
@@ -84,20 +84,23 @@ class WebSocketError(Exception):
 
 class _Dispatcher(asyncore.dispatcher):
     def __init__(self, ws):
+        self.lock = threading.Lock() #threadsafe addon
+        
         asyncore.dispatcher.__init__(self)
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connect((ws.host, ws.port))
         
         self.ws = ws
         self._read_buffer = ''
-        self._write_buffer = ''
+        with self.lock: #threadsafe addon
+        	self._write_buffer = ''
         self._handshake_complete = False
-
+        
         if self.ws.port != 80:
             hostport = '%s:%d' % (self.ws.host, self.ws.port)
         else:
             hostport = self.ws.host
-            
+        
         fields = [
             'Upgrade: WebSocket',
             'Connection: Upgrade',
@@ -136,7 +139,9 @@ class _Dispatcher(asyncore.dispatcher):
         self.close()
         if self.ws.onclose:
             self.ws.onclose()
-
+    def handle_connect (self):
+        pass
+        
     def handle_read(self):
         if self._handshake_complete:
             self._read_until('\xff', self._handle_frame)
@@ -144,22 +149,27 @@ class _Dispatcher(asyncore.dispatcher):
             self._read_until('\r\n\r\n', self._handle_header)
 
     def handle_write(self):
-        sent = self.send(self._write_buffer)
-        self._write_buffer = self._write_buffer[sent:]
+        with self.lock: #threadsafe addon
+            sent = self.send(self._write_buffer)
+            self._write_buffer = self._write_buffer[sent:]
 
     def writable(self):
-        return len(self._write_buffer) > 0
+        with self.lock: #threadsafe addon
+            return len(self._write_buffer) > 0
 
-    def write(self, data):
-        self._write_buffer += data # TODO: separate buffer for handshake from data to
-                                   # prevent mix-up when send() is called before
-                                   # handshake is complete?
+    def write(self, data,sync=False):
+        with self.lock: #threadsafe addon
+            self._write_buffer += data # TODO: separate buffer for handshake from data to
+                                  # prevent mix-up when send() is called before
+                                  # handshake is complete?
+        if sync:
+          self.handle_write()
 
     def _read_until(self, delimiter, callback):
         self._read_buffer += self.recv(4096)
         pos = self._read_buffer.find(delimiter)
         if pos >= 0:
-            pos += len(delimiter)+1
+            pos += len(delimiter)
         if pos > 0:
             data = self._read_buffer[:pos]
             self._read_buffer = self._read_buffer[pos:]
