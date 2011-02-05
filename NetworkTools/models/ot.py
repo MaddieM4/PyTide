@@ -14,6 +14,7 @@ from multiprocessing import Process, Manager, freeze_support
 #from gtk.gdk import threads_enter, threads_leave
 from websocket import WebSocket
 from handler import CallbackHandler
+import transform
 
 class ServerBuffer(Process):
     def __init__(self, url, onopen_callback):
