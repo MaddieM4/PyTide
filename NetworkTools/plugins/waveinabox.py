@@ -18,6 +18,7 @@
 import urllib
 import urllib2
 from cookielib import CookieJar
+import webkit
 
 from ..models import plugin, websocket
 from ..models.user import User
@@ -28,12 +29,12 @@ from NetworkTools import ConnectionFailure
 __all__ = ['WaveInABoxConnection']
 
 # ----------------------- TEMP. MEASURE - AUTODISCOVERY SOON ------------------
-DOMAINS_USING_PORTS = {'acmewave.com':':9898',
-                       '86.14.183.107':'9898',
-                       'nathanael':'9898'}
+DOMAINS_USING_PORTS = {'acmewave.com':9898,
+                       '86.14.183.107':9898,
+                       'nathanael':9898}
 def get_port(domain):
     if domain in DOMAINS_USING_PORTS:
-        return DOMAINS_USING_PORTS[domain]
+        return ':%s' % DOMAINS_USING_PORTS[domain]
     else:
         return str()
 # -----------------------------------------------------------------------------
@@ -48,24 +49,30 @@ class WaveInABoxConnection(plugin.Plugin):
         self.password = password
         self.domain = domain
         self.cookie_jar = CookieJar()
+        self.browser = webkit.WebView()
+        
         try:
             # This 'opener' includes cookies as you'll need some sort of
             # ID from inside it.
             cp = urllib2.HTTPCookieProcessor(self.cookie_jar)
-            opener = urllib2.build_opener(cp)
+            self.opener = urllib2.build_opener(cp)
             # MESSY! Why do some wiab instances use :9898 and others not?
-            url = 'http://%s%s/auth/signin' % (self.domain, get_port(domain))
+            self.serverurl = 'http://%s%s' % (self.domain, get_port(domain))
+            url = self.serverurl + '/auth/signin' 
             login_data = urllib.urlencode({'address':self.username,
                                            'password':self.password,
                                            }
                                           )
-            self.response = opener.open(url, login_data)
+            self.response = self.opener.open(url, login_data)
 
         except IOError, e:
             print "An Error occured when connecting to %s:" % (self.domain)
             raise ConnectionFailure("Could not connect to %s:\n" % self.domain)
         else:
-            print self.response_data
+            print "Response recieved"
+            url = self.serverurl + '/socket.io/socket.io.js'
+            self.browser.execute_script(self.opener.open(url).read())
+            
         finally:
             pass 
     def _query(self, query, startpage):
